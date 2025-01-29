@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_game_resource_public,game.resource.public,model_game_resource,base.group_public,1,0,0,0
+access_game_player_public,game.player.public,model_game_player,base.group_public,1,0,0,0
+access_game_match_public,game.match.public,model_game_match,base.group_public,1,0,0,0
+access_player_inventory_public,player.inventory.public,model_player_inventory,base.group_public,1,0,0,0
