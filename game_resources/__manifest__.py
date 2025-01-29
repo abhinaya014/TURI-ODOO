@@ -12,15 +12,17 @@
     'license': 'LGPL-3',
     'depends': [
         'base', 
-    #    'mail', 
-    #    'web'
+        'mail', 
+        'web'
     ],
     'data': [
-    #    'security/ir.model.access.csv',
-    #    'data/ir_sequence_data.xml',
-    #    'views/resource_views.xml',
-    #    'views/player_match_views.xml',
-    #    'views/menu_views.xml',
+        'security/ir.model.access.csv',
+        'data/ir_sequence_data.xml',
+        'views/resource_views.xml',
+        'views/player_match_views.xml',
+        'views/menu_views.xml',
     ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
 }
-+
