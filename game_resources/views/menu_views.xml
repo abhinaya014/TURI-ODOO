@@ -1,0 +1,39 @@
+<odoo>
+    <!-- Define base menu -->
+    <menuitem 
+        id="menu_game_resources_root" 
+        name="Game Management" 
+        sequence="10"/>
+
+    <!-- Resources submenu -->
+    <menuitem 
+        id="menu_game_resources" 
+        name="Resources" 
+        parent="menu_game_resources_root"
+        sequence="10" 
+        action="action_game_resource"/>
+
+    <!-- Players submenu -->
+    <menuitem 
+        id="menu_game_players" 
+        name="Players" 
+        parent="menu_game_resources_root"
+        sequence="20" 
+        action="action_game_player"/>
+
+    <!-- Matches submenu -->
+    <menuitem 
+        id="menu_game_matches" 
+        name="Matches" 
+        parent="menu_game_resources_root"
+        sequence="30" 
+        action="action_game_match"/>
+
+    <!-- Inventory submenu -->
+    <menuitem 
+        id="menu_player_inventory" 
+        name="Inventory" 
+        parent="menu_game_resources_root"
+        sequence="40" 
+        action="action_player_inventory"/>
+</odoo>

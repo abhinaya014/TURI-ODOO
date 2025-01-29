@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Player Views -->
+    <record id="view_game_player_tree" model="ir.ui.view">
+        <field name="name">game.player.tree</field>
+        <field name="model">game.player</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="level"/>
+                <field name="experience"/>
+                <field name="last_login"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_game_player_form" model="ir.ui.view">
+        <field name="name">game.player.form</field>
+        <field name="model">game.player</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="active" widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Username"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="email"/>
+                            <field name="password" password="True"/>
+                            <field name="registration_date"/>
+                        </group>
+                        <group>
+                            <field name="level"/>
+                            <field name="experience"/>
+                            <field name="last_login"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Inventory">
+                            <field name="inventory_ids"/>
+                        </page>
+                        <page string="Matches">
+                            <field name="match_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Match Views -->
+    <record id="view_game_match_tree" model="ir.ui.view">
+        <field name="name">game.match.tree</field>
+        <field name="model">game.match</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="state=='draft'" decoration-success="state=='finished'" decoration-warning="state=='in_progress'">
+                <field name="name"/>
+                <field name="match_type"/>
+                <field name="start_time"/>
+                <field name="end_time"/>
+                <field name="winner_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_game_match_form" model="ir.ui.view">
+        <field name="name">game.match.form</field>
+        <field name="model">game.match</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_start_match" string="Start Match" type="object" 
+                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_end_match" string="End Match" type="object" 
+                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'in_progress')]}"/>
+                    <button name="action_cancel_match" string="Cancel Match" type="object" 
+                            attrs="{'invisible': [('state', 'in', ['finished', 'cancelled'])]}"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="match_type"/>
+                            <field name="start_time"/>
+                            <field name="end_time"/>
+                        </group>
+                        <group>
+                            <field name="winner_id"/>
+                            <field name="score"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Players">
+                            <field name="player_ids"/>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_game_player" model="ir.actions.act_window">
+        <field name="name">Players</field>
+        <field name="res_model">game.player</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_game_match" model="ir.actions.act_window">
+        <field name="name">Matches</field>
+        <field name="res_model">game.match</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
