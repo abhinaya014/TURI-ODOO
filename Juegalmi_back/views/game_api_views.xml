@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!-- Menú Principal -->
+    <menuitem id="menu_game_api_root" name="Game API" sequence="10"/>
+
+    <!-- Menú y Acción para Players -->
+    <menuitem id="menu_game_api_players" name="Players" parent="menu_game_api_root" sequence="1"/>
+    <record id="action_game_player" model="ir.actions.act_window">
+      <field name="name">Game Players</field>
+      <field name="res_model">game.player</field>
+      <field name="view_mode">kanban,tree,form</field>
+    </record>
+    <menuitem id="menu_game_api_players_list" name="Players List" parent="menu_game_api_players" action="action_game_player" sequence="1"/>
+
+    <!-- Menú y Acción para Skins -->
+    <menuitem id="menu_game_api_skins" name="Skins" parent="menu_game_api_root" sequence="2"/>
+    <record id="action_game_skin" model="ir.actions.act_window">
+      <field name="name">Game Skins</field>
+      <field name="res_model">game.skin</field>
+      <field name="view_mode">kanban,tree,form</field>
+    </record>
+    <menuitem id="menu_game_api_skins_list" name="Skins List" parent="menu_game_api_skins" action="action_game_skin" sequence="1"/>
+
+    <!-- Menú y Acción para Matches -->
+    <menuitem id="menu_game_api_matches" name="Matches" parent="menu_game_api_root" sequence="3"/>
+    <record id="action_game_match" model="ir.actions.act_window">
+      <field name="name">Game Matches</field>
+      <field name="res_model">game.match</field>
+      <field name="view_mode">kanban,tree,form</field>
+    </record>
+    <menuitem id="menu_game_api_matches_list" name="Matches List" parent="menu_game_api_matches" action="action_game_match" sequence="1"/>
+
+    <!-- Menú y Acción para Transacciones de Monedas -->
+    <menuitem id="menu_game_api_transactions" name="Transactions" parent="menu_game_api_root" sequence="4"/>
+    <record id="action_game_transaction" model="ir.actions.act_window">
+      <field name="name">Coin Transactions</field>
+      <field name="res_model">game.coin.transaction</field>
+      <field name="view_mode">kanban,tree,form</field>
+    </record>
+    <menuitem id="menu_game_api_transactions_list" name="Transactions List" parent="menu_game_api_transactions" action="action_game_transaction" sequence="1"/>
+
+    <!-- Vistas Kanban, Tree y Form para game.player -->
+    <record id="view_game_player_kanban" model="ir.ui.view">
+      <field name="name">game.player.kanban</field>
+      <field name="model">game.player</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="name"/>
+          <field name="email"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click">
+                <div>
+                  <strong t-field="record.name"/>
+                </div>
+                <div t-field="record.email"/>
+                <div>
+                  <field name="coin_balance" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+    <record id="view_game_player_tree" model="ir.ui.view">
+      <field name="name">game.player.tree</field>
+      <field name="model">game.player</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="email"/>
+          <field name="coin_balance"/>
+        </tree>
+      </field>
+    </record>
+    <record id="view_game_player_form" model="ir.ui.view">
+      <field name="name">game.player.form</field>
+      <field name="model">game.player</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="email"/>
+              <field name="password"/>
+              <field name="partner_id" readonly="1"/>
+              <field name="coin_balance" readonly="1"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Vistas Kanban, Tree y Form para game.skin -->
+    <record id="view_game_skin_kanban" model="ir.ui.view">
+      <field name="name">game.skin.kanban</field>
+      <field name="model">game.skin</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="name"/>
+          <field name="type"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click">
+                <div><strong t-field="record.name"/></div>
+                <div t-field="record.type"/>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+    <record id="view_game_skin_tree" model="ir.ui.view">
+      <field name="name">game.skin.tree</field>
+      <field name="model">game.skin</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="type"/>
+          <field name="description"/>
+        </tree>
+      </field>
+    </record>
+    <record id="view_game_skin_form" model="ir.ui.view">
+      <field name="name">game.skin.form</field>
+      <field name="model">game.skin</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="type"/>
+              <field name="description"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Vistas Kanban, Tree y Form para game.match -->
+    <record id="view_game_match_kanban" model="ir.ui.view">
+      <field name="name">game.match.kanban</field>
+      <field name="model">game.match</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="name"/>
+          <field name="start_date"/>
+          <field name="end_date"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click">
+                <div><strong t-field="record.name"/></div>
+                <div t-field="record.start_date"/>
+                <div t-field="record.end_date"/>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+    <record id="view_game_match_tree" model="ir.ui.view">
+      <field name="name">game.match.tree</field>
+      <field name="model">game.match</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="start_date"/>
+          <field name="end_date"/>
+          <field name="winner_id"/>
+          <field name="score"/>
+        </tree>
+      </field>
+    </record>
+    <record id="view_game_match_form" model="ir.ui.view">
+      <field name="name">game.match.form</field>
+      <field name="model">game.match</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="start_date"/>
+              <field name="end_date"/>
+              <field name="winner_id"/>
+              <field name="score"/>
+              <field name="player_ids" widget="many2many_tags"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Vistas Kanban, Tree y Form para game.coin.transaction -->
+    <record id="view_game_coin_transaction_kanban" model="ir.ui.view">
+      <field name="name">game.coin.transaction.kanban</field>
+      <field name="model">game.coin.transaction</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="player_id"/>
+          <field name="amount"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click">
+                <div><strong t-field="record.player_id"/></div>
+                <div t-field="record.amount"/>
+                <div t-field="record.date"/>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+    <record id="view_game_coin_transaction_tree" model="ir.ui.view">
+      <field name="name">game.coin.transaction.tree</field>
+      <field name="model">game.coin.transaction</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="player_id"/>
+          <field name="amount"/>
+          <field name="reason"/>
+          <field name="date"/>
+        </tree>
+      </field>
+    </record>
+    <record id="view_game_coin_transaction_form" model="ir.ui.view">
+      <field name="name">game.coin.transaction.form</field>
+      <field name="model">game.coin.transaction</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <field name="player_id"/>
+              <field name="amount"/>
+              <field name="reason"/>
+              <field name="date"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+  </data>
+</odoo>
