@@ -52,10 +52,10 @@
             <t t-name="kanban-box">
               <div class="oe_kanban_global_click">
                 <div>
-                  <strong t-field="record.name"/>
+                  <strong t-esc="record.name.value"/>
                 </div>
-                <div t-field="record.email"/>
-                <div>
+                <div t-esc="record.email.value"/>
+                <div t-esc="record.coin_balance.value"/>
                   <field name="coin_balance" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 </div>
               </div>
