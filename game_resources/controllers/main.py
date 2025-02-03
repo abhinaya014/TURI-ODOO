@@ -41,7 +41,7 @@ class GameAPIController(http.Controller):
                     ('Access-Control-Allow-Headers', 'Content-Type, Authorization')]
         )
 
-    @http.route('/game_resources/api/test', type='http', auth='none', csrf=False, cors='*')
+    @http.route('/game_resources/api/test', type='http', auth='public', csrf=False, cors='*')
     def test_connection(self):
         try:
             return self._json_response({
