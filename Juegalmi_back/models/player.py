@@ -11,7 +11,8 @@ class GamePlayer(models.Model):
     
     # Relación con transacciones de monedas
     coin_transaction_ids = fields.One2many('game.coin.transaction', 'player_id', string="Transacciones")
-    coin_balance = fields.Float(compute='_compute_coin_balance', store=True)
+    coin_balance = fields.Float(string="Coin Balance", compute='_compute_coin_balance', store=True)
+
 
     @api.depends('coin_transaction_ids.amount')
     def _compute_coin_balance(self):
