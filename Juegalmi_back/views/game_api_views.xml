@@ -127,7 +127,6 @@
               <field name="partner_id" readonly="1"/>
             </group>
             <notebook>
-              <!-- Se ha eliminado el page "Inventory" ya que el campo no existe -->
               <page string="Matches">
                 <field name="match_ids" widget="many2many_tags"/>
               </page>
@@ -302,7 +301,7 @@
          VISTAS PARA GAME.COIN.TRANSACTION
          *********************** -->
 
-    <!-- Vista Kanban de Transacciones -->
+    <!-- Vista Kanban de Transacciones con condicional para el campo "date" -->
     <record id="view_game_coin_transaction_kanban" model="ir.ui.view">
       <field name="name">game.coin.transaction.kanban</field>
       <field name="model">game.coin.transaction</field>
@@ -317,7 +316,9 @@
                 <div style="font-size:13px; margin-top:4px;">
                   <span>Amount: </span><span t-esc="record.amount.value"/>
                 </div>
-                <div style="font-size:12px; color:#999; margin-top:4px;" t-esc="record.date.value"/>
+                <div style="font-size:12px; color:#999; margin-top:4px;">
+                  <t t-if="record.date && record.date.value" t-esc="record.date.value"/>
+                </div>
               </div>
             </t>
           </templates>
