@@ -317,7 +317,7 @@
                   <span>Amount: </span><span t-esc="record.amount.value"/>
                 </div>
                 <div style="font-size:12px; color:#999; margin-top:4px;">
-                  <t t-if="record.date && record.date.value" t-esc="record.date.value"/>
+                 <t t-if="record.date &amp;&amp; record.date.value" t-esc="record.date.value"/>
                 </div>
               </div>
             </t>
