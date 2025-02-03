@@ -5,8 +5,10 @@ class GameSkin(models.Model):
     _description = 'Game Skin'
 
     name = fields.Char(required=True)
+    photo = fields.Binary(string="Image")
     type = fields.Selection([
         ('weapon', 'Arma'),
         ('character', 'Personaje'),
-    ], string="Tipo", default='weapon')
+        # Puedes agregar más tipos según sea necesario
+    ], string="Type", default='weapon')
     description = fields.Text()

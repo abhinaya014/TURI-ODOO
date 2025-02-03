@@ -46,17 +46,43 @@
       <field name="model">game.player</field>
       <field name="arch" type="xml">
         <kanban>
+          <!-- Declaramos los campos necesarios para que se puedan usar en la plantilla -->
           <field name="name"/>
           <field name="email"/>
+          <field name="photo"/>
+          <field name="player_id"/>
+          <field name="level"/>
+          <field name="coin_balance"/>
+          <field name="total_matches"/>
+          <field name="total_wins"/>
           <templates>
             <t t-name="kanban-box">
-              <div class="oe_kanban_global_click">
-                <div>
-                  <strong t-esc="record.name.value"/>
+              <div class="oe_kanban_global_click" style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; margin: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <!-- Encabezado con foto, nombre y Player ID -->
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <div style="margin-right: 10px;">
+                    <img t-if="record.photo.value" t-att-src="'data:image/png;base64,%s' % record.photo.value" style="width:50px; height:50px; border-radius:50%;"/>
+                    <img t-else="" src="/web/static/src/img/smile.svg" style="width:50px; height:50px; border-radius:50%;"/>
+                  </div>
+                  <div>
+                    <div style="font-size: 16px; font-weight: bold; color: #333;" t-esc="record.name.value"/>
+                    <div style="font-size: 12px; color: #777;" t-esc="record.player_id.value"/>
+                  </div>
                 </div>
-                <div t-esc="record.email.value"/>
-                <div>
-                  <field name="coin_balance" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <!-- Información adicional -->
+                <div style="font-size: 13px; color: #555; margin-bottom: 5px;">
+                  <strong>Email:</strong> <span t-esc="record.email.value"/>
+                </div>
+                <div style="font-size: 13px; color: #555; margin-bottom: 5px;">
+                  <strong>Level:</strong> <span t-esc="record.level.value"/>
+                </div>
+                <div style="font-size: 13px; color: #555; margin-bottom: 5px;">
+                  <strong>Coins:</strong>
+                  <span t-field="record.coin_balance"/>
+                </div>
+                <div style="font-size: 12px; color: #999;">
+                  <span>Total Matches: </span><span t-esc="record.total_matches.value"/>
+                  <span> | Total Wins: </span><span t-esc="record.total_wins.value"/>
                 </div>
               </div>
             </t>
@@ -64,6 +90,7 @@
         </kanban>
       </field>
     </record>
+
     <record id="view_game_player_tree" model="ir.ui.view">
       <field name="name">game.player.tree</field>
       <field name="model">game.player</field>
@@ -71,10 +98,14 @@
         <tree>
           <field name="name"/>
           <field name="email"/>
+          <field name="level"/>
           <field name="coin_balance"/>
+          <field name="total_matches"/>
+          <field name="total_wins"/>
         </tree>
       </field>
     </record>
+
     <record id="view_game_player_form" model="ir.ui.view">
       <field name="name">game.player.form</field>
       <field name="model">game.player</field>
@@ -82,11 +113,31 @@
         <form>
           <sheet>
             <group>
+              <field name="photo" widget="image" class="oe_avatar" options="{'preview_image': 'photo'}"/>
+            </group>
+            <group>
               <field name="name"/>
               <field name="email"/>
               <field name="password"/>
-              <field name="partner_id" readonly="1"/>
+            </group>
+            <group>
+              <field name="player_id" readonly="1"/>
+              <field name="level"/>
               <field name="coin_balance" readonly="1"/>
+            </group>
+            <group>
+              <field name="total_matches" readonly="1"/>
+              <field name="total_wins" readonly="1"/>
+            </group>
+            <group>
+              <field name="last_login" readonly="1"/>
+              <field name="registration_date" readonly="1"/>
+            </group>
+            <group>
+              <field name="active"/>
+            </group>
+            <group>
+              <field name="partner_id" readonly="1"/>
             </group>
           </sheet>
         </form>
@@ -101,19 +152,23 @@
         <kanban>
           <field name="name"/>
           <field name="type"/>
+          <field name="photo"/>
           <templates>
             <t t-name="kanban-box">
-              <div class="oe_kanban_global_click">
+              <div class="oe_kanban_global_click" style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; margin: 5px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                 <div>
-                  <strong t-esc="record.name.value"/>
+                  <img t-if="record.photo.value" t-att-src="'data:image/png;base64,%s' % record.photo.value" style="width:60px; height:60px; border-radius:8px; margin-bottom: 5px;"/>
+                  <img t-else="" src="/web/static/src/img/smile.svg" style="width:60px; height:60px; border-radius:8px; margin-bottom: 5px;"/>
                 </div>
-                <div t-esc="record.type.value"/>
+                <div style="font-size: 15px; font-weight: bold; color: #333;" t-esc="record.name.value"/>
+                <div style="font-size: 13px; color: #777;" t-esc="record.type.value"/>
               </div>
             </t>
           </templates>
         </kanban>
       </field>
     </record>
+
     <record id="view_game_skin_tree" model="ir.ui.view">
       <field name="name">game.skin.tree</field>
       <field name="model">game.skin</field>
@@ -125,6 +180,7 @@
         </tree>
       </field>
     </record>
+
     <record id="view_game_skin_form" model="ir.ui.view">
       <field name="name">game.skin.form</field>
       <field name="model">game.skin</field>
@@ -132,8 +188,13 @@
         <form>
           <sheet>
             <group>
+              <field name="photo" widget="image" class="oe_avatar" options="{'preview_image': 'photo'}"/>
+            </group>
+            <group>
               <field name="name"/>
               <field name="type"/>
+            </group>
+            <group>
               <field name="description"/>
             </group>
           </sheet>
@@ -148,35 +209,44 @@
       <field name="arch" type="xml">
         <kanban>
           <field name="name"/>
-          <field name="start_date"/>
-          <field name="end_date"/>
+          <field name="start_time"/>
+          <field name="end_time"/>
+          <field name="state"/>
           <templates>
             <t t-name="kanban-box">
-              <div class="oe_kanban_global_click">
-                <div>
-                  <strong t-esc="record.name.value"/>
+              <div class="oe_kanban_global_click" style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; margin: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <div style="font-size: 16px; font-weight: bold; color: #333;" t-esc="record.name.value"/>
+                <div style="margin-top: 4px; font-size: 13px; color: #555;">
+                  <span>Start: </span><span t-esc="record.start_time.value"/>
                 </div>
-                <div t-esc="record.start_date.value"/>
-                <div t-esc="record.end_date.value"/>
+                <div style="margin-top: 4px; font-size: 13px; color: #555;">
+                  <span>End: </span><span t-esc="record.end_time.value"/>
+                </div>
+                <div style="margin-top: 4px; font-size: 13px; color: #999;">
+                  <span>Status: </span><span t-esc="record.state.value"/>
+                </div>
               </div>
             </t>
           </templates>
         </kanban>
       </field>
     </record>
+
     <record id="view_game_match_tree" model="ir.ui.view">
       <field name="name">game.match.tree</field>
       <field name="model">game.match</field>
       <field name="arch" type="xml">
         <tree>
           <field name="name"/>
-          <field name="start_date"/>
-          <field name="end_date"/>
+          <field name="start_time"/>
+          <field name="end_time"/>
+          <field name="state"/>
           <field name="winner_id"/>
           <field name="score"/>
         </tree>
       </field>
     </record>
+
     <record id="view_game_match_form" model="ir.ui.view">
       <field name="name">game.match.form</field>
       <field name="model">game.match</field>
@@ -185,11 +255,22 @@
           <sheet>
             <group>
               <field name="name"/>
-              <field name="start_date"/>
-              <field name="end_date"/>
+              <field name="match_type"/>
+            </group>
+            <group>
+              <field name="start_time"/>
+              <field name="end_time"/>
+              <field name="state"/>
+            </group>
+            <group>
               <field name="winner_id"/>
               <field name="score"/>
+            </group>
+            <group>
               <field name="player_ids" widget="many2many_tags"/>
+            </group>
+            <group>
+              <field name="notes"/>
             </group>
           </sheet>
         </form>
@@ -206,18 +287,19 @@
           <field name="amount"/>
           <templates>
             <t t-name="kanban-box">
-              <div class="oe_kanban_global_click">
-                <div>
-                  <strong t-esc="record.player_id.value"/>
+              <div class="oe_kanban_global_click" style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; margin: 5px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <div style="font-size: 14px; font-weight: bold;" t-esc="record.player_id.value"/>
+                <div style="font-size: 13px; margin-top: 4px;">
+                  <span>Amount: </span><span t-esc="record.amount.value"/>
                 </div>
-                <div t-esc="record.amount.value"/>
-                <div t-esc="record.date.value"/>
+                <div style="font-size: 12px; color: #999; margin-top: 4px;" t-esc="record.date.value"/>
               </div>
             </t>
           </templates>
         </kanban>
       </field>
     </record>
+
     <record id="view_game_coin_transaction_tree" model="ir.ui.view">
       <field name="name">game.coin.transaction.tree</field>
       <field name="model">game.coin.transaction</field>
@@ -230,6 +312,7 @@
         </tree>
       </field>
     </record>
+
     <record id="view_game_coin_transaction_form" model="ir.ui.view">
       <field name="name">game.coin.transaction.form</field>
       <field name="model">game.coin.transaction</field>
@@ -239,6 +322,8 @@
             <group>
               <field name="player_id"/>
               <field name="amount"/>
+            </group>
+            <group>
               <field name="reason"/>
               <field name="date"/>
             </group>
