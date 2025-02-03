@@ -55,7 +55,7 @@
                   <strong t-esc="record.name.value"/>
                 </div>
                 <div t-esc="record.email.value"/>
-                <div t-esc="record.coin_balance.value"/>
+                <div>
                   <field name="coin_balance" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 </div>
               </div>
@@ -104,8 +104,10 @@
           <templates>
             <t t-name="kanban-box">
               <div class="oe_kanban_global_click">
-                <div><strong t-field="record.name"/></div>
-                <div t-field="record.type"/>
+                <div>
+                  <strong t-esc="record.name.value"/>
+                </div>
+                <div t-esc="record.type.value"/>
               </div>
             </t>
           </templates>
@@ -151,9 +153,11 @@
           <templates>
             <t t-name="kanban-box">
               <div class="oe_kanban_global_click">
-                <div><strong t-field="record.name"/></div>
-                <div t-field="record.start_date"/>
-                <div t-field="record.end_date"/>
+                <div>
+                  <strong t-esc="record.name.value"/>
+                </div>
+                <div t-esc="record.start_date.value"/>
+                <div t-esc="record.end_date.value"/>
               </div>
             </t>
           </templates>
@@ -203,9 +207,11 @@
           <templates>
             <t t-name="kanban-box">
               <div class="oe_kanban_global_click">
-                <div><strong t-field="record.player_id"/></div>
-                <div t-field="record.amount"/>
-                <div t-field="record.date"/>
+                <div>
+                  <strong t-esc="record.player_id.value"/>
+                </div>
+                <div t-esc="record.amount.value"/>
+                <div t-esc="record.date.value"/>
               </div>
             </t>
           </templates>
