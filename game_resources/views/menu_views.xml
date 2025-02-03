@@ -16,7 +16,7 @@
     <!-- Players submenu -->
     <menuitem 
         id="menu_game_players" 
-        name="Players" 
+        name="Jugadores" 
         parent="menu_game_resources_root"
         sequence="20" 
         action="action_game_player"/>
@@ -24,7 +24,7 @@
     <!-- Matches submenu -->
     <menuitem 
         id="menu_game_matches" 
-        name="Matches" 
+        name="Partidos" 
         parent="menu_game_resources_root"
         sequence="30" 
         action="action_game_match"/>

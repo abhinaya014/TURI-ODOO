@@ -2,12 +2,12 @@
 <odoo>
   <data>
     <!-- Menú Principal -->
-    <menuitem id="menu_game_api_root" name="Game API" sequence="10"/>
+    <menuitem id="menu_game_api_root" name="Juegalmi Turi" sequence="10"/>
 
     <!-- Menú y Acción para Players -->
     <menuitem id="menu_game_api_players" name="Players" parent="menu_game_api_root" sequence="1"/>
     <record id="action_game_player" model="ir.actions.act_window">
-      <field name="name">Game Players</field>
+      <field name="name">Jugadores</field>
       <field name="res_model">game.player</field>
       <field name="view_mode">kanban,tree,form</field>
     </record>
