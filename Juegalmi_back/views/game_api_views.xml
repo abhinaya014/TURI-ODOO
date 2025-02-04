@@ -396,11 +396,7 @@
          ACCIONES (OPCIONAL)
          *********************** -->
 
-    <record id="action_game_player" model="ir.actions.act_window">
-      <field name="name">Players</field>
-      <field name="res_model">game.player</field>
-      <field name="view_mode">tree,form</field>
-    </record>
+
 
     <record id="action_game_match" model="ir.actions.act_window">
       <field name="name">Matches</field>
