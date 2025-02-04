@@ -12,12 +12,12 @@
     <!-- Menú y Acción para Players -->
     <menuitem id="menu_game_api_players" name="Players" parent="menu_game_api_root" sequence="1"/>
     <record id="action_game_player" model="ir.actions.act_window">
-      <field name="name">Jugadores</field>
-      <field name="res_model">game.player</field>
-      <!-- Forzamos la vista Kanban como predeterminada -->
-      <field name="view_id" ref="view_game_player_kanban_full"/>
-      <field name="view_mode">kanban,tree,form</field>
-    </record>
+  <field name="name">Jugadores</field>
+  <field name="res_model">game.player</field>
+  <field name="view_id" ref="view_game_player_kanban_full"/>  <!-- Forzar la vista Kanban por defecto -->
+  <field name="view_mode">kanban,tree,form</field>
+</record>
+
     <menuitem id="menu_game_api_players_list" name="Players List" parent="menu_game_api_players" action="action_game_player" sequence="1"/>
 
     <!-- Menú y Acción para Skins -->
