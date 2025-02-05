@@ -20,12 +20,12 @@ class GameAPIController(http.Controller):
     @http.route('/game_api/login', type='http', auth='none', methods=['POST'], csrf=False, session_less=True)
     def login_player(self):
         try:
-            # Verificamos si el cuerpo de la solicitud tiene contenido JSON válido
+            # Verificar si hay datos en la solicitud
             if not request.httprequest.data:
                 _logger.error("El cuerpo de la solicitud está vacío.")
                 return self._json_response({'status': 'error', 'message': 'El cuerpo de la solicitud está vacío o no es JSON válido'}, 400)
 
-            # Cargar el JSON manualmente
+            # Cargar manualmente el JSON
             try:
                 data = json.loads(request.httprequest.data.decode('utf-8'))
             except json.JSONDecodeError as e:
