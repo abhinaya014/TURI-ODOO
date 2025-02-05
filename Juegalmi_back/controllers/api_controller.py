@@ -29,54 +29,55 @@ class GameAPIController(http.Controller):
 
     # Registro de jugador
     @http.route('/game_api/register', type='json', auth='none', methods=['POST'], csrf=False)
-def register_player(self, **kw):
-    try:
-        # Obtener los datos directamente del request
-        data = request.jsonrequest
-        
-        name = data.get('name')
-        email = data.get('email')
-        password = data.get('password')
+    def register_player(self, **kw):
+        try:
+            # Obtener los datos directamente del request
+            data = kw
+            
+            name = data.get('name')
+            email = data.get('email')
+            password = data.get('password')
 
-        if not name or not email or not password:
-            return {'status': 'error', 'message': 'Faltan campos obligatorios'}
+            if not name or not email or not password:
+                return {'status': 'error', 'message': 'Faltan campos obligatorios'}
 
-        # Verificar email único
-        existing_player = request.env['game.player'].sudo().search([('email', '=', email)], limit=1)
-        if existing_player:
-            return {'status': 'error', 'message': 'El email ya está registrado'}
+            # Verificar email único
+            existing_player = request.env['game.player'].sudo().search([('email', '=', email)], limit=1)
+            if existing_player:
+                return {'status': 'error', 'message': 'El email ya está registrado'}
 
-        # Crear el jugador
-        vals = {
-            'name': name,
-            'email': email,
-            'password': password,
-        }
-
-        player = request.env['game.player'].sudo().create(vals)
-
-        return {
-            'status': 'success',
-            'message': 'Jugador registrado con éxito',
-            'data': {
-                'player_id': player.id,
-                'name': player.name,
-                'email': player.email,
-                'level': player.level,
-                'coin_balance': player.coin_balance
+            # Crear el jugador
+            vals = {
+                'name': name,
+                'email': email,
+                'password': password,
             }
-        }
 
-    except Exception as e:
-        _logger.error(f"Error en el registro del jugador: {e}")
-        return {'status': 'error', 'message': str(e)}
+            player = request.env['game.player'].sudo().create(vals)
+
+            return {
+                'status': 'success',
+                'message': 'Jugador registrado con éxito',
+                'data': {
+                    'player_id': player.id,
+                    'name': player.name,
+                    'email': player.email,
+                    'level': player.level,
+                    'coin_balance': player.coin_balance
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Error en el registro del jugador: {e}")
+            return {'status': 'error', 'message': str(e)}
 
     # Login de jugador
     @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False)
-    def login_player(self, **post):
+    def login_player(self, **kw):
         try:
-            email = post.get('email')
-            password = post.get('password')
+            data = kw
+            email = data.get('email')
+            password = data.get('password')
 
             if not email or not password:
                 return {'status': 'error', 'message': 'Email y contraseña son obligatorios'}
