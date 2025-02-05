@@ -8,28 +8,11 @@ _logger = logging.getLogger(__name__)
 class GameAPIController(http.Controller):
 
     def _json_response(self, data, status=200):
-        return request.make_response(json.dumps(data, default=str), headers={'Content-Type': 'application/json'}, status=status)
-
-    # -----------------------------
-    # JUGADORES
-    # -----------------------------
-
-    # Listar jugadores
-    @http.route('/game_api/players', type='json', auth='public', methods=['GET'], csrf=False, session_less=True)
-    def api_list_players(self):
-        try:
-            players = request.env['game.player'].sudo().search([])
-            data = [{
-                'id': p.id,
-                'name': p.name,
-                'email': p.email,
-                'coin_balance': p.coin_balance,
-                'level': p.level
-            } for p in players]
-            return self._json_response({'status': 'success', 'data': data})
-        except Exception as e:
-            _logger.error(f"Error al listar jugadores: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+        return request.make_response(
+            json.dumps(data, default=str),
+            headers={'Content-Type': 'application/json'},
+            status=status
+        )
 
     # -----------------------------
     # LOGIN DE JUGADOR
@@ -37,8 +20,12 @@ class GameAPIController(http.Controller):
     @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False, session_less=True)
     def login_player(self):
         try:
-            # Obtener los datos JSON directamente del request
-            data = request.jsonrequest  # Esto debería funcionar bien con POST en formato JSON
+            # Verificamos si el cuerpo de la solicitud tiene contenido JSON válido
+            if not request.jsonrequest:
+                return self._json_response({'status': 'error', 'message': 'El cuerpo de la solicitud no es JSON válido'}, 400)
+
+            # Obtener los datos JSON
+            data = request.jsonrequest
 
             email = data.get('email')
             password = data.get('password')
@@ -69,9 +56,6 @@ class GameAPIController(http.Controller):
                 }
             })
 
-        except AttributeError as e:
-            _logger.error(f"Error de atributo: {e}")
-            return self._json_response({'status': 'error', 'message': f'Error al procesar la solicitud: {str(e)}'}, 400)
         except Exception as e:
             _logger.error(f"Error en el login del jugador: {e}")
             return self._json_response({'status': 'error', 'message': str(e)}, 500)
