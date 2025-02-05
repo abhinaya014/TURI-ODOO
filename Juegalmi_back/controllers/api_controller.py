@@ -73,7 +73,7 @@ class GameAPIController(http.Controller):
 
     # Login de jugador
     @http.route('/game_api/login', type='json', auth='nopublicne', methods=['POST'], csrf=False, session_less=True)
-def login_player(self, **kw):
+    def login_player(self, **kw):
     try:
         # Obtener los datos JSON directamente del request
         data = request.jsonrequest  # <-- Esto ya debería funcionar correctamente
