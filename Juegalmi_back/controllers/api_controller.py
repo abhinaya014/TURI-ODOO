@@ -29,35 +29,47 @@ class GameAPIController(http.Controller):
 
     # Registro de jugador
     @http.route('/game_api/register', type='json', auth='none', methods=['POST'], csrf=False)
-    def register_player(self, **post):
-        try:
-            name = post.get('name')
-            email = post.get('email')
-            password = post.get('password')
-            photo = post.get('photo')
+def register_player(self, **kw):
+    try:
+        # Obtener los datos directamente del request
+        data = request.jsonrequest
+        
+        name = data.get('name')
+        email = data.get('email')
+        password = data.get('password')
 
-            if not name or not email or not password:
-                return {'status': 'error', 'message': 'Faltan campos obligatorios'}
+        if not name or not email or not password:
+            return {'status': 'error', 'message': 'Faltan campos obligatorios'}
 
-            existing_player = request.env['game.player'].sudo().search([('email', '=', email)], limit=1)
-            if existing_player:
-                return {'status': 'error', 'message': 'El email ya está registrado'}
+        # Verificar email único
+        existing_player = request.env['game.player'].sudo().search([('email', '=', email)], limit=1)
+        if existing_player:
+            return {'status': 'error', 'message': 'El email ya está registrado'}
 
-            player_vals = {'name': name, 'email': email, 'password': password}
-            if photo:
-                player_vals['photo'] = photo
+        # Crear el jugador
+        vals = {
+            'name': name,
+            'email': email,
+            'password': password,
+        }
 
-            player = request.env['game.player'].sudo().create(player_vals)
+        player = request.env['game.player'].sudo().create(vals)
 
-            return {
-                'status': 'success',
-                'message': 'Jugador registrado con éxito',
-                'player_id': player.id
+        return {
+            'status': 'success',
+            'message': 'Jugador registrado con éxito',
+            'data': {
+                'player_id': player.id,
+                'name': player.name,
+                'email': player.email,
+                'level': player.level,
+                'coin_balance': player.coin_balance
             }
+        }
 
-        except Exception as e:
-            _logger.error(f"Error en el registro del jugador: {e}")
-            return {'status': 'error', 'message': str(e)}
+    except Exception as e:
+        _logger.error(f"Error en el registro del jugador: {e}")
+        return {'status': 'error', 'message': str(e)}
 
     # Login de jugador
     @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False)
