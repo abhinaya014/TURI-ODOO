@@ -1,15 +1,11 @@
 from odoo import http, fields
-from odoo.http import request, Response
+from odoo.http import request
 import json
 import logging
 
 _logger = logging.getLogger(__name__)
 
 class GameAPIController(http.Controller):
-
-    def _json_response(self, data, status=200):
-        return Response(json.dumps(data, default=str), status=status, content_type='application/json')
-
     # -----------------------------
     # JUGADORES
     # -----------------------------
@@ -26,10 +22,10 @@ class GameAPIController(http.Controller):
                 'coin_balance': p.coin_balance,
                 'level': p.level
             } for p in players]
-            return self._json_response({'status': 'success', 'data': data})
+            return {'status': 'success', 'data': data}
         except Exception as e:
             _logger.error(f"Error al listar jugadores: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
 
     # Registro de jugador
     @http.route('/game_api/register', type='json', auth='none', methods=['POST'], csrf=False)
@@ -38,14 +34,14 @@ class GameAPIController(http.Controller):
             name = post.get('name')
             email = post.get('email')
             password = post.get('password')
-            photo = post.get('photo')  # Base64 string para la foto (opcional)
+            photo = post.get('photo')
 
             if not name or not email or not password:
-                return self._json_response({'status': 'error', 'message': 'Faltan campos obligatorios'}, 400)
+                return {'status': 'error', 'message': 'Faltan campos obligatorios'}
 
             existing_player = request.env['game.player'].sudo().search([('email', '=', email)], limit=1)
             if existing_player:
-                return self._json_response({'status': 'error', 'message': 'El email ya está registrado'}, 409)
+                return {'status': 'error', 'message': 'El email ya está registrado'}
 
             player_vals = {'name': name, 'email': email, 'password': password}
             if photo:
@@ -53,15 +49,15 @@ class GameAPIController(http.Controller):
 
             player = request.env['game.player'].sudo().create(player_vals)
 
-            return self._json_response({
+            return {
                 'status': 'success',
                 'message': 'Jugador registrado con éxito',
                 'player_id': player.id
-            })
+            }
 
         except Exception as e:
             _logger.error(f"Error en el registro del jugador: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
 
     # Login de jugador
     @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False)
@@ -71,15 +67,15 @@ class GameAPIController(http.Controller):
             password = post.get('password')
 
             if not email or not password:
-                return self._json_response({'status': 'error', 'message': 'Email y contraseña son obligatorios'}, 400)
+                return {'status': 'error', 'message': 'Email y contraseña son obligatorios'}
 
             player = request.env['game.player'].sudo().search([('email', '=', email), ('password', '=', password)], limit=1)
             if not player:
-                return self._json_response({'status': 'error', 'message': 'Email o contraseña incorrectos'}, 401)
+                return {'status': 'error', 'message': 'Email o contraseña incorrectos'}
 
             player.sudo().write({'last_login': fields.Datetime.now()})
 
-            return self._json_response({
+            return {
                 'status': 'success',
                 'message': 'Login exitoso',
                 'data': {
@@ -90,11 +86,11 @@ class GameAPIController(http.Controller):
                     'level': player.level,
                     'last_login': player.last_login
                 }
-            })
+            }
 
         except Exception as e:
             _logger.error(f"Error en el login del jugador: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
 
     # -----------------------------
     # SKINS
@@ -109,10 +105,10 @@ class GameAPIController(http.Controller):
                 'type': skin.type,
                 'description': skin.description
             } for skin in skins]
-            return self._json_response({'status': 'success', 'data': data})
+            return {'status': 'success', 'data': data}
         except Exception as e:
             _logger.error(f"Error al listar skins: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
 
     # -----------------------------
     # PARTIDOS
@@ -130,10 +126,10 @@ class GameAPIController(http.Controller):
                 'winner_id': match.winner_id.id if match.winner_id else None,
                 'score': match.score
             } for match in matches]
-            return self._json_response({'status': 'success', 'data': data})
+            return {'status': 'success', 'data': data}
         except Exception as e:
             _logger.error(f"Error al listar partidos: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
 
     # -----------------------------
     # TRANSACCIONES DE MONEDAS
@@ -149,7 +145,7 @@ class GameAPIController(http.Controller):
                 'reason': t.reason,
                 'date': t.date
             } for t in transactions]
-            return self._json_response({'status': 'success', 'data': data})
+            return {'status': 'success', 'data': data}
         except Exception as e:
             _logger.error(f"Error al listar transacciones: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
