@@ -6,10 +6,6 @@ import logging
 _logger = logging.getLogger(__name__)
 
 class GameAPIController(http.Controller):
-
-    def _json_response(self, data, status=200):
-        return request.make_response(json.dumps(data, default=str), headers={'Content-Type': 'application/json'}, status=status)
-
     # -----------------------------
     # JUGADORES
     # -----------------------------
@@ -26,38 +22,40 @@ class GameAPIController(http.Controller):
                 'coin_balance': p.coin_balance,
                 'level': p.level
             } for p in players]
-            return self._json_response({'status': 'success', 'data': data})
+            return {'status': 'success', 'data': data}
         except Exception as e:
             _logger.error(f"Error al listar jugadores: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
 
     # Registro de jugador
-    @http.route('/game_api/register', type='json', auth='none', methods=['POST'], csrf=False, session_less=True)
-    def register_player(self):
+    @http.route('/game_api/register', type='json', auth='public', methods=['POST'], csrf=False, session_less=True)
+    def register_player(self, **kw):
         try:
-            # Obtener datos JSON
+            # Obtener los datos directamente del request
             data = request.jsonrequest
-
+            
             name = data.get('name')
             email = data.get('email')
             password = data.get('password')
 
             if not name or not email or not password:
-                return self._json_response({'status': 'error', 'message': 'Faltan campos obligatorios'}, 400)
+                return {'status': 'error', 'message': 'Faltan campos obligatorios'}
 
             # Verificar email único
             existing_player = request.env['game.player'].sudo().search([('email', '=', email)], limit=1)
             if existing_player:
-                return self._json_response({'status': 'error', 'message': 'El email ya está registrado'}, 409)
+                return {'status': 'error', 'message': 'El email ya está registrado'}
 
             # Crear el jugador
-            player = request.env['game.player'].sudo().create({
+            vals = {
                 'name': name,
                 'email': email,
                 'password': password,
-            })
+            }
 
-            return self._json_response({
+            player = request.env['game.player'].sudo().create(vals)
+
+            return {
                 'status': 'success',
                 'message': 'Jugador registrado con éxito',
                 'data': {
@@ -67,30 +65,30 @@ class GameAPIController(http.Controller):
                     'level': player.level,
                     'coin_balance': player.coin_balance
                 }
-            })
+            }
 
         except Exception as e:
             _logger.error(f"Error en el registro del jugador: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
 
     # Login de jugador
-    @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False, session_less=True)
-    def login_player(self):
+    @http.route('/game_api/login', type='json', auth='public', methods=['POST'], csrf=False, session_less=True)
+    def login_player(self, **kw):
         try:
             data = request.jsonrequest
             email = data.get('email')
             password = data.get('password')
 
             if not email or not password:
-                return self._json_response({'status': 'error', 'message': 'Email y contraseña son obligatorios'}, 400)
+                return {'status': 'error', 'message': 'Email y contraseña son obligatorios'}
 
             player = request.env['game.player'].sudo().search([('email', '=', email), ('password', '=', password)], limit=1)
             if not player:
-                return self._json_response({'status': 'error', 'message': 'Email o contraseña incorrectos'}, 401)
+                return {'status': 'error', 'message': 'Email o contraseña incorrectos'}
 
             player.sudo().write({'last_login': fields.Datetime.now()})
 
-            return self._json_response({
+            return {
                 'status': 'success',
                 'message': 'Login exitoso',
                 'data': {
@@ -101,11 +99,11 @@ class GameAPIController(http.Controller):
                     'level': player.level,
                     'last_login': player.last_login
                 }
-            })
+            }
 
         except Exception as e:
             _logger.error(f"Error en el login del jugador: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
 
     # -----------------------------
     # SKINS
@@ -120,10 +118,10 @@ class GameAPIController(http.Controller):
                 'type': skin.type,
                 'description': skin.description
             } for skin in skins]
-            return self._json_response({'status': 'success', 'data': data})
+            return {'status': 'success', 'data': data}
         except Exception as e:
             _logger.error(f"Error al listar skins: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
 
     # -----------------------------
     # PARTIDOS
@@ -141,10 +139,10 @@ class GameAPIController(http.Controller):
                 'winner_id': match.winner_id.id if match.winner_id else None,
                 'score': match.score
             } for match in matches]
-            return self._json_response({'status': 'success', 'data': data})
+            return {'status': 'success', 'data': data}
         except Exception as e:
             _logger.error(f"Error al listar partidos: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
 
     # -----------------------------
     # TRANSACCIONES DE MONEDAS
@@ -160,7 +158,7 @@ class GameAPIController(http.Controller):
                 'reason': t.reason,
                 'date': t.date
             } for t in transactions]
-            return self._json_response({'status': 'success', 'data': data})
+            return {'status': 'success', 'data': data}
         except Exception as e:
             _logger.error(f"Error al listar transacciones: {e}")
-            return self._json_response({'status': 'error', 'message': str(e)}, 500)
+            return {'status': 'error', 'message': str(e)}
