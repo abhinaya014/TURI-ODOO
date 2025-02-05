@@ -34,17 +34,23 @@ class GameAPIController(http.Controller):
 
             _logger.info(f"Datos recibidos: {data}")
 
-            email = data.get('email')
+            login_identifier = data.get('login')  # Puede ser email o username
             password = data.get('password')
 
             # Validaciones básicas
-            if not email or not password:
-                return self._json_response({'status': 'error', 'message': 'Email y contraseña son obligatorios'}, 400)
+            if not login_identifier or not password:
+                return self._json_response({'status': 'error', 'message': 'Login y contraseña son obligatorios'}, 400)
 
-            # Buscar el jugador
-            player = request.env['game.player'].sudo().search([('email', '=', email), ('password', '=', password)], limit=1)
+            # Buscar el jugador por email o username
+            player = request.env['game.player'].sudo().search([
+                '|',
+                ('email', '=', login_identifier),
+                ('name', '=', login_identifier),
+                ('password', '=', password)
+            ], limit=1)
+
             if not player:
-                return self._json_response({'status': 'error', 'message': 'Email o contraseña incorrectos'}, 401)
+                return self._json_response({'status': 'error', 'message': 'Login o contraseña incorrectos'}, 401)
 
             # Actualizar la última fecha de login
             player.sudo().write({'last_login': fields.Datetime.now()})
