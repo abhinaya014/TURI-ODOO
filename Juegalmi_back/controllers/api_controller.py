@@ -1,8 +1,7 @@
-from odoo import http
+from odoo import http, fields
 from odoo.http import request, Response
 import json
 import logging
-from datetime import datetime
 
 _logger = logging.getLogger(__name__)
 
@@ -11,7 +10,7 @@ class GameAPIController(http.Controller):
     def _json_response(self, data, status=200):
         return Response(json.dumps(data, default=str), status=status, content_type='application/json')
 
-    # Ejemplo de endpoint para listar jugadores
+    # LISTAR JUGADORES
     @http.route('/game_api/players', type='json', auth='public', methods=['GET'], csrf=False)
     def api_list_players(self, **kwargs):
         players = request.env['game.player'].sudo().search([])
@@ -21,11 +20,10 @@ class GameAPIController(http.Controller):
             'email': p.email,
             'coin_balance': p.coin_balance,
         } for p in players]
-        return {'status': 'success', 'data': data}
+        return self._json_response({'status': 'success', 'data': data})
 
-                # REGISTRO
-
-     @http.route('/game_api/register', type='json', auth='none', methods=['POST'], csrf=False)
+    # REGISTRO DE JUGADOR
+    @http.route('/game_api/register', type='json', auth='none', methods=['POST'], csrf=False)
     def register_player(self, **kwargs):
         try:
             name = kwargs.get('name')
@@ -64,9 +62,8 @@ class GameAPIController(http.Controller):
             _logger.error(f"Error en el registro del jugador: {e}")
             return self._json_response({'status': 'error', 'message': str(e)}, 500)
 
-            # LOGIN
-
-         @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False)
+    # LOGIN DE JUGADOR
+    @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False)
     def login_player(self, **kwargs):
         try:
             email = kwargs.get('email')
