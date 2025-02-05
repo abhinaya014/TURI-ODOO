@@ -72,38 +72,45 @@ class GameAPIController(http.Controller):
             return {'status': 'error', 'message': str(e)}
 
     # Login de jugador
-    @http.route('/game_api/login', type='json', auth='public', methods=['POST'], csrf=False, session_less=True)
-    def login_player(self, **kw):
-        try:
-            data = request.jsonrequest
-            email = data.get('email')
-            password = data.get('password')
+    @http.route('/game_api/login', type='json', auth='nopublicne', methods=['POST'], csrf=False, session_less=True)
+def login_player(self, **kw):
+    try:
+        # Obtener los datos JSON directamente del request
+        data = request.jsonrequest  # <-- Esto ya debería funcionar correctamente
 
-            if not email or not password:
-                return {'status': 'error', 'message': 'Email y contraseña son obligatorios'}
+        email = data.get('email')
+        password = data.get('password')
 
-            player = request.env['game.player'].sudo().search([('email', '=', email), ('password', '=', password)], limit=1)
-            if not player:
-                return {'status': 'error', 'message': 'Email o contraseña incorrectos'}
+        # Validaciones básicas
+        if not email or not password:
+            return {'status': 'error', 'message': 'Email y contraseña son obligatorios'}
 
-            player.sudo().write({'last_login': fields.Datetime.now()})
+        # Buscar el jugador
+        player = request.env['game.player'].sudo().search([('email', '=', email), ('password', '=', password)], limit=1)
+        if not player:
+            return {'status': 'error', 'message': 'Email o contraseña incorrectos'}
 
-            return {
-                'status': 'success',
-                'message': 'Login exitoso',
-                'data': {
-                    'id': player.id,
-                    'name': player.name,
-                    'email': player.email,
-                    'coin_balance': player.coin_balance,
-                    'level': player.level,
-                    'last_login': player.last_login
-                }
+        # Actualizar la última fecha de login
+        player.sudo().write({'last_login': fields.Datetime.now()})
+
+        # Respuesta exitosa
+        return {
+            'status': 'success',
+            'message': 'Login exitoso',
+            'data': {
+                'id': player.id,
+                'name': player.name,
+                'email': player.email,
+                'coin_balance': player.coin_balance,
+                'level': player.level,
+                'last_login': player.last_login
             }
+        }
 
-        except Exception as e:
-            _logger.error(f"Error en el login del jugador: {e}")
-            return {'status': 'error', 'message': str(e)}
+    except Exception as e:
+        _logger.error(f"Error en el login del jugador: {e}")
+        return {'status': 'error', 'message': str(e)}
+
 
     # -----------------------------
     # SKINS
