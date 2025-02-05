@@ -11,7 +11,7 @@ class GameAPIController(http.Controller):
     # -----------------------------
 
     # Listar jugadores
-    @http.route('/game_api/players', type='json', auth='public', methods=['GET'], csrf=False)
+    @http.route('/game_api/players', type='json', auth='public', methods=['GET'], csrf=False, session_less=True)
     def api_list_players(self):
         try:
             players = request.env['game.player'].sudo().search([])
@@ -28,7 +28,7 @@ class GameAPIController(http.Controller):
             return {'status': 'error', 'message': str(e)}
 
     # Registro de jugador
-    @http.route('/game_api/register', type='json', auth='none', methods=['POST'], csrf=False)
+    @http.route('/game_api/register', type='json', auth='none', methods=['POST'], csrf=False, session_less=True)
     def register_player(self, **kw):
         try:
             # Obtener los datos directamente del request
@@ -39,7 +39,7 @@ class GameAPIController(http.Controller):
             password = data.get('password')
 
             if not name or not email or not password:
-                return {'status': 'error', 'message': 'Faltan pitos obligatorios'}
+                return {'status': 'error', 'message': 'Faltan campos obligatorios'}
 
             # Verificar email único
             existing_player = request.env['game.player'].sudo().search([('email', '=', email)], limit=1)
@@ -72,7 +72,7 @@ class GameAPIController(http.Controller):
             return {'status': 'error', 'message': str(e)}
 
     # Login de jugador
-    @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False)
+    @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False, session_less=True)
     def login_player(self, **kw):
         try:
             data = request.jsonrequest
@@ -108,7 +108,7 @@ class GameAPIController(http.Controller):
     # -----------------------------
     # SKINS
     # -----------------------------
-    @http.route('/game_api/skins', type='json', auth='public', methods=['GET'], csrf=False)
+    @http.route('/game_api/skins', type='json', auth='public', methods=['GET'], csrf=False, session_less=True)
     def api_list_skins(self):
         try:
             skins = request.env['game.skin'].sudo().search([])
@@ -126,7 +126,7 @@ class GameAPIController(http.Controller):
     # -----------------------------
     # PARTIDOS
     # -----------------------------
-    @http.route('/game_api/matches', type='json', auth='public', methods=['GET'], csrf=False)
+    @http.route('/game_api/matches', type='json', auth='public', methods=['GET'], csrf=False, session_less=True)
     def api_list_matches(self):
         try:
             matches = request.env['game.match'].sudo().search([])
@@ -147,7 +147,7 @@ class GameAPIController(http.Controller):
     # -----------------------------
     # TRANSACCIONES DE MONEDAS
     # -----------------------------
-    @http.route('/game_api/transactions', type='json', auth='public', methods=['GET'], csrf=False)
+    @http.route('/game_api/transactions', type='json', auth='public', methods=['GET'], csrf=False, session_less=True)
     def api_list_transactions(self):
         try:
             transactions = request.env['game.coin.transaction'].sudo().search([])
