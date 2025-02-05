@@ -17,7 +17,7 @@ class GameAPIController(http.Controller):
     # -----------------------------
     # LOGIN DE JUGADOR
     # -----------------------------
-    @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False, session_less=True)
+    @http.route('/game_api/login', type='json', auth='public', methods=['POST'], csrf=False, session_less=True)
     def login_player(self):
         try:
             # Verificamos si el cuerpo de la solicitud tiene contenido JSON válido
