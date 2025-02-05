@@ -27,53 +27,8 @@ class GameAPIController(http.Controller):
             _logger.error(f"Error al listar jugadores: {e}")
             return {'status': 'error', 'message': str(e)}
 
-    # Registro de jugador
-    @http.route('/game_api/register', type='json', auth='public', methods=['POST'], csrf=False, session_less=True)
-    def register_player(self, **kw):
-        try:
-            # Obtener los datos directamente del request
-            data = request.jsonrequest
-            
-            name = data.get('name')
-            email = data.get('email')
-            password = data.get('password')
-
-            if not name or not email or not password:
-                return {'status': 'error', 'message': 'Faltan campos obligatorios'}
-
-            # Verificar email único
-            existing_player = request.env['game.player'].sudo().search([('email', '=', email)], limit=1)
-            if existing_player:
-                return {'status': 'error', 'message': 'El email ya está registrado'}
-
-            # Crear el jugador
-            vals = {
-                'name': name,
-                'email': email,
-                'password': password,
-            }
-
-            player = request.env['game.player'].sudo().create(vals)
-
-            return {
-                'status': 'success',
-                'message': 'Jugador registrado con éxito',
-                'data': {
-                    'player_id': player.id,
-                    'name': player.name,
-                    'email': player.email,
-                    'level': player.level,
-                    'coin_balance': player.coin_balance
-                }
-            }
-
-        except Exception as e:
-            _logger.error(f"Error en el registro del jugador: {e}")
-            return {'status': 'error', 'message': str(e)}
-
-    # Login de jugador
-    @http.route('/game_api/login', type='json', auth='nopublicne', methods=['POST'], csrf=False, session_less=True)
-    def login_player(self, **kw):
+    @http.route('/game_api/login', type='json', auth='public', methods=['POST'], csrf=False, session_less=True)
+    def login_player(self):
     try:
         # Obtener los datos JSON directamente del request
         data = request.jsonrequest  # <-- Esto ya debería funcionar correctamente
@@ -110,62 +65,3 @@ class GameAPIController(http.Controller):
     except Exception as e:
         _logger.error(f"Error en el login del jugador: {e}")
         return {'status': 'error', 'message': str(e)}
-
-
-    # -----------------------------
-    # SKINS
-    # -----------------------------
-    @http.route('/game_api/skins', type='json', auth='public', methods=['GET'], csrf=False, session_less=True)
-    def api_list_skins(self):
-        try:
-            skins = request.env['game.skin'].sudo().search([])
-            data = [{
-                'id': skin.id,
-                'name': skin.name,
-                'type': skin.type,
-                'description': skin.description
-            } for skin in skins]
-            return {'status': 'success', 'data': data}
-        except Exception as e:
-            _logger.error(f"Error al listar skins: {e}")
-            return {'status': 'error', 'message': str(e)}
-
-    # -----------------------------
-    # PARTIDOS
-    # -----------------------------
-    @http.route('/game_api/matches', type='json', auth='public', methods=['GET'], csrf=False, session_less=True)
-    def api_list_matches(self):
-        try:
-            matches = request.env['game.match'].sudo().search([])
-            data = [{
-                'id': match.id,
-                'name': match.name,
-                'start_time': match.start_time,
-                'end_time': match.end_time,
-                'state': match.state,
-                'winner_id': match.winner_id.id if match.winner_id else None,
-                'score': match.score
-            } for match in matches]
-            return {'status': 'success', 'data': data}
-        except Exception as e:
-            _logger.error(f"Error al listar partidos: {e}")
-            return {'status': 'error', 'message': str(e)}
-
-    # -----------------------------
-    # TRANSACCIONES DE MONEDAS
-    # -----------------------------
-    @http.route('/game_api/transactions', type='json', auth='public', methods=['GET'], csrf=False, session_less=True)
-    def api_list_transactions(self):
-        try:
-            transactions = request.env['game.coin.transaction'].sudo().search([])
-            data = [{
-                'id': t.id,
-                'player_id': t.player_id.id,
-                'amount': t.amount,
-                'reason': t.reason,
-                'date': t.date
-            } for t in transactions]
-            return {'status': 'success', 'data': data}
-        except Exception as e:
-            _logger.error(f"Error al listar transacciones: {e}")
-            return {'status': 'error', 'message': str(e)}
