@@ -32,14 +32,14 @@ class GameAPIController(http.Controller):
     def register_player(self, **kw):
         try:
             # Obtener los datos directamente del request
-            data = kw
+            data = request.jsonrequest
             
             name = data.get('name')
             email = data.get('email')
             password = data.get('password')
 
             if not name or not email or not password:
-                return {'status': 'error', 'message': 'Faltan campos obligatorios'}
+                return {'status': 'error', 'message': 'Faltan pitos obligatorios'}
 
             # Verificar email único
             existing_player = request.env['game.player'].sudo().search([('email', '=', email)], limit=1)
@@ -75,7 +75,7 @@ class GameAPIController(http.Controller):
     @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False)
     def login_player(self, **kw):
         try:
-            data = kw
+            data = request.jsonrequest
             email = data.get('email')
             password = data.get('password')
 
