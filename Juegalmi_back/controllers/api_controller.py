@@ -1,5 +1,6 @@
 from odoo import http, fields
 from odoo.http import request
+import json
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -36,8 +37,8 @@ class GameAPIController(http.Controller):
     @http.route('/game_api/login', type='json', auth='none', methods=['POST'], csrf=False, session_less=True)
     def login_player(self):
         try:
-            # Obtener los datos JSON del cuerpo de la solicitud
-            data = request.jsonrequest
+            # Obtener los datos JSON directamente del request
+            data = request.jsonrequest  # Esto debería funcionar bien con POST en formato JSON
 
             email = data.get('email')
             password = data.get('password')
@@ -68,6 +69,9 @@ class GameAPIController(http.Controller):
                 }
             })
 
+        except AttributeError as e:
+            _logger.error(f"Error de atributo: {e}")
+            return self._json_response({'status': 'error', 'message': f'Error al procesar la solicitud: {str(e)}'}, 400)
         except Exception as e:
             _logger.error(f"Error en el login del jugador: {e}")
             return self._json_response({'status': 'error', 'message': str(e)}, 500)
