@@ -17,16 +17,21 @@ class GameAPIController(http.Controller):
     # -----------------------------
     # LOGIN DE JUGADOR
     # -----------------------------
-    @http.route('/game_api/login', type='json', auth='public', methods=['POST'], csrf=False, session_less=True)
+    @http.route('/game_api/login', type='http', auth='none', methods=['POST'], csrf=False, session_less=True)
     def login_player(self):
         try:
             # Verificamos si el cuerpo de la solicitud tiene contenido JSON válido
-            if not request.jsonrequest:
-                _logger.error("El cuerpo de la solicitud no contiene datos JSON.")
-                return self._json_response({'status': 'error', 'message': 'El cuerpo de la solicitud no es JSON válido'}, 400)
+            if not request.httprequest.data:
+                _logger.error("El cuerpo de la solicitud está vacío.")
+                return self._json_response({'status': 'error', 'message': 'El cuerpo de la solicitud está vacío o no es JSON válido'}, 400)
 
-            # Obtener los datos JSON
-            data = request.jsonrequest
+            # Cargar el JSON manualmente
+            try:
+                data = json.loads(request.httprequest.data.decode('utf-8'))
+            except json.JSONDecodeError as e:
+                _logger.error(f"Error al decodificar JSON: {e}")
+                return self._json_response({'status': 'error', 'message': 'Formato de JSON inválido'}, 400)
+
             _logger.info(f"Datos recibidos: {data}")
 
             email = data.get('email')
@@ -34,13 +39,11 @@ class GameAPIController(http.Controller):
 
             # Validaciones básicas
             if not email or not password:
-                _logger.warning("Faltan campos obligatorios: email o contraseña.")
                 return self._json_response({'status': 'error', 'message': 'Email y contraseña son obligatorios'}, 400)
 
             # Buscar el jugador
             player = request.env['game.player'].sudo().search([('email', '=', email), ('password', '=', password)], limit=1)
             if not player:
-                _logger.warning(f"Jugador no encontrado: {email}")
                 return self._json_response({'status': 'error', 'message': 'Email o contraseña incorrectos'}, 401)
 
             # Actualizar la última fecha de login
@@ -62,4 +65,4 @@ class GameAPIController(http.Controller):
 
         except Exception as e:
             _logger.error(f"Error en el login del jugador: {e}")
-            return self._json_response({'status': 'error', 'message': 'Error interno del servidor: ' + str(e)}, 500)
+            return self._json_response({'status': 'error', 'message': f"Error interno del servidor: {str(e)}"}, 500)
