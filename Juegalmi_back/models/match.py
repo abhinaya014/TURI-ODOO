@@ -7,26 +7,39 @@ class GameMatch(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'start_time desc'
 
-    name = fields.Char(string='Match ID', required=True, copy=False,
-                       default=lambda self: self.env['ir.sequence'].next_by_code('game.match'))
+    name = fields.Char(
+        string='Match ID', 
+        required=True, 
+        copy=False,
+        default=lambda self: self.env['ir.sequence'].next_by_code('game.match')
+    )
     start_time = fields.Datetime(string='Start Time', tracking=True)
     end_time = fields.Datetime(string='End Time', tracking=True)
     duration = fields.Float(string='Duration (minutes)', compute='_compute_duration', store=True)
+    
     state = fields.Selection([
         ('draft', 'Draft'),
         ('in_progress', 'In Progress'),
         ('finished', 'Finished'),
         ('cancelled', 'Cancelled')
     ], string='Status', default='draft', tracking=True)
-    player_ids = fields.Many2many('game.player', 'player_match_rel', 'match_id', 'player_id',
-                                  string='Players', tracking=True)
+
+    # Relación con jugadores y estadísticas
+    player_stats_ids = fields.One2many(
+        'game.match.player.stats', 
+        'match_id', 
+        string='Player Statistics', 
+        tracking=True
+    )
+
     winner_id = fields.Many2one('game.player', string='Winner', tracking=True)
+
     match_type = fields.Selection([
         ('duel', '1v1'),
         ('team', 'Team Match'),
         ('battle_royale', 'Battle Royale')
     ], string='Match Type', required=True, default='duel')
-    score = fields.Integer(string='Score', tracking=True)
+    
     notes = fields.Text(string='Match Notes', tracking=True)
 
     @api.depends('start_time', 'end_time')
@@ -38,19 +51,20 @@ class GameMatch(models.Model):
             else:
                 match.duration = 0
 
-    @api.constrains('player_ids')
+    @api.constrains('player_stats_ids')
     def _check_players_count(self):
         for match in self:
-            if match.match_type == 'duel' and len(match.player_ids) != 2:
+            player_count = len(match.player_stats_ids)
+            if match.match_type == 'duel' and player_count != 2:
                 raise ValidationError('Duel matches must have exactly 2 players!')
-            elif match.match_type == 'team' and len(match.player_ids) != 4:
+            elif match.match_type == 'team' and player_count != 4:
                 raise ValidationError('Team matches must have exactly 4 players!')
-            elif match.match_type == 'battle_royale' and len(match.player_ids) < 10:
+            elif match.match_type == 'battle_royale' and player_count < 10:
                 raise ValidationError('Battle Royale matches must have at least 10 players!')
 
     def action_start_match(self):
         self.ensure_one()
-        if not self.player_ids:
+        if not self.player_stats_ids:
             raise ValidationError('Cannot start match without players!')
         self.write({
             'state': 'in_progress',
@@ -65,11 +79,14 @@ class GameMatch(models.Model):
             'state': 'finished',
             'end_time': fields.Datetime.now()
         })
+
         # Dar experiencia al ganador
         self.winner_id.add_experience(100)
+
         # Dar experiencia a los participantes
-        for player in self.player_ids - self.winner_id:
-            player.add_experience(50)
+        for stat in self.player_stats_ids:
+            if stat.player_id != self.winner_id:
+                stat.player_id.add_experience(50)
 
     def action_cancel_match(self):
         if self.state == 'finished':

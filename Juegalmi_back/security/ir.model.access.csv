@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_game_player,access_game_player,model_game_player,,1,1,1,1
-access_game_skin,access_game_skin,model_game_skin,,1,1,1,1
-access_game_match,access_game_match,model_game_match,,1,1,1,1
-access_game_coin_transaction,access_game_coin_transaction,model_game_coin_transaction,,1,1,1,1
+access_game_player_admin,access_game_player,model_game_player,base.group_user,1,1,1,0
+access_game_skin_admin,access_game_skin,model_game_skin,base.group_user,1,1,1,1
+access_game_match_admin,access_game_match,model_game_match,base.group_user,1,1,0,0
+access_game_coin_transaction_admin,access_game_coin_transaction,model_game_coin_transaction,base.group_system,1,1,1,1
