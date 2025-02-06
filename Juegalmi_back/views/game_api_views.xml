@@ -174,75 +174,6 @@
       </field>
     </record>
 
-    <!-- Vista Tree de Skins -->
-    <record id="view_game_skin_tree" model="ir.ui.view">
-      <field name="name">game.skin.tree</field>
-      <field name="model">game.skin</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="type"/>
-          <field name="description"/>
-        </tree>
-      </field>
-    </record>
-
-    <!-- Vista Form de Skins -->
-    <record id="view_game_skin_form" model="ir.ui.view">
-      <field name="name">game.skin.form</field>
-      <field name="model">game.skin</field>
-      <field name="arch" type="xml">
-        <form>
-          <sheet>
-            <group>
-              <field name="photo" widget="image" class="oe_avatar" options="{'preview_image': 'photo'}"/>
-            </group>
-            <group>
-              <field name="name"/>
-              <field name="type"/>
-            </group>
-            <group>
-              <field name="description"/>
-            </group>
-          </sheet>
-        </form>
-      </field>
-    </record>
-
-    <!-- ***********************
-         VISTAS PARA GAME.MATCH
-         *********************** -->
-
-    <!-- Vista Kanban de Partidos -->
-    <record id="view_game_match_kanban" model="ir.ui.view">
-      <field name="name">game.match.kanban</field>
-      <field name="model">game.match</field>
-      <field name="arch" type="xml">
-        <kanban>
-          <field name="name"/>
-          <field name="start_time"/>
-          <field name="end_time"/>
-          <field name="state"/>
-          <templates>
-            <t t-name="kanban-box">
-              <div class="oe_kanban_global_click" style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-                <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
-                <div style="margin-top:4px; font-size:13px; color:#555;">
-                  <span>Start: </span><span t-esc="record.start_time.value"/>
-                </div>
-                <div style="margin-top:4px; font-size:13px; color:#555;">
-                  <span>End: </span><span t-esc="record.end_time.value"/>
-                </div>
-                <div style="margin-top:4px; font-size:12px; color:#999;">
-                  <span>Status: </span><span t-esc="record.state.value"/>
-                </div>
-              </div>
-            </t>
-          </templates>
-        </kanban>
-      </field>
-    </record>
-
     <!-- Vista Form de Partidos -->
     <record id="view_game_match_form" model="ir.ui.view">
       <field name="name">game.match.form</field>
@@ -314,5 +245,62 @@
       </field>
     </record>
 
+    <!-- Vistas para GAME.SKIN -->
+    <record id="view_game_skin_kanban" model="ir.ui.view">
+      <field name="name">game.skin.kanban</field>
+      <field name="model">game.skin</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="name"/>
+          <field name="type"/>
+          <field name="photo"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click" style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                <div>
+                  <img t-if="record.photo.value" t-att-src="'data:image/png;base64,' + record.photo.value" style="width:60px; height:60px; border-radius:8px; margin-bottom:5px;"/>
+                  <img t-else="" src="/web/static/src/img/smile.svg" style="width:60px; height:60px; border-radius:8px; margin-bottom:5px;"/>
+                </div>
+                <div style="font-size:15px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
+                <div style="font-size:13px; color:#777;" t-esc="record.type.value"/>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <record id="view_game_skin_tree" model="ir.ui.view">
+      <field name="name">game.skin.tree</field>
+      <field name="model">game.skin</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="type"/>
+          <field name="description"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_game_skin_form" model="ir.ui.view">
+      <field name="name">game.skin.form</field>
+      <field name="model">game.skin</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <field name="photo" widget="image" class="oe_avatar" options="{'preview_image': 'photo'}"/>
+            </group>
+            <group>
+              <field name="name"/>
+              <field name="type"/>
+            </group>
+            <group>
+              <field name="description"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
   </data>
 </odoo>
