@@ -13,6 +13,7 @@ class GameMatch(models.Model):
         copy=False,
         default=lambda self: self.env['ir.sequence'].next_by_code('game.match')
     )
+    score = fields.Float(string='Total Match Score', default=0.0)
     start_time = fields.Datetime(string='Start Time', tracking=True)
     end_time = fields.Datetime(string='End Time', tracking=True)
     duration = fields.Float(string='Duration (minutes)', compute='_compute_duration', store=True)
