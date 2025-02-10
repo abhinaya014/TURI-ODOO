@@ -65,11 +65,6 @@ class GamePlayer(models.Model):
         partner = self.env['res.partner'].create(partner_vals)
         player.partner_id = partner.id
 
-       if vals.get('photo'):
-        self.env['res.partner'].create({
-            'name': player.name,
-            'email': player.email,
-            'image_1920': vals['photo']
-        })
-        player.write({'photo': vals['photo']})
+        if vals.get('photo'):
+            player.write({'photo': vals['photo']})
         return player
