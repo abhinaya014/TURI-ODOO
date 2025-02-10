@@ -244,7 +244,7 @@
               <div class="oe_kanban_global_click" style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
                 <div>
                   <img t-if="record.photo.value" t-att-src="'data:image/png;base64,' + record.photo.value" style="width:60px; height:60px; border-radius:8px; margin-bottom:5px;"/>
-                  <img t-else="" src="/web/static/src/img/smile.svg" style="width:60px; height:60px; border-radius:8px; margin-bottom:5px;"/>
+                  <img t-else src="/web/static/src/img/smile.svg" style="width:60px; height:60px; border-radius:50%;"/>
                 </div>
                 <div style="font-size:15px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
                 <div style="font-size:13px; color:#777;" t-esc="record.type.value"/>
