@@ -38,6 +38,7 @@ class GamePlayer(models.Model):
             wins = len(matches.filtered(lambda m: m.winner_id == player))
             player.total_matches = len(matches)
             player.total_wins = wins
+            
 
     @api.model
     def create(self, vals):
@@ -63,4 +64,22 @@ class GamePlayer(models.Model):
 
         partner = self.env['res.partner'].create(partner_vals)
         player.partner_id = partner.id
+
+        if player.photo:
+            player.write({'photo': player.photo})
+
+        
+    
+    def write(self, vals):
+    res = super(GamePlayer, self).write(vals)
+
+    # Sincronizar imagen si se actualiza el contacto
+    if 'partner_id' in vals and vals.get('photo'):
+        partner = self.partner_id
+        if partner:
+            partner.write({'image_1920': self.photo})
+
+    return res
+
+
         return player
