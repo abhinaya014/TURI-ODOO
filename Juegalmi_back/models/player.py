@@ -67,19 +67,4 @@ class GamePlayer(models.Model):
 
         if player.photo:
             player.write({'photo': player.photo})
-
-        
-    
-    def write(self, vals):
-    res = super(GamePlayer, self).write(vals)
-
-    # Sincronizar imagen si se actualiza el contacto
-    if 'partner_id' in vals and vals.get('photo'):
-        partner = self.partner_id
-        if partner:
-            partner.write({'image_1920': self.photo})
-
-    return res
-
-
         return player
