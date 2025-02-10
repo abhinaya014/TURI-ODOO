@@ -38,7 +38,6 @@ class GamePlayer(models.Model):
             wins = len(matches.filtered(lambda m: m.winner_id == player))
             player.total_matches = len(matches)
             player.total_wins = wins
-            
 
     @api.model
     def create(self, vals):
@@ -64,7 +63,4 @@ class GamePlayer(models.Model):
 
         partner = self.env['res.partner'].create(partner_vals)
         player.partner_id = partner.id
-
-        if vals.get('photo'):
-            player.write({'photo': vals['photo']})
         return player

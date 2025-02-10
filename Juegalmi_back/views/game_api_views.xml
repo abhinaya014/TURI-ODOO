@@ -69,12 +69,10 @@
                    style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
                 <div style="display:flex; align-items:center; margin-bottom:8px;">
                   <div style="margin-right:10px;">
-                    <img t-if="record.photo.raw_value"
-                         t-att-src="'data:image/png;base64,' + record.photo.raw_value"
+                    <img t-if="record.photo.value"
+                         t-att-src="'data:image/png;base64,' + record.photo.value"
                          style="width:60px; height:60px; border-radius:50%;"/>
-                    <img t-else
-                         src="/web/static/src/img/smile.svg"
-                         style="width:60px; height:60px; border-radius:50%;"/>
+                    <img t-else="" src="/web/static/src/img/smile.svg" style="width:60px; height:60px; border-radius:50%;"/>
                   </div>
                   <div>
                     <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
@@ -100,6 +98,22 @@
             </t>
           </templates>
         </kanban>
+      </field>
+    </record>
+
+    <!-- Vista Tree de Jugadores -->
+    <record id="view_game_player_tree" model="ir.ui.view">
+      <field name="name">game.player.tree</field>
+      <field name="model">game.player</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="email"/>
+          <field name="level"/>
+          <field name="coin_balance"/>
+          <field name="total_matches"/>
+          <field name="total_wins"/>
+        </tree>
       </field>
     </record>
 
@@ -203,7 +217,7 @@
       </field>
     </record>
 
-     <!-- Vista Kanban de Transacciones -->
+    <!-- Vista Kanban de Transacciones -->
     <record id="view_game_coin_transaction_kanban" model="ir.ui.view">
       <field name="name">game.coin.transaction.kanban</field>
       <field name="model">game.coin.transaction</field>
@@ -245,7 +259,7 @@
               <div class="oe_kanban_global_click" style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
                 <div>
                   <img t-if="record.photo.value" t-att-src="'data:image/png;base64,' + record.photo.value" style="width:60px; height:60px; border-radius:8px; margin-bottom:5px;"/>
-                  <img t-else src="/web/static/src/img/smile.svg" style="width:60px; height:60px; border-radius:50%;"/>
+                  <img t-else="" src="/web/static/src/img/smile.svg" style="width:60px; height:60px; border-radius:8px; margin-bottom:5px;"/>
                 </div>
                 <div style="font-size:15px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
                 <div style="font-size:13px; color:#777;" t-esc="record.type.value"/>
@@ -288,6 +302,5 @@
         </form>
       </field>
     </record>
-
   </data>
 </odoo>
