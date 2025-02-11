@@ -17,7 +17,7 @@ class GameAPIController(http.Controller):
     # -----------------------------
     # REGISTRO USANDO res.users
     # -----------------------------
-    @http.route('/game_api/registers', type='http', auth='none', methods=['POST'], csrf=False, session_less=True)
+    @http.route('/game_api/register', type='http', auth='none', methods=['POST'], csrf=False, session_less=True)
     def register_user(self):
         try:
             if not request.httprequest.data:
@@ -63,7 +63,7 @@ class GameAPIController(http.Controller):
     # -----------------------------
     # LOGIN USANDO res.users
     # -----------------------------
-    @http.route('/game_api/logins', type='http', auth='none', methods=['POST'], csrf=False, session_less=True)
+    @http.route('/game_api/login', type='http', auth='none', methods=['POST'], csrf=False, session_less=True)
     def login_user(self):
         try:
             if not request.httprequest.data:
