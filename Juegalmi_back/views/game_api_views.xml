@@ -130,7 +130,6 @@
             <group>
               <field name="name"/>
               <field name="email"/>
-              <field name="password"/>
             </group>
             <group>
               <field name="player_id" readonly="1"/>
