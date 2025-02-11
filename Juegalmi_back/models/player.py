@@ -42,41 +42,41 @@ class GamePlayer(models.Model):
             player.total_wins = wins
 
     @api.model
-def create(self, vals):
-    if 'registration_date' not in vals:
-        vals['registration_date'] = fields.Datetime.now()
+    def create(self, vals):
+        if 'registration_date' not in vals:
+            vals['registration_date'] = fields.Datetime.now()
 
-    # **Crear usuario en res.users (el único lugar donde usamos password)**
-    user_vals = {
-        'name': vals.get('name'),
-        'login': vals.get('email'),
-        'password': vals.get('password')  # Correcto: solo aquí usamos la contraseña
-    }
-    user = self.env['res.users'].sudo().create(user_vals)
+        # **Crear usuario en res.users (el único lugar donde usamos password)**
+        user_vals = {
+            'name': vals.get('name'),
+            'login': vals.get('email'),
+            'password': vals.get('password')  # Correcto: solo aquí usamos la contraseña
+        }
+        user = self.env['res.users'].sudo().create(user_vals)
 
-    # **Crear el jugador**
-    vals['user_id'] = user.id
-    player = super(GamePlayer, self).create(vals)
+        # **Crear el jugador**
+        vals['user_id'] = user.id
+        player = super(GamePlayer, self).create(vals)
 
-    # **Crear el contacto en res.partner (sin pasar la contraseña)**
-    partner_vals = {
-        'name': player.name,
-        'email': player.email,
-    }
-    if vals.get('photo'):
-        partner_vals['image_1920'] = vals['photo']
+        # **Crear el contacto en res.partner (sin pasar la contraseña)**
+        partner_vals = {
+            'name': player.name,
+            'email': player.email,
+        }
+        if vals.get('photo'):
+            partner_vals['image_1920'] = vals['photo']
 
-    # **Asegúrate de que partner no recibe campos no esperados**
-    partner = self.env['res.partner'].create(partner_vals)
-    player.partner_id = partner.id
+        # **Asegúrate de que partner no recibe campos no esperados**
+        partner = self.env['res.partner'].create(partner_vals)
+        player.partner_id = partner.id
 
-    # **Transacción inicial de monedas**
-    self.env['game.coin.transaction'].sudo().create({
-        'player_id': player.id,
-        'amount': 200,
-        'reason': 'Default initial coins',
-    })
-    return player
+        # **Transacción inicial de monedas**
+        self.env['game.coin.transaction'].sudo().create({
+            'player_id': player.id,
+            'amount': 200,
+            'reason': 'Default initial coins',
+        })
+        return player
 
     def write(self, vals):
         # ** Si se actualiza la contraseña, asegúrate de hacerlo en res.users **
