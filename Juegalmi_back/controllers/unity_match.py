@@ -5,10 +5,10 @@ import json
 class UnityMatchController(http.Controller):
 
     @http.route('/api/match', type='json', auth='public', methods=['POST'])
-    def create_match(self, **kw):
+    def create_match(self):
         try:
-            # Extraer datos desde JSON-RPC
-            data = request.jsonrequest.get('params', {})
+            # Acceder correctamente a los datos JSON
+            data = request.jsonrequest
 
             # Asegúrate de que los datos estén bien recibidos
             name = data.get('name')
