@@ -6,7 +6,8 @@ class GamePlayer(models.Model):
 
     name = fields.Char(required=True)
     email = fields.Char(required=True)
-    password = fields.Char(required=True)
+    # Eliminamos el campo de contraseña ya que ahora lo gestiona res.users
+    # password = fields.Char(required=True)
     photo = fields.Binary(string="Photo", attachment=True)
     level = fields.Integer(string="Level", default=1)
     experience = fields.Float(string="Experience", default=0)

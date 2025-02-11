@@ -43,7 +43,7 @@ class GameAPIController(http.Controller):
             new_user = request.env['res.users'].sudo().create({
                 'name': name,
                 'login': email,
-                'password': password
+                'password': password  # Odoo se encarga del cifrado automáticamente
             })
 
             return self._json_response({
