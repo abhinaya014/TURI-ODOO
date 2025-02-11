@@ -1,4 +1,6 @@
+
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 class GamePlayer(models.Model):
     _name = 'game.player'
@@ -6,8 +8,7 @@ class GamePlayer(models.Model):
 
     name = fields.Char(required=True)
     email = fields.Char(required=True)
-    # Eliminamos el campo de contraseña ya que ahora lo gestiona res.users
-    # password = fields.Char(required=True)
+    password = fields.Char(string="Password")
     photo = fields.Binary(string="Photo", attachment=True)
     level = fields.Integer(string="Level", default=1)
     experience = fields.Float(string="Experience", default=0)
@@ -26,6 +27,7 @@ class GamePlayer(models.Model):
     match_stats_ids = fields.One2many('game.match.player.stats', 'player_id', string="Match Statistics")
 
     partner_id = fields.Many2one('res.partner', string="Contacto", readonly=True)
+    user_id = fields.Many2one('res.users', string="User", readonly=True)
 
     @api.depends('coin_transaction_ids.amount')
     def _compute_coin_balance(self):
@@ -45,16 +47,19 @@ class GamePlayer(models.Model):
         if 'registration_date' not in vals:
             vals['registration_date'] = fields.Datetime.now()
 
+        # Crear usuario en res.users
+        user_vals = {
+            'name': vals.get('name'),
+            'login': vals.get('email'),
+            'password': vals.get('password')
+        }
+        user = self.env['res.users'].sudo().create(user_vals)
+
+        # Crear el jugador
+        vals['user_id'] = user.id
         player = super(GamePlayer, self).create(vals)
 
-        # Transacción inicial de monedas
-        self.env['game.coin.transaction'].sudo().create({
-            'player_id': player.id,
-            'amount': 200,
-            'reason': 'Default initial coins',
-        })
-
-        # Crear el contacto en res.partner
+        # Crear contacto en res.partner
         partner_vals = {
             'name': player.name,
             'email': player.email,
@@ -64,4 +69,17 @@ class GamePlayer(models.Model):
 
         partner = self.env['res.partner'].create(partner_vals)
         player.partner_id = partner.id
+
+        # Transacción inicial de monedas
+        self.env['game.coin.transaction'].sudo().create({
+            'player_id': player.id,
+            'amount': 200,
+            'reason': 'Default initial coins',
+        })
         return player
+
+    def write(self, vals):
+        if 'password' in vals and self.user_id:
+            self.user_id.sudo().write({'password': vals['password']})
+
+        return super(GamePlayer, self).write(vals)
