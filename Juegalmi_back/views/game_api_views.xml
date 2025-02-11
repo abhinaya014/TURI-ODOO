@@ -195,6 +195,11 @@
                 <field name="score"/>
               </group>
             </group>
+            <group>
+                <button name="action_start_match" type="object" string="Start Match" class="oe_highlight"/>
+                <button name="action_end_match" type="object" string="End Match" class="oe_highlight"/>
+            </group>
+
             <notebook>
               <page string="Player Statistics">
                 <field name="player_stats_ids">

@@ -75,3 +75,11 @@ class GameMatch(models.Model):
         if self.state not in ['draft', 'in_progress']:
             raise ValidationError('Only draft or in-progress matches can be cancelled.')
         self.write({'state': 'cancelled'})
+
+    def action_start_match(self):
+        self.start_match()
+
+    def action_end_match(self):
+        if not self.winner_id:
+            raise ValidationError('Please specify a winner before ending the match.')
+        self.end_match(self.winner_id.id, self.score)
