@@ -11,7 +11,7 @@ class GameAPIController(http.Controller):
         match_id = data.get('match_id')
         stats = data.get('player_stats', [])
 
-        match = request.env['game.match'].browse(match_id)
+        match = request.env['game.match']
         if not match:
             return {'status': 'error', 'message': 'Match not found.'}
 
