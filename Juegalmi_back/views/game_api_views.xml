@@ -165,7 +165,6 @@
       <field name="arch" type="xml">
         <tree decoration-info="state=='draft'" decoration-success="state=='finished'" decoration-warning="state=='in_progress'">
           <field name="name"/>
-          <field name="match_type"/>
           <field name="start_time"/>
           <field name="end_time"/>
           <field name="winner_id"/>
@@ -188,7 +187,6 @@
             </div>
             <group>
               <group>
-                <field name="match_type"/>
                 <field name="start_time"/>
                 <field name="end_time"/>
               </group>
