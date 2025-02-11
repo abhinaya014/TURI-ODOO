@@ -25,7 +25,6 @@ class GameMatch(models.Model):
         ('cancelled', 'Cancelled')
     ], string='Status', default='draft', tracking=True)
 
-    # Relación con jugadores y estadísticas
     player_stats_ids = fields.One2many(
         'game.match.player.stats', 
         'match_id', 
@@ -35,12 +34,6 @@ class GameMatch(models.Model):
 
     winner_id = fields.Many2one('game.player', string='Winner', tracking=True)
 
-    match_type = fields.Selection([
-        ('duel', '1v1'),
-        ('team', 'Team Match'),
-        ('battle_royale', 'Battle Royale')
-    ], string='Match Type', required=True, default='duel')
-    
     notes = fields.Text(string='Match Notes', tracking=True)
 
     @api.depends('start_time', 'end_time')
@@ -56,40 +49,29 @@ class GameMatch(models.Model):
     def _check_players_count(self):
         for match in self:
             player_count = len(match.player_stats_ids)
-            if match.match_type == 'duel' and player_count != 2:
-                raise ValidationError('Duel matches must have exactly 2 players!')
-            elif match.match_type == 'team' and player_count != 4:
-                raise ValidationError('Team matches must have exactly 4 players!')
-            elif match.match_type == 'battle_royale' and player_count < 10:
-                raise ValidationError('Battle Royale matches must have at least 10 players!')
+            if player_count < 2 or player_count > 8:
+                raise ValidationError('Matches must have between 2 and 8 players.')
 
-    def action_start_match(self):
+    @api.model
+    def start_match(self):
         self.ensure_one()
-        if not self.player_stats_ids:
-            raise ValidationError('Cannot start match without players!')
-        self.write({
-            'state': 'in_progress',
-            'start_time': fields.Datetime.now()
-        })
+        if self.state != 'draft':
+            raise ValidationError('Only matches in draft state can be started.')
+        self.write({'state': 'in_progress', 'start_time': fields.Datetime.now()})
 
-    def action_end_match(self):
+    def end_match(self, winner_id, total_score):
         self.ensure_one()
-        if not self.winner_id:
-            raise ValidationError('Cannot end match without declaring a winner!')
+        if self.state != 'in_progress':
+            raise ValidationError('Only matches in progress can be finished.')
         self.write({
             'state': 'finished',
-            'end_time': fields.Datetime.now()
+            'end_time': fields.Datetime.now(),
+            'winner_id': winner_id,
+            'score': total_score
         })
 
-        # Dar experiencia al ganador
-        self.winner_id.add_experience(100)
-
-        # Dar experiencia a los participantes
-        for stat in self.player_stats_ids:
-            if stat.player_id != self.winner_id:
-                stat.player_id.add_experience(50)
-
-    def action_cancel_match(self):
-        if self.state == 'finished':
-            raise ValidationError('Cannot cancel a finished match!')
+    def cancel_match(self):
+        self.ensure_one()
+        if self.state not in ['draft', 'in_progress']:
+            raise ValidationError('Only draft or in-progress matches can be cancelled.')
         self.write({'state': 'cancelled'})

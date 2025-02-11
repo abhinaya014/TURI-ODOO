@@ -2,7 +2,7 @@ from odoo import http
 from odoo.http import request
 import json
 
-class GameAPIController(http.Controller):
+class GameAPIController(http.Controller):    
 
     @http.route('/api/match/stats', type='json', auth='user', methods=['POST'])
     def record_match_stats(self, **kwargs):
