@@ -17,7 +17,7 @@ class GameAPIController(http.Controller):
     # -----------------------------
     # REGISTRO DE JUGADOR
     # -----------------------------
-    @http.route('/game_api/register', type='http', auth='none', methods=['POST'], csrf=False, session_less=True)
+    @http.route('/game_api/registedsdsr', type='http', auth='none', methods=['POST'], csrf=False, session_less=True)
     def register_player(self):
         try:
             # Verificamos si el cuerpo de la solicitud tiene contenido JSON válido
