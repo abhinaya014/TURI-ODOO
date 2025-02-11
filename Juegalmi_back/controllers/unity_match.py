@@ -7,8 +7,8 @@ class UnityMatchController(http.Controller):
     @http.route('/api/match', type='json', auth='public', methods=['POST'])
     def create_match(self):
         try:
-            # Acceder correctamente a los datos JSON
-            data = request.jsonrequest
+            # Obtener los datos JSON de la solicitud manualmente
+            data = request.httprequest.get_json()
 
             # Asegúrate de que los datos estén bien recibidos
             name = data.get('name')
