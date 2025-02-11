@@ -1,4 +1,3 @@
-
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
@@ -8,7 +7,7 @@ class GamePlayer(models.Model):
 
     name = fields.Char(required=True)
     email = fields.Char(required=True)
-    password = fields.Char(string="Password")
+    password = fields.Char(string="Password")  # Este campo es solo para entrada temporal
     photo = fields.Binary(string="Photo", attachment=True)
     level = fields.Integer(string="Level", default=1)
     experience = fields.Float(string="Experience", default=0)
@@ -47,7 +46,7 @@ class GamePlayer(models.Model):
         if 'registration_date' not in vals:
             vals['registration_date'] = fields.Datetime.now()
 
-        # Crear usuario en res.users
+        # ** Crear usuario en res.users y manejar la contraseña correctamente **
         user_vals = {
             'name': vals.get('name'),
             'login': vals.get('email'),
@@ -55,11 +54,11 @@ class GamePlayer(models.Model):
         }
         user = self.env['res.users'].sudo().create(user_vals)
 
-        # Crear el jugador
+        # ** Crear el jugador y relacionarlo con el usuario **
         vals['user_id'] = user.id
         player = super(GamePlayer, self).create(vals)
 
-        # Crear contacto en res.partner (sin incluir el campo password)
+        # ** Crear contacto en res.partner (sin incluir contraseña) **
         partner_vals = {
             'name': player.name,
             'email': player.email,
@@ -70,7 +69,7 @@ class GamePlayer(models.Model):
         partner = self.env['res.partner'].create(partner_vals)
         player.partner_id = partner.id
 
-        # Transacción inicial de monedas
+        # ** Crear la transacción inicial de monedas **
         self.env['game.coin.transaction'].sudo().create({
             'player_id': player.id,
             'amount': 200,
@@ -79,6 +78,7 @@ class GamePlayer(models.Model):
         return player
 
     def write(self, vals):
+        # ** Si se actualiza la contraseña, asegúrate de hacerlo en res.users **
         if 'password' in vals and self.user_id:
             self.user_id.sudo().write({'password': vals['password']})
 
