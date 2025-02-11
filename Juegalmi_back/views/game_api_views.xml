@@ -130,13 +130,14 @@
             <group>
               <field name="name"/>
               <field name="email"/>
+              <field name="password"/>
             </group>
             <group>
               <field name="player_id" readonly="1"/>
               <field name="level"/>
               <field name="coin_balance" readonly="1"/>
             </group>
-            <group> ˙
+            <group>
               <field name="total_matches" readonly="1"/>
               <field name="total_wins" readonly="1"/>
             </group>
