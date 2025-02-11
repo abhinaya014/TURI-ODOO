@@ -4,40 +4,39 @@ import json
 
 class UnityMatchController(http.Controller):
 
-   @http.route('/api/match', type='json', auth='public', methods=['POST'])
-def create_match(self, **data):
-    try:
-        # Asegúrate de recibir los datos correctamente
-        name = data.get('name')
-        players = data.get('players')
-        
-        if not name or not players or len(players) < 2:
-            return {'error': 'El nombre del partido y al menos 2 jugadores son obligatorios.'}
+    @http.route('/api/match', type='json', auth='public', methods=['POST'])
+    def create_match(self, **data):
+        try:
+            # Asegúrate de recibir los datos correctamente
+            name = data.get('name')
+            players = data.get('players')
 
-        # Crear el match
-        match = request.env['game.match'].create({
-            'name': name,
-            'start_time': data.get('start_time'),
-            'end_time': data.get('end_time'),
-            'winner_id': data.get('winner_id'),
-            'score': data.get('total_score'),
-            'state': 'draft',
-        })
+            if not name or not players or len(players) < 2:
+                return {'error': 'El nombre del partido y al menos 2 jugadores son obligatorios.'}
 
-        # Crear estadísticas de jugadores
-        for player in players:
-            request.env['game.match.player.stats'].create({
-                'match_id': match.id,
-                'player_id': player.get('player_id'),
-                'kills': player.get('kills', 0),
-                'deaths': player.get('deaths', 0),
-                'score': player.get('score', 0),
+            # Crear el match
+            match = request.env['game.match'].create({
+                'name': name,
+                'start_time': data.get('start_time'),
+                'end_time': data.get('end_time'),
+                'winner_id': data.get('winner_id'),
+                'score': data.get('total_score'),
+                'state': 'draft',
             })
 
-        match.start_match()
+            # Crear estadísticas de jugadores
+            for player in players:
+                request.env['game.match.player.stats'].create({
+                    'match_id': match.id,
+                    'player_id': player.get('player_id'),
+                    'kills': player.get('kills', 0),
+                    'deaths': player.get('deaths', 0),
+                    'score': player.get('score', 0),
+                })
 
-        return {'status': 'success', 'match_id': match.id}
+            match.start_match()
 
-    except Exception as e:
-        return {'error': str(e)}
+            return {'status': 'success', 'match_id': match.id}
 
+        except Exception as e:
+            return {'error': str(e)}
