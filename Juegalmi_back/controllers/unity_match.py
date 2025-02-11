@@ -4,25 +4,57 @@ import json
 
 class UnityMatchController(http.Controller):
 
-    @http.route('/api/match', type='json', auth='public', methods=['POST'])
-    def create_match(self):
+    @http.route('/api/match', type='http', auth='public', methods=['POST'], csrf=False)
+    def create_match(self, **kwargs):
         try:
-            # Paso 1: Verificar si llegan los datos JSON correctamente
-            data = request.httprequest.get_json()  # Obtener datos directamente
+            # Leer el cuerpo de la solicitud manualmente
+            data = json.loads(request.httprequest.data.decode('utf-8'))
+            
+            # Verificar los datos recibidos
             print("Datos recibidos:", json.dumps(data, indent=4))
 
-            # Validar si los datos esperados están presentes
-            if not data:
-                return {'error': 'No se recibieron datos.'}
-
+            # Validar los datos esperados
             name = data.get('name')
             players = data.get('players')
 
             if not name or not players or len(players) < 2:
-                return {'error': 'El nombre del partido y al menos 2 jugadores son obligatorios.'}
+                return http.Response(
+                    json.dumps({'error': 'El nombre del partido y al menos 2 jugadores son obligatorios.'}),
+                    status=400,
+                    content_type='application/json'
+                )
 
-            # Respuesta temporal de prueba
-            return {'status': 'success', 'message': 'Datos recibidos correctamente', 'data': data}
+            # Crear el match
+            match = request.env['game.match'].create({
+                'name': name,
+                'start_time': data.get('start_time'),
+                'end_time': data.get('end_time'),
+                'winner_id': data.get('winner_id'),
+                'score': data.get('total_score'),
+                'state': 'draft',
+            })
+
+            # Crear estadísticas de jugadores
+            for player in players:
+                request.env['game.match.player.stats'].create({
+                    'match_id': match.id,
+                    'player_id': player.get('player_id'),
+                    'kills': player.get('kills', 0),
+                    'deaths': player.get('deaths', 0),
+                    'score': player.get('score', 0),
+                })
+
+            match.start_match()
+
+            return http.Response(
+                json.dumps({'status': 'success', 'match_id': match.id}),
+                status=200,
+                content_type='application/json'
+            )
 
         except Exception as e:
-            return {'error': str(e)}
+            return http.Response(
+                json.dumps({'error': str(e)}),
+                status=500,
+                content_type='application/json'
+            )
