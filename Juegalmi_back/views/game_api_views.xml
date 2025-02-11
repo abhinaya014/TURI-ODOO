@@ -130,8 +130,8 @@
             <group>
               <field name="name"/>
               <field name="email"/>
-              <field name="password"/>
-            </group>
+              <field name="password" password="True"/>
+              </group>
             <group>
               <field name="player_id" readonly="1"/>
               <field name="level"/>
