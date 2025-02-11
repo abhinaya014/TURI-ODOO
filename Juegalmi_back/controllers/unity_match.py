@@ -4,7 +4,7 @@ import json
 
 class GameAPIController(http.Controller):    
 
-    @http.route('/api/match/stats', type='json', auth='user', methods=['POST'])
+    @http.route('/api/match/stats', type='json', auth='public', methods=['POST'])
     def record_match_stats(self, **kwargs):
         data = json.loads(request.httprequest.data)
         
