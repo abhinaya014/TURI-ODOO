@@ -32,7 +32,7 @@ class GameAPIController(http.Controller):
 
             _logger.info(f"Datos recibidos: {data}")
 
-            login_identifier = data.get('login')  # Puede ser email o username
+            login_identifier = data.ge('login')  # Puede ser email o username
             password = data.get('password')
 
             if not login_identifier or not password:
@@ -41,27 +41,26 @@ class GameAPIController(http.Controller):
             player = request.env['res.partner'].sudo().search([
                 '|',
                 ('email', '=', login_identifier),
-                ('name', '=', login_identifier),
-                ('password', '=', password)
+                ('name', '=', login_identifier)
             ], limit=1)
 
-            if not player:
+            if player and player.password == password:
+                # Password correcto
+                return self._json_response({
+                    'status': 'success',
+                    'message': 'Login exitoso',
+                    'data': {
+                        'id': player.id,
+                        'name': player.name,
+                        'email': player.email,
+                        'coin_balance': player.coin_balance,
+                        'level': player.level,
+                        'last_login': player.last_login
+                    }
+                })
+            else:
                 return self._json_response({'status': 'error', 'message': 'Login o contraseña incorrectos'}, 401)
 
-            player.sudo().write({'last_login': fields.Datetime.now()})
-
-            return self._json_response({
-                'status': 'success',
-                'message': 'Login exitoso',
-                'data': {
-                    'id': player.id,
-                    'name': player.name,
-                    'email': player.email,
-                    'coin_balance': player.coin_balance,
-                    'level': player.level,
-                    'last_login': player.last_login
-                }
-            })
 
         except Exception as e:
             _logger.error(f"Error en el login del jugador: {e}")
@@ -98,10 +97,11 @@ class GameAPIController(http.Controller):
 
             player_vals = {
                 'name': name,
-                'email': email,
-                'password': password
+                'email': email
             }
             player = request.env['res.partner'].sudo().create(player_vals)
+            player.sudo().write({'password': password})
+
 
             return self._json_response({
                 'status': 'success',
