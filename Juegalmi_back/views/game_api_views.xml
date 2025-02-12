@@ -247,7 +247,7 @@
         </kanban>
       </field>
     </record>
-    <!-- ***********************
+   <!-- ***********************
          VISTA KANBAN PARA SKINS
          *********************** -->
     <record id="view_game_skin_kanban" model="ir.ui.view">
@@ -257,18 +257,11 @@
         <kanban default_groupby="color">
           <field name="name"/>
           <field name="color"/>
-          <field name="photo"/>
           <field name="owned_by_players"/>
           <templates>
             <t t-name="kanban-box">
               <div class="oe_kanban_global_click" 
                    t-att-style="'background-color:' + record.color.raw_value + '; padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:transform 0.2s;'">
-                <div style="margin-bottom:8px;">
-                  <img t-if="record.photo.value" 
-                       t-att-src="'data:image/png;base64,' + record.photo.value" 
-                       style="width:100px; height:100px; border-radius:8px;"/>
-                  <img t-else="" src="/web/static/src/img/smile.svg" style="width:100px; height:100px; border-radius:8px;"/>
-                </div>
                 <div style="font-size:16px; font-weight:bold; color:#fff;" t-esc="record.name.value"/>
                 <div style="font-size:13px; color:#eee;" t-esc="record.color.value"/>
                 <div style="margin-top:10px; font-size:13px; color:#fff;">
@@ -293,9 +286,6 @@
         <form>
           <sheet>
             <group>
-              <field name="photo" widget="image" class="oe_avatar" options="{'preview_image': 'photo'}"/>
-            </group>
-            <group>
               <field name="name"/>
               <field name="color"/>
             </group>
@@ -306,6 +296,7 @@
         </form>
       </field>
     </record>
+
 
   </data>
 </odoo>

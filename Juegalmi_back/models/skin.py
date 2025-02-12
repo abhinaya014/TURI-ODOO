@@ -5,7 +5,6 @@ class GameSkin(models.Model):
     _description = 'Game Skin'
 
     name = fields.Char(required=True)
-    photo = fields.Binary(string="Image")
     type = fields.Selection([
         ('character', 'Personaje'),  # Solo permitiremos "Character"
     ], string="Type", default='character', required=True)

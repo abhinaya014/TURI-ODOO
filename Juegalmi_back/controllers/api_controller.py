@@ -60,7 +60,6 @@ class GameAPIController(http.Controller):
                 'id': skin.id,
                 'name': skin.name,
                 'color': skin.color,
-                'photo': f"data:image/png;base64,{skin.photo.decode('utf-8')}" if skin.photo else None
             } for skin in player.owned_skins]
 
             # Respuesta exitosa con skins incluidas
