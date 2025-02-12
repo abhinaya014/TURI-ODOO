@@ -38,11 +38,12 @@ class GameCoinAPI(http.Controller):
     # POST: Agregar monedas al jugador
     # ---------------------------
     @http.route('/game_api/coins/add', type='json', auth='public', methods=['POST'], csrf=False)
-    def add_coins(self, **kwargs):
+    def add_coins(self):
         try:
-            player_id = kwargs.get('player_id')
-            amount = kwargs.get('amount')
-            reason = kwargs.get('reason', 'Recarga de monedas')
+            data = request.jsonrequest  # Obtener el JSON del request correctamente
+            player_id = data.get('player_id')
+            amount = data.get('amount')
+            reason = data.get('reason', 'Recarga de monedas')
 
             if not player_id or amount is None:
                 return {'status': 'error', 'message': 'Faltan parámetros (player_id, amount)'}
@@ -71,11 +72,12 @@ class GameCoinAPI(http.Controller):
     # PUT: Restar monedas cuando compra algo
     # ---------------------------
     @http.route('/game_api/coins/use', type='json', auth='public', methods=['PUT'], csrf=False)
-    def use_coins(self, **kwargs):
+    def use_coins(self):
         try:
-            player_id = kwargs.get('player_id')
-            amount = kwargs.get('amount')
-            reason = kwargs.get('reason', 'Compra en el juego')
+            data = request.jsonrequest  # Obtener el JSON del request correctamente
+            player_id = data.get('player_id')
+            amount = data.get('amount')
+            reason = data.get('reason', 'Compra en el juego')
 
             if not player_id or amount is None:
                 return {'status': 'error', 'message': 'Faltan parámetros (player_id, amount)'}
