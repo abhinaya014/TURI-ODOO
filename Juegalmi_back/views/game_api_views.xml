@@ -50,69 +50,64 @@
          *********************** -->
 
     <!-- Vista Kanban Completa de Jugadores -->
+   <!-- ✅ Vista Kanban de Jugadores (Mejorada con Base64) -->
     <record id="view_game_player_kanban_full" model="ir.ui.view">
-    <field name="name">game.player.kanban.full</field>
-    <field name="model">game.player</field>
-    <field name="arch" type="xml">
+      <field name="name">game.player.kanban.full</field>
+      <field name="model">game.player</field>
+      <field name="arch" type="xml">
         <kanban>
-            <field name="name"/>
-            <field name="email"/>
-            <field name="photo"/>
-            <field name="player_id"/>
-            <field name="level"/>
-            <field name="coin_balance"/>
-            <field name="total_matches"/>
-            <field name="total_wins"/>
-            <templates>
-                <t t-name="kanban-box">
-                    <div class="oe_kanban_global_click"
-                         style="padding:12px; border:1px solid #ddd; border-radius:10px; background:#f9f9f9; box-shadow:0 2px 6px rgba(0,0,0,0.1); text-align:center;">
-                        <div style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
-                            <div style="margin-bottom:8px;">
-                                <t t-if="record.photo and record.photo.raw_value">
-                                    <img t-att-src="'/web/image/game.player/' + record.id.value + '/photo'"
-                                         style="width:80px; height:80px; border-radius:50%; object-fit:cover;"/>
-                                </t>
-                                <t t-else="">
-                                    <img src="/web/static/src/img/smile.svg"
-                                         style="width:80px; height:80px; border-radius:50%; object-fit:cover;"/>
-                                </t>
-                            </div>
-                            <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
-                            <div style="font-size:12px; color:#777;">
-                                ID: <span t-esc="record.player_id.value"/>
-                            </div>
-                        </div>
-                        <hr style="margin:10px 0; border-top:1px solid #ddd;"/>
-                        <div style="font-size:13px; color:#555; margin-bottom:4px;">
-                            <span>Email: </span><span t-esc="record.email.value"/>
-                        </div>
-                        <div style="font-size:13px; color:#555; margin-bottom:4px;">
-                            <span>Level: </span><span t-esc="record.level.value"/>
-                        </div>
-                        <div style="font-size:13px; color:#555; margin-bottom:4px;">
-                            <span>Coins: </span><span t-esc="record.coin_balance.value"/>
-                        </div>
-                        <div style="font-size:12px; color:#999;">
-                            <span>Matches: </span><span t-esc="record.total_matches.value"/>
-                            <span> | Wins: </span><span t-esc="record.total_wins.value"/>
-                        </div>
-                    </div>
-                </t>
-            </templates>
+          <field name="name"/>
+          <field name="photo"/>
+          <field name="player_id"/>
+          <field name="level"/>
+          <field name="coin_balance"/>
+          <field name="total_matches"/>
+          <field name="total_wins"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click"
+                   style="padding:12px; border:1px solid #ddd; border-radius:10px; background:#f9f9f9; box-shadow:0 2px 6px rgba(0,0,0,0.1); text-align:center;">
+                <div style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
+                  <div style="margin-bottom:8px;">
+                    <t t-if="record.photo and record.photo.value">
+                      <img t-att-src="'data:image/png;base64,' + record.photo.value"
+                           style="width:80px; height:80px; border-radius:50%; object-fit:cover;"/>
+                    </t>
+                    <t t-else="">
+                      <img src="/web/static/src/img/smile.svg"
+                           style="width:80px; height:80px; border-radius:50%; object-fit:cover;"/>
+                    </t>
+                  </div>
+                  <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
+                  <div style="font-size:12px; color:#777;">
+                    ID: <span t-esc="record.player_id.value"/>
+                  </div>
+                </div>
+                <hr style="margin:10px 0; border-top:1px solid #ddd;"/>
+                <div style="font-size:13px; color:#555; margin-bottom:4px;">
+                  <span>Level: </span><span t-esc="record.level.value"/>
+                </div>
+                <div style="font-size:13px; color:#555; margin-bottom:4px;">
+                  <span>Coins: </span><span t-esc="record.coin_balance.value"/>
+                </div>
+                <div style="font-size:12px; color:#999;">
+                  <span>Matches: </span><span t-esc="record.total_matches.value"/>
+                  <span> | Wins: </span><span t-esc="record.total_wins.value"/>
+                </div>
+              </div>
+            </t>
+          </templates>
         </kanban>
-    </field>
-</record>
+      </field>
+    </record>
 
-
-    <!-- Vista Tree de Jugadores -->
+    <!-- ✅ Vista Tree de Jugadores -->
     <record id="view_game_player_tree" model="ir.ui.view">
       <field name="name">game.player.tree</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree decoration-danger="not active">
           <field name="name"/>
-          <field name="email"/>
           <field name="level"/>
           <field name="coin_balance"/>
           <field name="total_matches"/>
@@ -121,7 +116,7 @@
       </field>
     </record>
 
-    <!-- Vista Form de Jugadores -->
+    <!-- ✅ Vista Form de Jugadores -->
     <record id="view_game_player_form" model="ir.ui.view">
       <field name="name">game.player.form</field>
       <field name="model">game.player</field>
@@ -145,18 +140,6 @@
               <field name="total_matches" readonly="1"/>
               <field name="total_wins" readonly="1"/>
             </group>
-            <notebook>
-              <page string="Matches">
-                <field name="match_stats_ids">
-                  <tree>
-                    <field name="match_id"/>
-                    <field name="kills"/>
-                    <field name="deaths"/>
-                    <field name="score"/>
-                  </tree>
-                </field>
-              </page>
-            </notebook>
           </sheet>
         </form>
       </field>
