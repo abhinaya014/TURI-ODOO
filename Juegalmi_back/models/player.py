@@ -1,5 +1,8 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class GamePlayer(models.Model):
     _name = 'game.player'
@@ -44,7 +47,7 @@ class GamePlayer(models.Model):
         if 'registration_date' not in vals:
             vals['registration_date'] = fields.Datetime.now()
 
-        # Verificar si ya existe un contacto en res.partner
+        # Verificar si el contacto ya existe en res.partner
         partner = self.env['res.partner'].sudo().search([('email', '=', vals.get('email'))], limit=1)
 
         if not partner:
@@ -60,6 +63,9 @@ class GamePlayer(models.Model):
         player = super(GamePlayer, self).create(vals)
 
         try:
+            # Obtener la compañía por defecto
+            company = self.env.company  # Esto obtiene la compañía actual
+
             # Verificar si el grupo 'base.group_user' existe
             user_group = self.env.ref('base.group_user', raise_if_not_found=False)
             if not user_group:
@@ -73,22 +79,16 @@ class GamePlayer(models.Model):
                     'login': player.email,
                     'partner_id': partner.id,
                     'password': vals.get('password'),
-                    'groups_id': [(6, 0, [user_group.id])],  # Asignar grupo de usuario normal
+                    'groups_id': [(6, 0, [user_group.id])],  # Grupo de usuarios normales
+                    'company_id': company.id,  # Asignar compañía por defecto
+                    'company_ids': [(6, 0, [company.id])],  # Asegurar que tenga acceso a la compañía
                 }
                 self.env['res.users'].sudo().create(user_vals)
 
         except Exception as e:
-            # Loguear error en la consola de Odoo
             _logger.error(f"Error al crear usuario en res.users: {e}")
 
-        # Transacción inicial de monedas
-        self.env['game.coin.transaction'].sudo().create({
-            'player_id': player.id,
-            'amount': 200,
-            'reason': 'Default initial coins',
-        })
-
-        return player  # Ahora está correctamente indentado dentro de create()
+        return player
 
     def write(self, vals):
         """Sincroniza cambios en el jugador con res.partner"""
