@@ -7,8 +7,19 @@ class GameSkin(models.Model):
     name = fields.Char(required=True)
     photo = fields.Binary(string="Image")
     type = fields.Selection([
-        ('weapon', 'Arma'),
-        ('character', 'Personaje'),
-        # Puedes agregar más tipos según sea necesario
-    ], string="Type", default='weapon')
+        ('character', 'Personaje'),  # Solo permitiremos "Character"
+    ], string="Type", default='character', required=True)
     description = fields.Text()
+    color = fields.Selection([
+        ('red', 'Rojo'),
+        ('blue', 'Azul'),
+        ('green', 'Verde'),
+        ('yellow', 'Amarillo'),
+        ('black', 'Negro'),
+        ('white', 'Blanco')
+    ], string="Color", required=True)
+
+    owned_by_players = fields.Many2many(
+        'game.player',
+        string="Jugadores que tienen este skin"
+    )
