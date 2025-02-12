@@ -11,7 +11,10 @@ class GamePlayer(models.Model):
     name = fields.Char(required=True)
     email = fields.Char(required=True)
     password = fields.Char(required=True)
-    photo = fields.Image(string="Photo", max_width=512, max_height=512, store=True, attachment=True)  # ✅ Acepta JPG, PNG, etc.
+
+    # ✅ Cambiamos Binary a Image para que funcione en todas las vistas
+    photo = fields.Image(string="Photo", max_width=512, max_height=512, store=True, attachment=True)
+
     level = fields.Integer(string="Level", default=1)
     experience = fields.Float(string="Experience", default=0)
     last_login = fields.Datetime(string="Last Login")
@@ -48,19 +51,18 @@ class GamePlayer(models.Model):
         if 'registration_date' not in vals:
             vals['registration_date'] = fields.Datetime.now()
 
-        # Verificar si el contacto ya existe en res.partner
+        # Guardar la imagen también en res.partner
         partner = self.env['res.partner'].sudo().search([('email', '=', vals.get('email'))], limit=1)
-
         if not partner:
             partner_vals = {
                 'name': vals.get('name'),
                 'email': vals.get('email'),
             }
             if vals.get('photo'):
-                partner_vals['image_1920'] = vals['photo']  # ✅ Asegurar que la imagen también se almacena en `res.partner`
+                partner_vals['image_1920'] = vals['photo']
             partner = self.env['res.partner'].sudo().create(partner_vals)
 
-        vals['partner_id'] = partner.id  # Asignamos el partner_id antes de crear el jugador
+        vals['partner_id'] = partner.id
         player = super(GamePlayer, self).create(vals)
 
         try:
@@ -92,6 +94,7 @@ class GamePlayer(models.Model):
             _logger.error(f"Error al crear usuario en res.users: {e}")
 
 
+
         # Asegurar que la imagen se guarde en res.partner
         if 'photo' in vals and vals['photo']:
             partner.sudo().write({'image_1920': vals['photo']})
@@ -110,7 +113,7 @@ class GamePlayer(models.Model):
                 if 'email' in vals:
                     partner_vals['email'] = vals['email']
                 if 'photo' in vals:
-                    partner_vals['image_1920'] = vals['photo']  # ✅ Asegurar que la imagen también se actualiza en res.partner
+                    partner_vals['image_1920'] = vals['photo']
                 player.partner_id.sudo().write(partner_vals)
 
         return res
