@@ -19,7 +19,7 @@
     <menuitem id="menu_game_api_players_list" name="Players List" parent="menu_game_api_players" action="action_game_player" sequence="1"/>
 
     <!-- Menú y Acción para Skins -->
-    <menuitem id="menu_game_api_skins" name="Skins" parent="menu_game_api_root" sequence="2"/>
+      <menuitem id="menu_game_api_skins" name="Skins" parent="menu_game_api_root" sequence="2"/>
     <record id="action_game_skin" model="ir.actions.act_window">
       <field name="name">Game Skins</field>
       <field name="res_model">game.skin</field>
@@ -247,8 +247,9 @@
         </kanban>
       </field>
     </record>
-
-    <!-- Vistas para GAME.SKIN -->
+ <!-- ***********************
+         VISTA KANBAN PARA SKINS
+         *********************** -->
     <record id="view_game_skin_kanban" model="ir.ui.view">
       <field name="name">game.skin.kanban</field>
       <field name="model">game.skin</field>
@@ -259,12 +260,14 @@
           <field name="photo"/>
           <templates>
             <t t-name="kanban-box">
-              <div class="oe_kanban_global_click" style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
-                <div>
-                  <img t-if="record.photo.value" t-att-src="'data:image/png;base64,' + record.photo.value" style="width:60px; height:60px; border-radius:8px; margin-bottom:5px;"/>
-                  <img t-else="" src="/web/static/src/img/smile.svg" style="width:60px; height:60px; border-radius:8px; margin-bottom:5px;"/>
+              <div class="oe_kanban_global_click" style="padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:transform 0.2s; background:#fafafa;">
+                <div style="margin-bottom:8px;">
+                  <img t-if="record.photo.value" 
+                       t-att-src="'data:image/png;base64,' + record.photo.value" 
+                       style="width:100px; height:100px; border-radius:8px;"/>
+                  <img t-else="" src="/web/static/src/img/smile.svg" style="width:100px; height:100px; border-radius:8px;"/>
                 </div>
-                <div style="font-size:15px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
+                <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
                 <div style="font-size:13px; color:#777;" t-esc="record.type.value"/>
               </div>
             </t>
@@ -273,6 +276,9 @@
       </field>
     </record>
 
+    <!-- ***********************
+         VISTA TREE PARA SKINS
+         *********************** -->
     <record id="view_game_skin_tree" model="ir.ui.view">
       <field name="name">game.skin.tree</field>
       <field name="model">game.skin</field>
@@ -285,6 +291,9 @@
       </field>
     </record>
 
+    <!-- ***********************
+         VISTA FORM PARA SKINS
+         *********************** -->
     <record id="view_game_skin_form" model="ir.ui.view">
       <field name="name">game.skin.form</field>
       <field name="model">game.skin</field>
