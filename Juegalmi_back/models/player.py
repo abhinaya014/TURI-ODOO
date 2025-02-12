@@ -25,6 +25,9 @@ class GamePlayer(models.Model):
     coin_transaction_ids = fields.One2many('game.coin.transaction', 'player_id', string="Coin Transactions", ondelete='cascade')
     coin_balance = fields.Float(string="Coin Balance", compute='_compute_coin_balance', store=True)
 
+    owned_skins = fields.Many2many('game.skin', string="Owned Skins")
+
+
     match_stats_ids = fields.One2many('game.match.player.stats', 'player_id', string="Match Statistics")
 
     partner_id = fields.Many2one('res.partner', string="Contacto", required=True, readonly=True, ondelete='cascade')
