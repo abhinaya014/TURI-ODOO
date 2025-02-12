@@ -135,3 +135,34 @@ class GameAPIController(http.Controller):
         except Exception as e:
             _logger.error(f"Error actualizando jugador: {e}", exc_info=True)
             return self._json_response({'status': 'error', 'message': 'Error interno del servidor'}, 500)
+
+
+              # -----------------------------
+    # GET: Obtener Jugador por ID
+    # -----------------------------
+    @http.route('/game_api/player/<int:player_id>', type='http', auth='public', methods=['GET'], csrf=False)
+    def get_player(self, player_id, **kwargs):
+        try:
+            _logger.info(f"Solicitud GET para obtener el jugador con ID: {player_id}")
+
+            # Buscar jugador en la base de datos
+            player = request.env['game.player'].sudo().browse(player_id)
+
+            if not player.exists():
+                return self._json_response({'status': 'error', 'message': 'Jugador no encontrado'}, 404)
+
+            # Respuesta con datos del jugador
+            return self._json_response({
+                'status': 'success',
+                'message': 'Jugador encontrado',
+                'data': {
+                    'id': player.id,
+                    'name': player.name,
+                    'email': player.email,
+                    'password': player.password  # ⚠️ Asegúrate de que la seguridad de la contraseña es adecuada
+                }
+            })
+
+        except Exception as e:
+            _logger.error(f"Error obteniendo jugador: {e}", exc_info=True)
+            return self._json_response({'status': 'error', 'message': 'Error interno del servidor'}, 500)
