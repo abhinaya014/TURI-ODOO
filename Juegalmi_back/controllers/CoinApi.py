@@ -15,6 +15,26 @@ class GameCoinAPI(http.Controller):
         )
 
     # ---------------------------
+    # GET: Obtener balance de monedas
+    # ---------------------------
+    @http.route('/game_api/coins/<int:player_id>', type='http', auth='public', methods=['GET'], csrf=False)
+    def get_coin_balance(self, player_id):
+        try:
+            player = request.env['game.player'].sudo().browse(player_id)
+            if not player.exists():
+                return self._json_response({'status': 'error', 'message': 'Jugador no encontrado'}, 404)
+
+            return self._json_response({
+                'status': 'success',
+                'player_id': player.id,
+                'coin_balance': player.coin_balance
+            })
+
+        except Exception as e:
+            _logger.error(f"Error obteniendo monedas: {e}")
+            return self._json_response({'status': 'error', 'message': 'Error interno del servidor'}, 500)
+
+    # ---------------------------
     # POST: Agregar monedas al jugador
     # ---------------------------
     @http.route('/game_api/coins/add', type='http', auth='public', methods=['POST'], csrf=False)
