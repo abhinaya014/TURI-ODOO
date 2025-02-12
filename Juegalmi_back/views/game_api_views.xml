@@ -3,7 +3,7 @@
   <data>
 
     <!-- ***********************
-         MENÚs Y ACCIONES
+         MENÚS Y ACCIONES
          *********************** -->
 
     <!-- Menú Principal -->
@@ -12,10 +12,12 @@
     <!-- Menú y Acción para Players -->
     <menuitem id="menu_game_api_players" name="Players" parent="menu_game_api_root" sequence="1"/>
     <record id="action_game_player" model="ir.actions.act_window">
-      <field name="name">Jugadores</field>
-      <field name="res_model">game.player</field>
-      <field name="view_mode">kanban,tree,form</field>
-    </record>
+  <field name="name">Jugadores</field>
+  <field name="res_model">game.player</field>
+  <field name="view_id" ref="view_game_player_kanban_full"/>  <!-- Forzar la vista Kanban por defecto -->
+  <field name="view_mode">kanban,tree,form</field>
+</record>
+
     <menuitem id="menu_game_api_players_list" name="Players List" parent="menu_game_api_players" action="action_game_player" sequence="1"/>
 
     <!-- Menú y Acción para Skins -->
@@ -50,56 +52,59 @@
          *********************** -->
 
     <!-- Vista Kanban Completa de Jugadores -->
-    <record id="view_game_player_kanban_full" model="ir.ui.view">
-      <field name="name">game.player.kanban.full</field>
-      <field name="model">game.player</field>
-      <field name="arch" type="xml">
-        <kanban>
-          <field name="name"/>
-          <field name="email"/>
-          <field name="photo"/>
-          <field name="player_id"/>
-          <field name="level"/>
-          <field name="coin_balance"/>
-          <field name="total_matches"/>
-          <field name="total_wins"/>
-          <templates>
-            <t t-name="kanban-box">
-              <div class="oe_kanban_global_click"
-                   style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-                <div style="display:flex; align-items:center; margin-bottom:8px;">
-                  <div style="margin-right:10px;">
-                    <img t-if="record.photo.value"
-                         t-att-src="'data:image/png;base64,' + record.photo.value"
-                         style="width:60px; height:60px; border-radius:50%;"/>
-                    <img t-else="" src="/web/static/src/img/smile.svg" style="width:60px; height:60px; border-radius:50%;"/>
-                  </div>
-                  <div>
-                    <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
-                    <div style="font-size:12px; color:#777;">
-                      ID: <span t-esc="record.player_id.value"/>
-                    </div>
-                  </div>
-                </div>
-                <div style="font-size:13px; color:#555; margin-bottom:4px;">
-                  <span>Email: </span><span t-esc="record.email.value"/>
-                </div>
-                <div style="font-size:13px; color:#555; margin-bottom:4px;">
-                  <span>Level: </span><span t-esc="record.level.value"/>
-                </div>
-                <div style="font-size:13px; color:#555; margin-bottom:4px;">
-                  <span>Coins: </span><span t-esc="record.coin_balance.value"/>
-                </div>
-                <div style="font-size:12px; color:#999;">
-                  <span>Matches: </span><span t-esc="record.total_matches.value"/>
-                  <span> | Wins: </span><span t-esc="record.total_wins.value"/>
+   <record id="view_game_player_kanban_full" model="ir.ui.view">
+  <field name="name">game.player.kanban.full</field>
+  <field name="model">game.player</field>
+  <field name="arch" type="xml">
+    <kanban>
+      <field name="name"/>
+      <field name="email"/>
+      <field name="photo"/>
+      <field name="player_id"/>
+      <field name="level"/>
+      <field name="coin_balance"/>
+      <field name="total_matches"/>
+      <field name="total_wins"/>
+      <templates>
+        <t t-name="kanban-box">
+          <div class="oe_kanban_global_click"
+               style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+            <div style="display:flex; align-items:center; margin-bottom:8px;">
+              <div style="margin-right:10px;">
+                <img t-if="record.photo.value"
+                     t-att-src="'data:image/png;base64,' + record.photo.value"
+                     style="width:60px; height:60px; border-radius:50%;"/>
+                <img t-else=""
+                     src="/web/static/src/img/smile.svg"
+                     style="width:60px; height:60px; border-radius:50%;"/>
+              </div>
+              <div>
+                <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
+                <div style="font-size:12px; color:#777;">
+                  ID: <span t-esc="record.player_id.value"/>
                 </div>
               </div>
-            </t>
-          </templates>
-        </kanban>
-      </field>
-    </record>
+            </div>
+            <div style="font-size:13px; color:#555; margin-bottom:4px;">
+              <span>Email: </span><span t-esc="record.email.value"/>
+            </div>
+            <div style="font-size:13px; color:#555; margin-bottom:4px;">
+              <span>Level: </span><span t-esc="record.level.value"/>
+            </div>
+            <div style="font-size:13px; color:#555; margin-bottom:4px;">
+              <span>Coins: </span><span t-esc="record.coin_balance.value"/>
+            </div>
+            <div style="font-size:12px; color:#999;">
+              <span>Matches: </span><span t-esc="record.total_matches.value"/>
+              <span> | Wins: </span><span t-esc="record.total_wins.value"/>
+            </div>
+          </div>
+        </t>
+      </templates>
+    </kanban>
+  </field>
+</record>
+
 
     <!-- Vista Tree de Jugadores -->
     <record id="view_game_player_tree" model="ir.ui.view">
@@ -130,8 +135,8 @@
             <group>
               <field name="name"/>
               <field name="email"/>
-              <field name="password" password="True"/>
-              </group>
+              <field name="password"/>
+            </group>
             <group>
               <field name="player_id" readonly="1"/>
               <field name="level"/>
@@ -141,16 +146,19 @@
               <field name="total_matches" readonly="1"/>
               <field name="total_wins" readonly="1"/>
             </group>
+            <group>
+              <field name="last_login" readonly="1"/>
+              <field name="registration_date" readonly="1"/>
+            </group>
+            <group>
+              <field name="active"/>
+            </group>
+            <group>
+              <field name="partner_id" readonly="1"/>
+            </group>
             <notebook>
               <page string="Matches">
-                <field name="match_stats_ids">
-                  <tree>
-                    <field name="match_id"/>
-                    <field name="kills"/>
-                    <field name="deaths"/>
-                    <field name="score"/>
-                  </tree>
-                </field>
+                <field name="match_ids" widget="many2many_tags"/>
               </page>
             </notebook>
           </sheet>
@@ -158,97 +166,11 @@
       </field>
     </record>
 
-    <!-- Vista Tree de Partidos -->
-    <record id="view_game_match_tree" model="ir.ui.view">
-      <field name="name">game.match.tree</field>
-      <field name="model">game.match</field>
-      <field name="arch" type="xml">
-        <tree decoration-info="state=='draft'" decoration-success="state=='finished'" decoration-warning="state=='in_progress'">
-          <field name="name"/>
-          <field name="start_time"/>
-          <field name="end_time"/>
-          <field name="winner_id"/>
-          <field name="state"/>
-        </tree>
-      </field>
-    </record>
+    <!-- ***********************
+         VISTAS PARA GAME.SKIN
+         *********************** -->
 
-    <!-- Vista Form de Partidos -->
-    <record id="view_game_match_form" model="ir.ui.view">
-      <field name="name">game.match.form</field>
-      <field name="model">game.match</field>
-      <field name="arch" type="xml">
-        <form>
-          <sheet>
-            <div class="oe_title" style="margin-bottom:20px;">
-              <h1>
-                <field name="name" placeholder="Match Name"/>
-              </h1>
-            </div>
-            <group>
-              <group>
-                <field name="start_time"/>
-                <field name="end_time"/>
-              </group>
-              <group>
-                <field name="winner_id"/>
-                <field name="score"/>
-              </group>
-            </group>
-            <group>
-                <button name="action_start_match" type="object" string="Start Match" class="oe_highlight"/>
-                <button name="action_end_match" type="object" string="End Match" class="oe_highlight"/>
-            </group>
-
-            <notebook>
-              <page string="Player Statistics">
-                <field name="player_stats_ids">
-                  <tree editable="bottom">
-                    <field name="player_id"/>
-                    <field name="kills"/>
-                    <field name="deaths"/>
-                    <field name="score"/>
-                  </tree>
-                </field>
-              </page>
-              <page string="Notes">
-                <field name="notes"/>
-              </page>
-            </notebook>
-          </sheet>
-        </form>
-      </field>
-    </record>
-
-    <!-- Vista Kanban de Transacciones -->
-    <record id="view_game_coin_transaction_kanban" model="ir.ui.view">
-      <field name="name">game.coin.transaction.kanban</field>
-      <field name="model">game.coin.transaction</field>
-      <field name="arch" type="xml">
-        <kanban>
-          <field name="player_id"/>
-          <field name="amount"/>
-          <field name="coin_image"/>
-          <templates>
-            <t t-name="kanban-box">
-              <div style="padding:10px; text-align:center;">
-                <img t-if="record.coin_image.value" t-att-src="'data:image/png;base64,' + record.coin_image.value"
-                     style="width:60px; height:60px; border-radius:50%; margin-bottom:10px;"/>
-                <div style="font-size:14px; font-weight:bold;" t-esc="record.player_id.value"/>
-                <div style="font-size:13px; margin-top:4px;">
-                  <span>Amount: </span><span t-esc="record.amount.value"/>
-                </div>
-                <div style="font-size:12px; color:#999; margin-top:4px;">
-                  <t t-if="record.date &amp;&amp; record.date.value" t-esc="record.date.value"/>
-                </div>
-              </div>
-            </t>
-          </templates>
-        </kanban>
-      </field>
-    </record>
-
-    <!-- Vistas para GAME.SKIN -->
+    <!-- Vista Kanban de Skins -->
     <record id="view_game_skin_kanban" model="ir.ui.view">
       <field name="name">game.skin.kanban</field>
       <field name="model">game.skin</field>
@@ -273,6 +195,7 @@
       </field>
     </record>
 
+    <!-- Vista Tree de Skins -->
     <record id="view_game_skin_tree" model="ir.ui.view">
       <field name="name">game.skin.tree</field>
       <field name="model">game.skin</field>
@@ -285,6 +208,7 @@
       </field>
     </record>
 
+    <!-- Vista Form de Skins -->
     <record id="view_game_skin_form" model="ir.ui.view">
       <field name="name">game.skin.form</field>
       <field name="model">game.skin</field>
@@ -305,5 +229,178 @@
         </form>
       </field>
     </record>
+
+    <!-- ***********************
+         VISTAS PARA GAME.MATCH
+         *********************** -->
+
+    <!-- Vista Kanban de Partidos -->
+    <record id="view_game_match_kanban" model="ir.ui.view">
+      <field name="name">game.match.kanban</field>
+      <field name="model">game.match</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="name"/>
+          <field name="start_time"/>
+          <field name="end_time"/>
+          <field name="state"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click" style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
+                <div style="margin-top:4px; font-size:13px; color:#555;">
+                  <span>Start: </span><span t-esc="record.start_time.value"/>
+                </div>
+                <div style="margin-top:4px; font-size:13px; color:#555;">
+                  <span>End: </span><span t-esc="record.end_time.value"/>
+                </div>
+                <div style="margin-top:4px; font-size:12px; color:#999;">
+                  <span>Status: </span><span t-esc="record.state.value"/>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- Vista Tree de Partidos -->
+    <record id="view_game_match_tree" model="ir.ui.view">
+      <field name="name">game.match.tree</field>
+      <field name="model">game.match</field>
+      <field name="arch" type="xml">
+        <tree decoration-info="state=='draft'" decoration-success="state=='finished'" decoration-warning="state=='in_progress'">
+          <field name="name"/>
+          <field name="match_type"/>
+          <field name="start_time"/>
+          <field name="end_time"/>
+          <field name="winner_id"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Vista Form de Partidos -->
+    <record id="view_game_match_form" model="ir.ui.view">
+      <field name="name">game.match.form</field>
+      <field name="model">game.match</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button name="action_start_match" string="Start Match" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+            <button name="action_end_match" string="End Match" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'in_progress')]}"/>
+            <button name="action_cancel_match" string="Cancel Match" type="object" attrs="{'invisible': [('state', 'in', ['finished','cancelled'])]}"/>
+            <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,finished,cancelled"/>
+          </header>
+          <sheet>
+            <div class="oe_title" style="margin-bottom:20px;">
+              <h1>
+                <field name="name" placeholder="Match Name"/>
+              </h1>
+            </div>
+            <group>
+              <group>
+                <field name="match_type"/>
+                <field name="start_time"/>
+                <field name="end_time"/>
+              </group>
+              <group>
+                <field name="winner_id"/>
+                <field name="score"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Players">
+                <field name="player_ids" widget="many2many_tags"/>
+              </page>
+              <page string="Notes">
+                <field name="notes"/>
+              </page>
+            </notebook>
+          </sheet>
+          <div class="oe_chatter">
+            <field name="message_follower_ids"/>
+            <field name="activity_ids"/>
+            <field name="message_ids"/>
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <!-- ***********************
+         VISTAS PARA GAME.COIN.TRANSACTION
+         *********************** -->
+
+    <!-- Vista Kanban de Transacciones -->
+    <record id="view_game_coin_transaction_kanban" model="ir.ui.view">
+      <field name="name">game.coin.transaction.kanban</field>
+      <field name="model">game.coin.transaction</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="player_id"/>
+          <field name="amount"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click" style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                <div style="font-size:14px; font-weight:bold;" t-esc="record.player_id.value"/>
+                <div style="font-size:13px; margin-top:4px;">
+                  <span>Amount: </span><span t-esc="record.amount.value"/>
+                </div>
+                <div style="font-size:12px; color:#999; margin-top:4px;">
+                  <t t-if="record.date &amp;&amp; record.date.value" t-esc="record.date.value"/>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- Vista Tree de Transacciones -->
+    <record id="view_game_coin_transaction_tree" model="ir.ui.view">
+      <field name="name">game.coin.transaction.tree</field>
+      <field name="model">game.coin.transaction</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="player_id"/>
+          <field name="amount"/>
+          <field name="reason"/>
+          <field name="date"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Vista Form de Transacciones -->
+    <record id="view_game_coin_transaction_form" model="ir.ui.view">
+      <field name="name">game.coin.transaction.form</field>
+      <field name="model">game.coin.transaction</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <field name="player_id"/>
+              <field name="amount"/>
+            </group>
+            <group>
+              <field name="reason"/>
+              <field name="date"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- ***********************
+         ACCIONES (OPCIONAL)
+         *********************** -->
+
+
+
+    <record id="action_game_match" model="ir.actions.act_window">
+      <field name="name">Matches</field>
+      <field name="res_model">game.match</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
   </data>
 </odoo>
