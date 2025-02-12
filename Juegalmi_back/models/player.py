@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 class GamePlayer(models.Model):
     _name = 'game.player'
@@ -21,10 +22,9 @@ class GamePlayer(models.Model):
     coin_transaction_ids = fields.One2many('game.coin.transaction', 'player_id', string="Coin Transactions", ondelete='cascade')
     coin_balance = fields.Float(string="Coin Balance", compute='_compute_coin_balance', store=True)
 
-    # Relación One2many con estadísticas de partidas
     match_stats_ids = fields.One2many('game.match.player.stats', 'player_id', string="Match Statistics")
 
-    partner_id = fields.Many2one('res.partner', string="Contacto", readonly=True)
+    partner_id = fields.Many2one('res.partner', string="Contacto", required=True, readonly=True, ondelete='cascade')
 
     @api.depends('coin_transaction_ids.amount')
     def _compute_coin_balance(self):
@@ -44,7 +44,42 @@ class GamePlayer(models.Model):
         if 'registration_date' not in vals:
             vals['registration_date'] = fields.Datetime.now()
 
+        # Verificar si ya existe un contacto en res.partner
+        partner = self.env['res.partner'].sudo().search([('email', '=', vals.get('email'))], limit=1)
+
+        if not partner:
+            partner_vals = {
+                'name': vals.get('name'),
+                'email': vals.get('email'),
+            }
+            if vals.get('photo'):
+                partner_vals['image_1920'] = vals['photo']
+            partner = self.env['res.partner'].sudo().create(partner_vals)
+
+        vals['partner_id'] = partner.id  # Asignamos el partner_id antes de crear el jugador
         player = super(GamePlayer, self).create(vals)
+
+        try:
+            # Verificar si el grupo 'base.group_user' existe
+            user_group = self.env.ref('base.group_user', raise_if_not_found=False)
+            if not user_group:
+                raise ValidationError("El grupo 'base.group_user' no está disponible en Odoo.")
+
+            # Verificar si ya existe un usuario con el mismo email
+            existing_user = self.env['res.users'].sudo().search([('login', '=', player.email)], limit=1)
+            if not existing_user:
+                user_vals = {
+                    'name': player.name,
+                    'login': player.email,
+                    'partner_id': partner.id,
+                    'password': vals.get('password'),
+                    'groups_id': [(6, 0, [user_group.id])],  # Asignar grupo de usuario normal
+                }
+                self.env['res.users'].sudo().create(user_vals)
+
+        except Exception as e:
+            # Loguear error en la consola de Odoo
+            _logger.error(f"Error al crear usuario en res.users: {e}")
 
         # Transacción inicial de monedas
         self.env['game.coin.transaction'].sudo().create({
@@ -53,14 +88,19 @@ class GamePlayer(models.Model):
             'reason': 'Default initial coins',
         })
 
-        # Crear el contacto en res.partner
-        partner_vals = {
-            'name': player.name,
-            'email': player.email,
-        }
-        if vals.get('photo'):
-            partner_vals['image_1920'] = vals['photo']
+        return player  # Ahora está correctamente indentado dentro de create()
 
-        partner = self.env['res.partner'].create(partner_vals)
-        player.partner_id = partner.id
-        return player
+    def write(self, vals):
+        """Sincroniza cambios en el jugador con res.partner"""
+        res = super(GamePlayer, self).write(vals)
+
+        for player in self:
+            if 'name' in vals or 'email' in vals:
+                partner_vals = {}
+                if 'name' in vals:
+                    partner_vals['name'] = vals['name']
+                if 'email' in vals:
+                    partner_vals['email'] = vals['email']
+                player.partner_id.sudo().write(partner_vals)
+
+        return res
