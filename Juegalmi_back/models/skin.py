@@ -15,8 +15,8 @@ class GameSkin(models.Model):
         ('blue', 'Azul'),
         ('green', 'Verde'),
         ('yellow', 'Amarillo'),
-        ('black', 'Negro'),
-        ('white', 'Blanco')
+        ('pink', 'Rosa'),
+        ('orange', 'Naranja')
     ], string="Color", required=True)
 
     owned_by_players = fields.Many2many(
