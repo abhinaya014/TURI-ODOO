@@ -60,15 +60,17 @@ class GamePlayer(models.Model):
         vals['partner_id'] = partner.id  # Asignamos el partner_id antes de crear el jugador
         player = super(GamePlayer, self).create(vals)
 
-        # Crear usuario en Odoo (res.users)
-        user_vals = {
-            'name': player.name,
-            'login': player.email,
-            'partner_id': partner.id,
-            'password': vals.get('password'),
-            'groups_id': [(6, 0, [self.env.ref('base.group_user').id])],  # Grupo de usuarios normales
-        }
-        user = self.env['res.users'].sudo().create(user_vals)
+        # Verificar si el usuario ya existe en res.users
+        existing_user = self.env['res.users'].sudo().search([('login', '=', player.email)], limit=1)
+        if not existing_user:
+            user_vals = {
+                'name': player.name,
+                'login': player.email,
+                'partner_id': partner.id,
+                'password': vals.get('password'),
+                'groups_id': [(6, 0, [self.env.ref('base.group_user').id])],  # Grupo de usuarios normales
+            }
+            self.env['res.users'].sudo().create(user_vals)
 
         # Transacción inicial de monedas
         self.env['game.coin.transaction'].sudo().create({
@@ -77,8 +79,7 @@ class GamePlayer(models.Model):
             'reason': 'Default initial coins',
         })
 
-    return player
-
+        return player  # Ahora está correctamente indentado dentro de create()
 
     def write(self, vals):
         """Sincroniza cambios en el jugador con res.partner"""
