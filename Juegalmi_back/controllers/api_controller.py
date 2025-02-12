@@ -55,7 +55,15 @@ class GameAPIController(http.Controller):
             # Actualizar la última fecha de login
             player.sudo().write({'last_login': fields.Datetime.now()})
 
-            # Respuesta exitosa
+            # Obtener skins compradas
+            skins = [{
+                'id': skin.id,
+                'name': skin.name,
+                'color': skin.color,
+                'photo': f"data:image/png;base64,{skin.photo.decode('utf-8')}" if skin.photo else None
+            } for skin in player.owned_skins]
+
+            # Respuesta exitosa con skins incluidas
             return self._json_response({
                 'status': 'success',
                 'message': 'Login exitoso',
@@ -65,7 +73,8 @@ class GameAPIController(http.Controller):
                     'email': player.email,
                     'coin_balance': player.coin_balance,
                     'level': player.level,
-                    'last_login': player.last_login
+                    'last_login': player.last_login,
+                    'skins': skins  # Lista de skins compradas
                 }
             })
 
