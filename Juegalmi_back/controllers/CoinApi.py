@@ -14,10 +14,13 @@ class GameCoinAPI(http.Controller):
             status=status
         )
 
-    @http.route('/game_api/coins/add', type='json', auth='public', methods=['POST'], csrf=False)
-    def add_coins(self):
+    # ---------------------------
+    # POST: Agregar monedas al jugador
+    # ---------------------------
+    @http.route('/game_api/coins/add', type='http', auth='public', methods=['POST'], csrf=False)
+    def add_coins(self, **kwargs):
         try:
-            data = request.jsonrequest  # Obtener JSON correctamente
+            data = json.loads(request.httprequest.data.decode('utf-8'))  # 🔥 Leer JSON manualmente
             _logger.info(f"Datos recibidos en POST: {data}")  # LOG
 
             player_id = data.get('player_id')
@@ -26,16 +29,16 @@ class GameCoinAPI(http.Controller):
 
             if not player_id or amount is None:
                 _logger.error("Faltan parámetros en POST (player_id, amount)")
-                return {'status': 'error', 'message': 'Faltan parámetros (player_id, amount)'}
+                return self._json_response({'status': 'error', 'message': 'Faltan parámetros (player_id, amount)'}, 400)
 
             player = request.env['game.player'].sudo().browse(player_id)
             if not player.exists():
                 _logger.error(f"Jugador no encontrado con ID: {player_id}")
-                return {'status': 'error', 'message': 'Jugador no encontrado'}
+                return self._json_response({'status': 'error', 'message': 'Jugador no encontrado'}, 404)
 
             if amount <= 0:
                 _logger.error("El monto debe ser mayor a 0")
-                return {'status': 'error', 'message': 'El monto debe ser mayor a 0'}
+                return self._json_response({'status': 'error', 'message': 'El monto debe ser mayor a 0'}, 400)
 
             # Crear la transacción
             request.env['game.coin.transaction'].sudo().create({
@@ -44,17 +47,19 @@ class GameCoinAPI(http.Controller):
                 'reason': reason
             })
 
-            _logger.info(f"Monedas agregadas correctamente. Nuevo saldo: {player.coin_balance}")
-            return {'status': 'success', 'message': 'Monedas agregadas correctamente', 'new_balance': player.coin_balance}
+            return self._json_response({'status': 'success', 'message': 'Monedas agregadas correctamente', 'new_balance': player.coin_balance})
 
         except Exception as e:
             _logger.error(f"Error agregando monedas: {str(e)}", exc_info=True)
-            return {'status': 'error', 'message': 'Error interno del servidor'}
+            return self._json_response({'status': 'error', 'message': 'Error interno del servidor'}, 500)
 
-    @http.route('/game_api/coins/use', type='json', auth='public', methods=['PUT'], csrf=False)
-    def use_coins(self):
+    # ---------------------------
+    # PUT: Restar monedas cuando compra algo
+    # ---------------------------
+    @http.route('/game_api/coins/use', type='http', auth='public', methods=['PUT'], csrf=False)
+    def use_coins(self, **kwargs):
         try:
-            data = request.jsonrequest  # Obtener JSON correctamente
+            data = json.loads(request.httprequest.data.decode('utf-8'))  # 🔥 Leer JSON manualmente
             _logger.info(f"Datos recibidos en PUT: {data}")  # LOG
 
             player_id = data.get('player_id')
@@ -63,20 +68,20 @@ class GameCoinAPI(http.Controller):
 
             if not player_id or amount is None:
                 _logger.error("Faltan parámetros en PUT (player_id, amount)")
-                return {'status': 'error', 'message': 'Faltan parámetros (player_id, amount)'}
+                return self._json_response({'status': 'error', 'message': 'Faltan parámetros (player_id, amount)'}, 400)
 
             player = request.env['game.player'].sudo().browse(player_id)
             if not player.exists():
                 _logger.error(f"Jugador no encontrado con ID: {player_id}")
-                return {'status': 'error', 'message': 'Jugador no encontrado'}
+                return self._json_response({'status': 'error', 'message': 'Jugador no encontrado'}, 404)
 
             if amount <= 0:
                 _logger.error("El monto debe ser mayor a 0")
-                return {'status': 'error', 'message': 'El monto debe ser mayor a 0'}
+                return self._json_response({'status': 'error', 'message': 'El monto debe ser mayor a 0'}, 400)
 
             if player.coin_balance < amount:
                 _logger.error(f"Saldo insuficiente: {player.coin_balance} < {amount}")
-                return {'status': 'error', 'message': 'Saldo insuficiente'}
+                return self._json_response({'status': 'error', 'message': 'Saldo insuficiente'}, 400)
 
             # Crear la transacción de gasto
             request.env['game.coin.transaction'].sudo().create({
@@ -85,9 +90,8 @@ class GameCoinAPI(http.Controller):
                 'reason': reason
             })
 
-            _logger.info(f"Compra realizada. Nuevo saldo: {player.coin_balance}")
-            return {'status': 'success', 'message': 'Compra realizada', 'new_balance': player.coin_balance}
+            return self._json_response({'status': 'success', 'message': 'Compra realizada', 'new_balance': player.coin_balance})
 
         except Exception as e:
             _logger.error(f"Error usando monedas: {str(e)}", exc_info=True)
-            return {'status': 'error', 'message': 'Error interno del servidor'}
+            return self._json_response({'status': 'error', 'message': 'Error interno del servidor'}, 500)
