@@ -64,7 +64,9 @@ class GamePlayer(models.Model):
 
         try:
             # Obtener la compañía por defecto
-            company = self.env.company  # Esto obtiene la compañía actual
+            company = self.env['res.company'].sudo().search([], limit=1)
+            if not company:
+                raise ValidationError("No se encontró una compañía en Odoo. Configura una antes de continuar.")
 
             # Verificar si el grupo 'base.group_user' existe
             user_group = self.env.ref('base.group_user', raise_if_not_found=False)
