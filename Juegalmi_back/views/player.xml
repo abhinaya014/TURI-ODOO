@@ -6,91 +6,102 @@
          VISTAS PARA GAME.PLAYER
          *********************** -->
 
-    <!-- Vista Kanban Completa de Jugadores -->
-<record id="view_game_player_kanban_full" model="ir.ui.view">
-  <field name="name">game.player.kanban.full</field>
-  <field name="model">game.player</field>
-  <field name="arch" type="xml">
-    <kanban>
-      <field name="name"/>
-      <field name="email"/>
-      <field name="photo"/>
-      <field name="player_id"/>
-      <field name="level"/>
-      <field name="coin_balance"/>
-      <field name="total_matches"/>
-      <field name="total_wins"/>
-      <templates>
-        <t t-name="kanban-box">
-          <div class="oe_kanban_global_click"
-               style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-            <div style="display:flex; align-items:center; margin-bottom:8px;">
-              <div style="margin-right:10px; width:64px; height:64px; overflow:hidden; border-radius:50%; display:flex; align-items:center; justify-content:center; background-color:#f5f5f5;">
-                <t t-if="record.photo.value">
-                    <img t-att-src="'data:image/png;base64,' + record.photo.value"
-                         style="width:64px; height:64px; object-fit:cover;"/>
-                </t>
-                <t t-else="">
-                    <img src="/web/static/img/user_menu_avatar.png"
-                         style="width:40px; height:40px; opacity:0.5;"/>
-                </t>
-              </div>
-              <div>
-                <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
-                <div style="font-size:12px; color:#777;">
-                  ID: <span t-esc="record.player_id.value"/>
+    <!-- Vista Kanban Super Estilizada de Jugadores -->
+    <record id="view_game_player_kanban_full" model="ir.ui.view">
+      <field name="name">game.player.kanban.full</field>
+      <field name="model">game.player</field>
+      <field name="arch" type="xml">
+        <kanban class="oe_kanban_card">
+          <field name="name"/>
+          <field name="email"/>
+          <field name="photo"/>
+          <field name="player_id"/>
+          <field name="level"/>
+          <field name="coin_balance"/>
+          <field name="total_matches"/>
+          <field name="total_wins"/>
+          <templates>
+            <t t-name="kanban-box">
+            <div t-att-data-id="record.id.value" class="oe_kanban_global_click kanban_player_card"
+                style="border-radius:15px; padding:20px; box-shadow:0px 5px 15px rgba(0,0,0,0.15); background:#141e30; color:#ffffff;">
+                
+              <div class="kanban_player_header" style="display:flex; align-items:center; gap:15px;">
+                <div class="kanban_player_avatar" style="width:80px; height:80px; border-radius:50%; overflow:hidden; background:#ffffff;">
+                  <t t-if="record.photo.value">
+                    <img t-att-src="'data:image/png;base64,' + record.photo.value" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"/>
+                  </t>
+                  <t t-else="">
+                    <img src="/web/static/img/user_menu_avatar.png" style="width:100%; height:100%; opacity:0.5;"/>
+                  </t>
+                </div>
+                <div>
+                  <div style="font-size:20px; font-weight:bold; color:#f3a712;" t-esc="record.name.value"/>
+                  <div style="font-size:14px; color:#dddddd;">ID: <span t-esc="record.player_id.value"/></div>
                 </div>
               </div>
+
+              <div class="kanban_player_details" style="margin-top:15px; font-size:15px;">
+                <div>Email: <strong t-esc="record.email.value"/></div>
+                <div>Nivel: <strong t-esc="record.level.value"/></div>
+                <div>Coins: <strong t-esc="record.coin_balance.value"/></div>
+                <div>Matches: <strong t-esc="record.total_matches.value"/></div>
+                <div>Wins: <strong t-esc="record.total_wins.value"/></div>
+              </div>
+
             </div>
-            <div style="font-size:13px; color:#555; margin-bottom:4px;">
-              <span>Email: </span><span t-esc="record.email.value"/>
-            </div>
-            <div style="font-size:13px; color:#555; margin-bottom:4px;">
-              <span>Level: </span><span t-esc="record.level.value"/>
-            </div>
-            <div style="font-size:13px; color:#555; margin-bottom:4px;">
-              <span>Coins: </span><span t-esc="record.coin_balance.value"/>
-            </div>
-            <div style="font-size:12px; color:#999;">
-              <span>Matches: </span><span t-esc="record.total_matches.value"/>
-              <span> | Wins: </span><span t-esc="record.total_wins.value"/>
-            </div>
-          </div>
-        </t>
-      </templates>
-    </kanban>
-  </field>
-</record>
-    <!-- Vista Tree de Jugadores -->
+          </t>
+
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
     <record id="view_game_player_tree" model="ir.ui.view">
       <field name="name">game.player.tree</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree> 
           <field name="name"/>
           <field name="email"/>
           <field name="level"/>
           <field name="coin_balance"/>
           <field name="total_matches"/>
           <field name="total_wins"/>
-        </tree>
+        </tree> 
       </field>
     </record>
 
-    <!-- Vista Form de Jugadores -->
+
+    <!-- Vista Form Totalmente Mejorada -->
     <record id="view_game_player_form" model="ir.ui.view">
       <field name="name">game.player.form</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
-        <form>
+        <form string="Game Player" class="oe_form_modern" style="background:#0f0c29; color:#ffffff; border-radius:15px; padding:20px;">
           <sheet>
+            <div class="oe_title" style="text-align:center;">
+              <h2 style="color:#ffcc00;" t-esc="record.name.value"/>
+              <h4 style="color:#bbbbbb;" t-esc="record.email.value"/>
+            </div>
             <group>
-              <field name="photo" widget="image" class="oe_avatar" options="{'preview_image': 'photo'}"/>
+              <div style="display:flex; gap:20px; align-items:center;">
+                <div style="width:140px; height:140px; overflow:hidden; border-radius:50%; background:#222; display:flex; align-items:center; justify-content:center;">
+                  <t t-if="record.photo.value">
+                    <img t-att-src="'data:image/png;base64,' + record.photo.value" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"/>
+                  </t>
+                  <t t-else="">
+                    <img src="/web/static/img/user_menu_avatar.png" style="width:80px; height:80px; opacity:0.5;"/>
+                  </t>
+                </div>
+                <div>
+                  <field name="photo" widget="image" class="oe_avatar" options="{'preview_image': 'photo'}"/>
+                </div>
+              </div>
             </group>
             <group>
               <field name="name"/>
               <field name="email"/>
-              <field name="password"/>
+              <field name="password" password="True" placeholder="Enter Password"/>
             </group>
             <group>
               <field name="player_id" readonly="1"/>
@@ -102,7 +113,7 @@
               <field name="total_wins" readonly="1"/>
             </group>
             <notebook>
-              <page string="Matches">
+              <page string="Matches" style="background:#1a1a2e;">
                 <field name="match_stats_ids">
                   <tree>
                     <field name="match_id"/>
@@ -112,15 +123,19 @@
                   </tree>
                 </field>
               </page>
+              <page string="Player Stats">
+                <group>
+                  <field name="level"/>
+                  <field name="experience"/>
+                  <field name="last_login" readonly="1"/>
+                  <field name="registration_date" readonly="1"/>
+                </group>
+              </page>
             </notebook>
           </sheet>
         </form>
       </field>
     </record>
-
-
-
-
 
   </data>
 </odoo>
