@@ -19,22 +19,36 @@ class GamePlayer(models.Model):
     experience = fields.Float(string="Experience", default=0)
     last_login = fields.Datetime(string="Last Login")
     registration_date = fields.Datetime(string="Registration Date", default=fields.Datetime.now)
-    player_id = fields.Char(string="Player ID", copy=False, default=lambda self: self.env['ir.sequence'].next_by_code('game.player'))
+    player_id = fields.Char(
+        string="Player ID", 
+        copy=False, 
+        default=lambda self: self.env['ir.sequence'].next_by_code('game.player')
+    )
     active = fields.Boolean(default=True, string="Active")
 
     total_matches = fields.Integer(string="Total Matches", compute="_compute_totals", store=True)
     total_wins = fields.Integer(string="Total Wins", compute="_compute_totals", store=True)
 
-    coin_transaction_ids = fields.One2many('game.coin.transaction', 'player_id', string="Coin Transactions", ondelete='cascade')
+    coin_transaction_ids = fields.One2many(
+        'game.coin.transaction', 'player_id', string="Coin Transactions", ondelete='cascade'
+    )
     coin_balance = fields.Float(string="Coin Balance", compute='_compute_coin_balance', store=True)
 
     owned_skins = fields.Many2many('game.skin', string="Owned Skins")
     match_stats_ids = fields.One2many('game.match.player.stats', 'player_id', string="Match Statistics")
 
     partner_id = fields.Many2one('res.partner', string="Contacto", required=True, readonly=True, ondelete='cascade')
+
     win_rate = fields.Float(string="Win Rate", compute="_compute_win_rate", store=True)
 
+    can_level_up = fields.Boolean(
+        string="Can Level Up",
+        compute="_compute_can_level_up",
+        store=False
+    )
 
+    ### 📌 FUNCIONES COMPUTADAS ###
+    
     @api.depends('coin_transaction_ids.amount')
     def _compute_coin_balance(self):
         for player in self:
@@ -48,7 +62,6 @@ class GamePlayer(models.Model):
             player.total_matches = len(matches)
             player.total_wins = wins
 
-
     @api.depends('total_matches', 'total_wins')
     def _compute_win_rate(self):
         for player in self:
@@ -56,6 +69,26 @@ class GamePlayer(models.Model):
                 player.win_rate = (player.total_wins / player.total_matches) * 100
             else:
                 player.win_rate = 0.0
+
+    @api.depends('experience', 'level')
+    def _compute_can_level_up(self):
+        """Comprueba si el jugador tiene suficiente experiencia para subir de nivel"""
+        for player in self:
+            player.can_level_up = player.experience >= (player.level * 100)
+
+    ### 📌 ACCIONES ###
+    
+    def action_level_up(self):
+        """Sube de nivel al jugador si tiene suficiente experiencia"""
+        for player in self:
+            if player.experience < (player.level * 100):
+                raise ValidationError(f"Necesitas más experiencia para subir de nivel.")
+            
+            player.level += 1
+            player.experience -= (player.level * 100)
+            _logger.info(f"Jugador {player.name} ha subido al nivel {player.level}")
+
+    ### 📌 CREATE Y WRITE ###
 
     @api.model
     def create(self, vals):
