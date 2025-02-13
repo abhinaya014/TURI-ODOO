@@ -12,6 +12,7 @@
       <field name="model">game.player</field>
       <field name="arch" type="xml">
         <kanban class="oe_kanban_card">
+          <field name="id"/>
           <field name="name"/>
           <field name="email"/>
           <field name="photo"/>
