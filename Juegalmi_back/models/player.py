@@ -8,7 +8,7 @@ class GamePlayer(models.Model):
     _name = 'game.player'
     _description = 'Game Player'
 
-    name = fields.Char(required=True, string="Player Name")
+    name = fields.Char(string="Player Name", required=True)
     email = fields.Char(required=True, string="Email", index=True, unique=True)
     password = fields.Char(required=True, string="Password")
     
