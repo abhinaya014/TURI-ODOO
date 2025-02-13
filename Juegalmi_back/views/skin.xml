@@ -6,37 +6,42 @@
    <!-- ***********************
          VISTA KANBAN PARA SKINS
          *********************** -->
-  <record id="view_game_skin_kanban" model="ir.ui.view">
-   <field name="name">game.skin.kanban</field>
-   <field name="model">game.skin</field>
-   <field name="arch" type="xml">
-     <kanban>
-       <field name="name"/>
-       <field name="color"/>
-       <field name="owned_by_players"/>
-       <templates>
-         <t t-name="kanban-box">
-           <div class="oe_kanban_global_click"
-                style="padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:transform 0.2s;">
-             
-             <!-- Mostrar imagen en vez de texto para el color -->
-             <div style="margin-bottom:10px;">
-               <img t-att-src="'/your_module/static/img/color_' + record.color.value + '.png'"
-                    style="width:100px; height:100px; object-fit:cover; border-radius:10px;"/>
-             </div>
-             
-             <div style="font-size:16px; font-weight:bold; color:#fff;" t-esc="record.name.value"/>
-             
-             <div style="margin-top:10px; font-size:13px; color:#fff;">
-               <strong>Jugadores:</strong>
-               <span t-esc="len(record.owned_by_players.value) or 0"/>
-             </div>
-           </div>
-         </t>
-       </templates>
-     </kanban>
-   </field>
- </record>
+<record id="view_game_skin_kanban" model="ir.ui.view">
+  <field name="name">game.skin.kanban</field>
+  <field name="model">game.skin</field>
+  <field name="arch" type="xml">
+    <kanban>
+      <field name="name"/>
+      <field name="color"/>
+      <field name="owned_by_players"/>
+      <templates>
+        <t t-name="kanban-box">
+          <div class="oe_kanban_global_click"
+               style="padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:transform 0.2s;">
+
+            <!-- Mostrar imagen en vez de texto para el color -->
+            <div style="margin-bottom:10px;">
+              <img t-att-src="'/your_module/static/img/color_' + record.color.value + '.png' if record.color.value else '/your_module/static/img/default_color.png'"
+                   style="width:100px; height:100px; object-fit:cover; border-radius:10px;"/>
+            </div>
+
+            <div style="font-size:16px; font-weight:bold; color:#fff;" t-esc="record.name.value"/>
+
+            <div style="margin-top:10px; font-size:13px; color:#fff;">
+              <strong>Jugadores:</strong>
+              <t t-if="record.owned_by_players.value">
+                <t t-esc="record.owned_by_players.value | length"/>
+              </t>
+              <t t-else="">0</t>
+            </div>
+
+          </div>
+        </t>
+      </templates>
+    </kanban>
+  </field>
+</record>
+
 
  <!-- ***********************
          VISTA FORM PARA SKINS
