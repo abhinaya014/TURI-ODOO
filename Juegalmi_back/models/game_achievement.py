@@ -37,18 +37,22 @@ class GameAchievement(models.Model):
         if player.exists() and player.id not in self.player_ids.ids:
             # Crear la transacción de monedas
             if self.reward_coins > 0:
-                self.env['game.coin.transaction'].create({
+                transaction = self.env['game.coin.transaction'].sudo().create({
                     'player_id': player.id,
                     'amount': self.reward_coins,
                     'reason': f'Logro desbloqueado: {self.name}',
                     'date': fields.Datetime.now()
                 })
             # Añadir el jugador a la lista
-            self.write({
-                'player_ids': [(4, player.id, 0)]
-            })
+            if player.id not in self.player_ids.ids:
+                self.write({
+                    'player_ids': [(4, player.id, 0)]
+                })
             return True
-        return False
+        except Exception as e:
+            _logger.error(f"Error al otorgar logro: {str(e)}")
+            return False
+    return False
 
     def check_achievement_for_player(self, player_id):
         player = self.env['game.player'].browse(player_id)
