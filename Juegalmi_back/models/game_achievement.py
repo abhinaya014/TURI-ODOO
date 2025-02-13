@@ -32,6 +32,24 @@ class GameAchievement(models.Model):
     player_ids = fields.Many2many('game.player', string="Players who achieved")
     active = fields.Boolean(default=True)
 
+    def award_achievement(self, player_id):
+        player = self.env['game.player'].browse(player_id)
+        if player.exists() and player.id not in self.player_ids.ids:
+            # Crear la transacción de monedas
+            if self.reward_coins > 0:
+                self.env['game.coin.transaction'].create({
+                    'player_id': player.id,
+                    'amount': self.reward_coins,
+                    'reason': f'Logro desbloqueado: {self.name}',
+                    'date': fields.Datetime.now()
+                })
+            # Añadir el jugador a la lista
+            self.write({
+                'player_ids': [(4, player.id, 0)]
+            })
+            return True
+        return False
+
     def check_achievement_for_player(self, player_id):
         player = self.env['game.player'].browse(player_id)
         if not player.exists() or player.id in self.player_ids.ids:
@@ -51,12 +69,5 @@ class GameAchievement(models.Model):
             achieved = len(player.owned_skins) >= self.threshold
 
         if achieved:
-            self.player_ids = [(4, player.id)]
-            if self.reward_coins > 0:
-                self.env['game.coin.transaction'].create({
-                    'player_id': player.id,
-                    'amount': self.reward_coins,
-                    'reason': f'Achievement Reward: {self.name}'
-                })
-            return True
+            return self.award_achievement(player_id)
         return False

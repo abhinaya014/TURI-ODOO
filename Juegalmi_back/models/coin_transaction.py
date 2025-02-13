@@ -41,22 +41,3 @@ class GameCoinTransaction(models.Model):
                 record.player_balance = record.player_id.coin_balance
             else:
                 record.player_balance = 0.0
-
-
-    def award_achievement(self, player_id):
-    player = self.env['game.player'].browse(player_id)
-    if player.exists() and player.id not in self.player_ids.ids:
-        # Crear la transacción de monedas
-        if self.reward_coins > 0:
-            self.env['game.coin.transaction'].create({
-                'player_id': player.id,
-                'amount': self.reward_coins,
-                'reason': f'Logro desbloqueado: {self.name}',
-                'date': fields.Datetime.now()
-            })
-        # Añadir el jugador a la lista de jugadores que han conseguido el logro
-        self.write({
-            'player_ids': [(4, player.id, 0)]
-        })
-        return True
-    return False
