@@ -1,0 +1,43 @@
+.o_player_kanban {
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: none !important;
+    border-radius: 15px !important;
+    overflow: hidden;
+}
+
+.o_player_kanban:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.o_player_kanban .o_kanban_image_fill_left {
+    background-color: rgba(0,0,0,0.2);
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.o_player_kanban .o_kanban_record_title {
+    color: #f3a712;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.o_player_kanban .badge {
+    transition: all 0.3s ease;
+}
+
+.o_player_kanban .badge:hover {
+    transform: scale(1.1);
+}
+
+.player_progress .progress {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.player_progress .progress-bar {
+    transition: width 1s ease-in-out;
+    background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+}
