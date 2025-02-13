@@ -11,6 +11,8 @@
         'views/match.xml',
         'views/menu.xml',
         'views/transic.xml',
+        'data/game_skins.xml',
+
     ],
     'installable': True,
     'application': True,
