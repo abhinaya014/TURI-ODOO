@@ -12,7 +12,7 @@ class GamePlayer(models.Model):
     email = fields.Char(required=True)
     password = fields.Char(required=True)
 
-    # ✅ Cambiamos Binary a Image para que funcione en todas las vistas
+    # 🔹 Usamos Image y nos aseguramos de que se almacena correctamente
     photo = fields.Image(string="Photo", max_width=512, max_height=512, attachment=True, store=False)
 
     level = fields.Integer(string="Level", default=1)
@@ -51,7 +51,7 @@ class GamePlayer(models.Model):
         if 'registration_date' not in vals:
             vals['registration_date'] = fields.Datetime.now()
 
-        # Guardar la imagen también en res.partner
+        # 🔹 Guardar la imagen también en res.partner
         partner = self.env['res.partner'].sudo().search([('email', '=', vals.get('email'))], limit=1)
         if not partner:
             partner_vals = {
@@ -65,37 +65,7 @@ class GamePlayer(models.Model):
         vals['partner_id'] = partner.id
         player = super(GamePlayer, self).create(vals)
 
-        try:
-            # Obtener la compañía por defecto
-            company = self.env['res.company'].sudo().search([], limit=1)
-            if not company:
-                raise ValidationError("No se encontró una compañía en Odoo. Configura una antes de continuar.")
-
-            # Verificar si el grupo 'base.group_user' existe
-            user_group = self.env.ref('base.group_user', raise_if_not_found=False)
-            if not user_group:
-                raise ValidationError("El grupo 'base.group_user' no está disponible en Odoo.")
-
-            # Verificar si ya existe un usuario con el mismo email
-            existing_user = self.env['res.users'].sudo().search([('login', '=', player.email)], limit=1)
-            if not existing_user:
-                user_vals = {
-                    'name': player.name,
-                    'login': player.email,
-                    'partner_id': partner.id,
-                    'password': vals.get('password'),
-                    'groups_id': [(6, 0, [user_group.id])],  # Grupo de usuarios normales
-                    'company_id': company.id,  # Asignar compañía por defecto
-                    'company_ids': [(6, 0, [company.id])],  # Asegurar que tenga acceso a la compañía
-                }
-                self.env['res.users'].sudo().create(user_vals)
-
-        except Exception as e:
-            _logger.error(f"Error al crear usuario en res.users: {e}")
-
-
-
-        # Asegurar que la imagen se guarde en res.partner
+        # 🔹 Asegurar que la imagen se guarda en res.partner
         if 'photo' in vals and vals['photo']:
             partner.sudo().write({'image_1920': vals['photo']})
 
