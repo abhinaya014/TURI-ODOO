@@ -73,11 +73,11 @@
       <field name="name">game.player.form</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
-        <form string="Game Player" class="oe_form_modern" style="background:#0f0c29; color:#ffffff; border-radius:15px; padding:20px;">
+        <form string="Game Player" class="oe_form_modern" style="background:#0f0c29; color:#0f0c29; border-radius:15px; padding:20px;">
           <sheet>
             <div class="oe_title" style="text-align:center;">
               <h2 style="color:#ffcc00;" t-esc="name"/> <!-- Cambio aquí -->
-              <h4 style="color:#bbbbbb;" t-esc="email"/> <!-- Cambio aquí -->
+              <h4 style="color:#0f0c29;" t-esc="email"/> <!-- Cambio aquí -->
             </div>
             <group>
               <div style="display:flex; gap:20px; align-items:center;">
