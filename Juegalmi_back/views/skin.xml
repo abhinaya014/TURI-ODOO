@@ -21,7 +21,7 @@
 
             <!-- Mostrar imagen en vez de texto para el color -->
             <div style="margin-bottom:10px;">
-              <img t-att-src="'/your_module/static/img/color_' + record.color.value + '.png' if record.color.value else '/your_module/static/img/default_color.png'"
+              <img t-att-src="'/your_module/static/img/color_' + (record.color.value or 'default') + '.png'"
                    style="width:100px; height:100px; object-fit:cover; border-radius:10px;"/>
             </div>
 
@@ -29,10 +29,7 @@
 
             <div style="margin-top:10px; font-size:13px; color:#fff;">
               <strong>Jugadores:</strong>
-              <t t-if="record.owned_by_players.value">
-                <t t-esc="record.owned_by_players.value | length"/>
-              </t>
-              <t t-else="">0</t>
+              <span t-esc="record.owned_by_players.value and record.owned_by_players.value | count or 0"/>
             </div>
 
           </div>
