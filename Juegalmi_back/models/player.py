@@ -8,7 +8,7 @@ class GamePlayer(models.Model):
     _name = 'game.player'
     _description = 'Game Player'
 
-    name = fields.Char(string="Player Name", required=True)
+    name = fields.Char(required=True, string="Player Name")
     email = fields.Char(required=True, string="Email", index=True, unique=True)
     password = fields.Char(required=True, string="Password")
     
@@ -18,7 +18,11 @@ class GamePlayer(models.Model):
     experience = fields.Float(string="Experience", default=0)
     last_login = fields.Datetime(string="Last Login")
     registration_date = fields.Datetime(string="Registration Date", default=fields.Datetime.now)
-    player_id = fields.Char(string="Player ID", copy=False, default=lambda self: self.env['ir.sequence'].next_by_code('game.player'))
+    
+    player_id = fields.Char(
+        string="Player ID", copy=False, readonly=True, default=lambda self: self._generate_player_id()
+    )
+    
     active = fields.Boolean(default=True, string="Active")
 
     total_matches = fields.Integer(string="Total Matches", compute="_compute_totals", store=True)
@@ -33,11 +37,16 @@ class GamePlayer(models.Model):
     partner_id = fields.Many2one('res.partner', string="Contact", required=True, readonly=True, ondelete='cascade')
     win_rate = fields.Float(string="Win Rate", compute="_compute_win_rate", store=True)
 
+    def _generate_player_id(self):
+        """Genera un Player ID usando ir.sequence"""
+        sequence = self.env['ir.sequence'].sudo().search([('code', '=', 'game.player')], limit=1)
+        return sequence.next_by_id() if sequence else False
+
     @api.depends('total_matches', 'total_wins')
     def _compute_win_rate(self):
+        """Evita división por 0 y calcula el porcentaje de victorias"""
         for player in self:
-            player.win_rate = (player.total_wins / player.total_matches * 100) if player.total_matches else 0
-
+            player.win_rate = (player.total_wins * 100 / player.total_matches) if player.total_matches > 0 else 0
 
     @api.depends('coin_transaction_ids.amount')
     def _compute_coin_balance(self):
@@ -49,7 +58,7 @@ class GamePlayer(models.Model):
         for player in self:
             matches = self.env['game.match'].search([('player_stats_ids.player_id', '=', player.id)])
             player.total_matches = len(matches)
-            player.total_wins = sum(1 for match in matches if match.winner_id == player)
+            player.total_wins = len(matches.filtered(lambda m: m.winner_id == player))
 
     @api.model
     def create(self, vals):
@@ -61,9 +70,10 @@ class GamePlayer(models.Model):
         if not existing_partner:
             partner_vals = {
                 'name': vals.get('name'),
-                'email': vals.get('email'),
-                'image_1920': vals.get('photo') if vals.get('photo') else False
+                'email': vals.get('email')
             }
+            if vals.get('photo'):
+                partner_vals['image_1920'] = vals['photo']
             existing_partner = self.env['res.partner'].sudo().create(partner_vals)
 
         vals['partner_id'] = existing_partner.id
@@ -89,7 +99,7 @@ class GamePlayer(models.Model):
                 partner_vals['name'] = vals['name']
             if 'email' in vals:
                 partner_vals['email'] = vals['email']
-            if 'photo' in vals:
+            if 'photo' in vals and vals['photo']:
                 partner_vals['image_1920'] = vals['photo']
             
             if partner_vals:
