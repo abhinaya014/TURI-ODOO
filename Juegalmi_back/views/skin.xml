@@ -20,8 +20,14 @@
 
             <!-- Imagen del skin (Grande) -->
             <div style="margin-bottom:15px;">
-              <img t-att-src="'data:image/png;base64,' + (record.image.value or '')"
-                   style="width:200px; height:200px; object-fit:cover; border-radius:10px;"/>
+              <t t-if="record.image.value">
+                <img t-att-src="'data:image/png;base64,' + record.image.value"
+                     style="width:200px; height:200px; object-fit:cover; border-radius:10px;"/>
+              </t>
+              <t t-else="">
+                <img src="/your_module/static/img/default_skin.png"
+                     style="width:200px; height:200px; object-fit:cover; border-radius:10px; opacity:0.5;"/>
+              </t>
             </div>
 
             <!-- Nombre del skin -->

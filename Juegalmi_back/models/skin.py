@@ -11,7 +11,7 @@ class GameSkin(models.Model):
 
     description = fields.Text()
 
-    # Ahora este campo reemplaza la selección de colores y permite subir imágenes personalizadas
+    # Campo imagen para almacenar la imagen en base64
     image = fields.Image(string="Skin Image", help="Imagen personalizada del skin")
 
     owned_by_players = fields.Many2many(
@@ -19,7 +19,6 @@ class GameSkin(models.Model):
         string="Jugadores que poseen este skin"
     )
 
-    # Contador automático de jugadores con este skin
     owned_by_players_count = fields.Integer(
         string="Número de jugadores",
         compute="_compute_owned_by_players_count",
