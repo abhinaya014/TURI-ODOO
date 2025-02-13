@@ -31,6 +31,13 @@ class GamePlayer(models.Model):
     match_stats_ids = fields.One2many('game.match.player.stats', 'player_id', string="Match Statistics")
 
     partner_id = fields.Many2one('res.partner', string="Contact", required=True, readonly=True, ondelete='cascade')
+    win_rate = fields.Float(string="Win Rate", compute="_compute_win_rate", store=True)
+
+    @api.depends('total_matches', 'total_wins')
+    def _compute_win_rate(self):
+        for player in self:
+            player.win_rate = (player.total_wins / player.total_matches * 100) if player.total_matches else 0
+
 
     @api.depends('coin_transaction_ids.amount')
     def _compute_coin_balance(self):
