@@ -11,11 +11,11 @@ class GameSkin(models.Model):
     description = fields.Text()
     image_url = fields.Selection([
         ('Juegalmi_back\static\img\skin_red.png', 'Red Skin'),
-        ('/juegalmi_back\static\img\skin_blue.png', 'Blue Skin'),
-        ('/juegalmi_back\static\img\skin_green.png', 'Green Skin'),
-        ('/juegalmi_back\static\img\skin_yellow.png', 'Yellow Skin'),
-        ('/juegalmi_back\static\img\skin_pink.png', 'Pink Skin'),
-        ('/juegalmi_back\static\img\skin_orange.png', 'Orange Skin'),
+        ('Juegalmi_back\static\img\skin_blue.png', 'Blue Skin'),
+        ('juegalmi_back\static\img\skin_green.png', 'Green Skin'),
+        ('juegalmi_back\static\img\skin_yellow.png', 'Yellow Skin'),
+        ('juegalmi_back\static\img\skin_pink.png', 'Pink Skin'),
+        ('juegalmi_back\static\img\skin_orange.png', 'Orange Skin'),
     ], string="Skin Image", required=True)
     owned_by_players = fields.Many2many(
         'game.player',
