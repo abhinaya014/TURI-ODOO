@@ -25,24 +25,24 @@
               <div class="oe_kanban_global_click kanban_player_card" style="border-radius:15px; padding:20px; box-shadow:0px 5px 15px rgba(0,0,0,0.15); background:#141e30; color:#ffffff;">
                 <div class="kanban_player_header" style="display:flex; align-items:center; gap:15px;">
                   <div class="kanban_player_avatar" style="width:80px; height:80px; border-radius:50%; overflow:hidden; background:#ffffff;">
-                    <t t-if="record.photo">
-                      <img t-att-src="'data:image/png;base64,' + record.photo" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"/>
+                    <t t-if="record.photo.value">
+                      <img t-att-src="'data:image/png;base64,' + record.photo.value" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"/>
                     </t>
                     <t t-else="">
                       <img src="/web/static/img/user_menu_avatar.png" style="width:100%; height:100%; opacity:0.5;"/>
                     </t>
                   </div>
                   <div>
-                    <div style="font-size:20px; font-weight:bold; color:#f3a712;" t-esc="record.name"/>
-                    <div style="font-size:14px; color:#dddddd;">ID: <span t-esc="record.player_id"/></div>
+                    <div style="font-size:20px; font-weight:bold; color:#f3a712;" t-esc="record.name.value"/>
+                    <div style="font-size:14px; color:#dddddd;">ID: <span t-esc="record.player_id.value"/></div>
                   </div>
                 </div>
                 <div class="kanban_player_details" style="margin-top:15px; font-size:15px;">
-                  <div>Email: <strong t-esc="record.email"/></div>
-                  <div>Nivel: <strong t-esc="record.level"/></div>
-                  <div>Coins: <strong t-esc="record.coin_balance"/></div>
-                  <div>Matches: <strong t-esc="record.total_matches"/></div>
-                  <div>Wins: <strong t-esc="record.total_wins"/></div>
+                  <div>Email: <strong t-esc="record.email.value"/></div>
+                  <div>Nivel: <strong t-esc="record.level.value"/></div>
+                  <div>Coins: <strong t-esc="record.coin_balance.value"/></div>
+                  <div>Matches: <strong t-esc="record.total_matches.value"/></div>
+                  <div>Wins: <strong t-esc="record.total_wins.value"/></div>
                 </div>
               </div>
             </t>
@@ -51,20 +51,22 @@
       </field>
     </record>
 
+        <record id="view_game_player_tree" model="ir.ui.view">
     <record id="view_game_player_tree" model="ir.ui.view">
-      <field name="name">game.player.tree</field>
-      <field name="model">game.player</field>
-      <field name="arch" type="xml">
-        <tree> 
-          <field name="name"/>
-          <field name="email"/>
-          <field name="level"/>
-          <field name="coin_balance"/>
-          <field name="total_matches"/>
-          <field name="total_wins"/>
-        </tree> 
-      </field>
-    </record>
+    <field name="name">game.player.tree</field>
+    <field name="model">game.player</field>
+    <field name="arch" type="xml">
+      <tree> 
+        <field name="name"/>
+        <field name="email"/>
+        <field name="level"/>
+        <field name="coin_balance"/>
+        <field name="total_matches"/>
+        <field name="total_wins"/>
+      </tree> 
+    </field>
+  </record>
+
 
     <!-- Vista Form Totalmente Mejorada -->
     <record id="view_game_player_form" model="ir.ui.view">
@@ -74,14 +76,14 @@
         <form string="Game Player" class="oe_form_modern" style="background:#0f0c29; color:#ffffff; border-radius:15px; padding:20px;">
           <sheet>
             <div class="oe_title" style="text-align:center;">
-              <h2 style="color:#ffcc00;" t-esc="record.name"/>
-              <h4 style="color:#bbbbbb;" t-esc="record.email"/>
+              <h2 style="color:#ffcc00;" t-esc="record.name.value"/>
+              <h4 style="color:#bbbbbb;" t-esc="record.email.value"/>
             </div>
             <group>
               <div style="display:flex; gap:20px; align-items:center;">
                 <div style="width:140px; height:140px; overflow:hidden; border-radius:50%; background:#222; display:flex; align-items:center; justify-content:center;">
-                  <t t-if="record.photo">
-                    <img t-att-src="'data:image/png;base64,' + record.photo" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"/>
+                  <t t-if="record.photo.value">
+                    <img t-att-src="'data:image/png;base64,' + record.photo.value" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"/>
                   </t>
                   <t t-else="">
                     <img src="/web/static/img/user_menu_avatar.png" style="width:80px; height:80px; opacity:0.5;"/>
