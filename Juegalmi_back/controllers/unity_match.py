@@ -33,3 +33,32 @@ class GameAPIController(http.Controller):
 
         return {'status': 'success', 'matches': match_list}
 
+        @http.route('/game_api/achievements/check/<int:player_id>', type='http', auth='public', methods=['POST'], csrf=False)
+        def check_achievements(self, player_id):
+            try:
+                player = request.env['game.player'].sudo().browse(player_id)
+                if not player.exists():
+                    return self._json_response({'status': 'error', 'message': 'Player not found'}, 404)
+
+                achievements = request.env['game.achievement'].sudo().search([])
+                new_achievements = []
+
+                for achievement in achievements:
+                    if achievement.check_achievement_for_player(player_id):
+                        new_achievements.append({
+                            'id': achievement.id,
+                            'name': achievement.name,
+                            'description': achievement.description,
+                            'points': achievement.points,
+                            'reward_coins': achievement.reward_coins
+                        })
+
+                return self._json_response({
+                    'status': 'success',
+                    'new_achievements': new_achievements
+                })
+
+            except Exception as e:
+                _logger.error(f"Error checking achievements: {e}")
+                return self._json_response({'status': 'error', 'message': 'Error interno del servidor'}, 500)
+

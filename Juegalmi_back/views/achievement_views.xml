@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista Kanban -->
+        <record id="view_game_achievement_kanban" model="ir.ui.view">
+            <field name="name">game.achievement.kanban</field>
+            <field name="model">game.achievement</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="name"/>
+                    <field name="points"/>
+                    <field name="rarity"/>
+                    <field name="achievement_type"/>
+                    <field name="threshold"/>
+                    <field name="reward_coins"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click" t-attf-style="
+                                background: #{record.rarity.raw_value == 'legendary' ? 'linear-gradient(135deg, #ff4e50 0%, #f9d423 100%)' :
+                                           record.rarity.raw_value == 'epic' ? 'linear-gradient(135deg, #9733ee 0%, #da22ff 100%)' :
+                                           record.rarity.raw_value == 'rare' ? 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)' :
+                                           'linear-gradient(135deg, #134e5e 0%, #71b280 100%)'};
+                                border-radius: 15px;
+                                padding: 20px;
+                                margin-bottom: 12px;
+                                box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                
+                                <div class="oe_kanban_details" style="color: white;">
+                                    <div>
+                                        <strong style="font-size: 1.2em;"><field name="name"/></strong>
+                                    </div>
+                                    <div style="margin-top: 8px;">
+                                        <field name="achievement_type"/>
+                                    </div>
+                                    <div style="margin-top: 8px;">
+                                        <span class="badge badge-pill badge-light">
+                                            <field name="points"/> Points
+                                        </span>
+                                        <t t-if="record.reward_coins.raw_value > 0">
+                                            <span class="badge badge-pill badge-warning ml-2">
+                                                <field name="reward_coins"/> 🪙
+                                            </span>
+                                        </t>
+                                    </div>
+                                    <div class="text-right" style="margin-top: 10px;">
+                                        <span t-attf-class="badge badge-pill badge-#{record.rarity.raw_value == 'legendary' ? 'danger' :
+                                                                                    record.rarity.raw_value == 'epic' ? 'primary' :
+                                                                                    record.rarity.raw_value == 'rare' ? 'info' : 'success'}">
+                                            <field name="rarity"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Vista Form -->
+        <record id="view_game_achievement_form" model="ir.ui.view">
+            <field name="name">game.achievement.form</field>
+            <field name="model">game.achievement</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Achievement Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="achievement_type"/>
+                                <field name="threshold"/>
+                                <field name="rarity" widget="badge"/>
+                            </group>
+                            <group>
+                                <field name="points"/>
+                                <field name="reward_coins"/>
+                                <field name="sequence"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Description">
+                                <field name="description" placeholder="Describe how to achieve this..."/>
+                            </page>
+                            <page string="Players">
+                                <field name="player_ids" widget="many2many_tags"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista Tree -->
+        <record id="view_game_achievement_tree" model="ir.ui.view">
+            <field name="name">game.achievement.tree</field>
+            <field name="model">game.achievement</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="achievement_type"/>
+                    <field name="threshold"/>
+                    <field name="points"/>
+                    <field name="reward_coins"/>
+                    <field name="rarity"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Acción -->
+        <record id="action_game_achievement" model="ir.actions.act_window">
+            <field name="name">🏆 Achievements</field>
+            <field name="res_model">game.achievement</field>
+            <field name="view_mode">kanban,tree,form</field>
+        </record>
+
+        <!-- Menú -->
+        <menuitem id="menu_game_achievements"
+                  name="🏆 Achievements"
+                  parent="menu_game_api_root"
+                  action="action_game_achievement"
+                  sequence="5"/>
+    </data>
+</odoo>

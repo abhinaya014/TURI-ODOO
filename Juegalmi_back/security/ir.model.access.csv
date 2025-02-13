@@ -4,3 +4,4 @@ access_game_skin_admin,access_game_skin,model_game_skin,base.group_user,1,1,1,1
 access_game_match_admin,access_game_match,model_game_match,base.group_user,1,1,1,0
 access_game_coin_transaction_admin,access_game_coin_transaction,model_game_coin_transaction,base.group_system,1,1,1,1
 access_game_match_player_stats,access_game_match_player_stats,model_game_match_player_stats,base.group_user,1,1,1,0
+access_game_achievement,access.game.achievement,model_game_achievement,base.group_user,1,1,1,1
