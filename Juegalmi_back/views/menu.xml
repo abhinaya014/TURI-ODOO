@@ -3,46 +3,47 @@
   <data>
 
     <!-- ***********************
-         MENÚs Y ACCIONES
+         MENÚs Y ACCIONES MEJORADOS
          *********************** -->
 
-    <!-- Menú Principal -->
-    <menuitem id="menu_game_api_root" name="Juegalmi Turi" sequence="10"/>
+    <!-- Menú Principal con Estilo Moderno -->
+    <menuitem id="menu_game_api_root" name="🌌 Juegalmi Universe" sequence="10"/>
 
     <!-- Menú y Acción para Players -->
-    <menuitem id="menu_game_api_players" name="Players" parent="menu_game_api_root" sequence="1"/>
+    <menuitem id="menu_game_api_players" name="🎮 Players" parent="menu_game_api_root" sequence="1"/>
     <record id="action_game_player" model="ir.actions.act_window">
-      <field name="name">Jugadores</field>
+      <field name="name">🧑‍🚀 Jugadores</field>
       <field name="res_model">game.player</field>
       <field name="view_mode">kanban,tree,form</field>
     </record>
-    <menuitem id="menu_game_api_players_list" name="Players List" parent="menu_game_api_players" action="action_game_player" sequence="1"/>
+    <menuitem id="menu_game_api_players_list" name="📋 Players List" parent="menu_game_api_players" action="action_game_player" sequence="1"/>
 
     <!-- Menú y Acción para Skins -->
-      <menuitem id="menu_game_api_skins" name="Skins" parent="menu_game_api_root" sequence="2"/>
+    <menuitem id="menu_game_api_skins" name="🎭 Skins" parent="menu_game_api_root" sequence="2"/>
     <record id="action_game_skin" model="ir.actions.act_window">
-      <field name="name">Game Skins</field>
+      <field name="name">🎨 Game Skins</field>
       <field name="res_model">game.skin</field>
       <field name="view_mode">kanban,tree,form</field>
     </record>
-    <menuitem id="menu_game_api_skins_list" name="Skins List" parent="menu_game_api_skins" action="action_game_skin" sequence="1"/>
+    <menuitem id="menu_game_api_skins_list" name="✨ Skins List" parent="menu_game_api_skins" action="action_game_skin" sequence="1"/>
 
     <!-- Menú y Acción para Matches -->
-    <menuitem id="menu_game_api_matches" name="Matches" parent="menu_game_api_root" sequence="3"/>
+    <menuitem id="menu_game_api_matches" name="🏆 Matches" parent="menu_game_api_root" sequence="3"/>
     <record id="action_game_match" model="ir.actions.act_window">
-      <field name="name">Game Matches</field>
+      <field name="name">⚔️ Game Matches</field>
       <field name="res_model">game.match</field>
       <field name="view_mode">kanban,tree,form</field>
     </record>
-    <menuitem id="menu_game_api_matches_list" name="Matches List" parent="menu_game_api_matches" action="action_game_match" sequence="1"/>
+    <menuitem id="menu_game_api_matches_list" name="🔥 Matches List" parent="menu_game_api_matches" action="action_game_match" sequence="1"/>
 
     <!-- Menú y Acción para Transacciones de Monedas -->
-    <menuitem id="menu_game_api_transactions" name="Transactions" parent="menu_game_api_root" sequence="4"/>
+    <menuitem id="menu_game_api_transactions" name="💰 Transactions" parent="menu_game_api_root" sequence="4"/>
     <record id="action_game_transaction" model="ir.actions.act_window">
-      <field name="name">Coin Transactions</field>
+      <field name="name">💵 Coin Transactions</field>
       <field name="res_model">game.coin.transaction</field>
       <field name="view_mode">kanban,tree,form</field>
     </record>
-    <menuitem id="menu_game_api_transactions_list" name="Transactions List" parent="menu_game_api_transactions" action="action_game_transaction" sequence="1"/>
+    <menuitem id="menu_game_api_transactions_list" name="📜 Transactions List" parent="menu_game_api_transactions" action="action_game_transaction" sequence="1"/>
+
   </data>
 </odoo>
