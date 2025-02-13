@@ -8,24 +8,18 @@ class GameSkin(models.Model):
     type = fields.Selection([
         ('character', 'Personaje'),
     ], string="Type", default='character', required=True)
-    
+
     description = fields.Text()
 
-    # Nuevo: Imagen del skin
-    image = fields.Image(string="Skin Image", help="Imagen del skin en el juego")
-
-    # Si quieres usar imágenes predefinidas en /static/img/
-    color_image = fields.Char(
-        string="Color Image Path",
-        help="Ruta de la imagen de color en /static/img/"
-    )
+    # Ahora este campo reemplaza la selección de colores y permite subir imágenes personalizadas
+    image = fields.Image(string="Skin Image", help="Imagen personalizada del skin")
 
     owned_by_players = fields.Many2many(
         'game.player',
         string="Jugadores que poseen este skin"
     )
 
-    # Campo computado para contar jugadores que tienen el skin
+    # Contador automático de jugadores con este skin
     owned_by_players_count = fields.Integer(
         string="Número de jugadores",
         compute="_compute_owned_by_players_count",
