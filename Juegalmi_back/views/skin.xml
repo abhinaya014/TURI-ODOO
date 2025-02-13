@@ -2,56 +2,59 @@
 <odoo>
   <data>
 
-
-   <!-- ***********************
+    <!-- ***********************
          VISTA KANBAN PARA SKINS
          *********************** -->
-<record id="view_game_skin_kanban" model="ir.ui.view">
-  <field name="name">game.skin.kanban</field>
-  <field name="model">game.skin</field>
-  <field name="arch" type="xml">
-    <kanban>
-      <field name="name"/>
-      <field name="image"/>
-      <field name="owned_by_players"/>
-      <templates>
-        <t t-name="kanban-box">
-          <div class="oe_kanban_global_click"
-               style="padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:transform 0.2s;">
+    <record id="view_game_skin_kanban" model="ir.ui.view">
+      <field name="name">game.skin.kanban</field>
+      <field name="model">game.skin</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="name"/>
+          <field name="image"/>
+          <field name="owned_by_players"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click"
+                   style="padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:transform 0.2s; background:#1e1e1e; color:white;">
 
-            <!-- Mostrar imagen del skin -->
-            <div style="margin-bottom:10px;">
-              <img t-att-src="record.image.value"
-                   style="width:100px; height:100px; object-fit:cover; border-radius:10px;"/>
-            </div>
+                <!-- Mostrar imagen del skin -->
+                <div style="margin-bottom:10px;">
+                  <img t-att-src="record.image.value or '/juegalmi_back/static/img/default_skin.png'"
+                       style="width:100px; height:100px; object-fit:cover; border-radius:10px;"/>
+                </div>
 
-            <div style="font-size:16px; font-weight:bold; color:#fff;" t-esc="record.name.value"/>
+                <!-- Nombre del skin -->
+                <div style="font-size:16px; font-weight:bold;" t-esc="record.name.value"/>
 
-            <div style="margin-top:10px; font-size:13px; color:#fff;">
-              <strong>Jugadores:</strong>
-              <span t-esc="record.owned_by_players.value and record.owned_by_players.value | count or 0"/>
-            </div>
+                <!-- Cantidad de jugadores que tienen este skin -->
+                <div style="margin-top:10px; font-size:13px;">
+                  <strong>Jugadores:</strong>
+                  <t t-if="record.owned_by_players.value">
+                    <span t-esc="record.owned_by_players.value | count"/>
+                  </t>
+                  <t t-else="">0</t>
+                </div>
 
-          </div>
-        </t>
-      </templates>
-    </kanban>
-  </field>
-</record>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
 
-
- <!-- ***********************
+    <!-- ***********************
          VISTA FORM PARA SKINS
          *********************** -->
     <record id="view_game_skin_form" model="ir.ui.view">
       <field name="name">game.skin.form</field>
       <field name="model">game.skin</field>
       <field name="arch" type="xml">
-        <form>
+        <form string="Game Skin">
           <sheet>
             <group>
               <field name="name"/>
-              <field name="color"/>
+              <field name="image" widget="image"/>
             </group>
             <group>
               <field name="owned_by_players" widget="many2many_tags"/>
@@ -60,7 +63,6 @@
         </form>
       </field>
     </record>
-
 
   </data>
 </odoo>
