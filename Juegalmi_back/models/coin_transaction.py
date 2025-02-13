@@ -1,14 +1,15 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 class GameCoinTransaction(models.Model):
     _name = 'game.coin.transaction'
     _description = 'Coin Transaction for a Player'
+    _order = 'date desc'
 
     player_id = fields.Many2one(
         'game.player', 
         string="Jugador", 
         required=True, 
-        ondelete='cascade'  # Permitir eliminar automáticamente si se borra el jugador
+        ondelete='cascade'
     )
 
     amount = fields.Float(
@@ -27,8 +28,16 @@ class GameCoinTransaction(models.Model):
         default=fields.Datetime.now
     )
 
-    # NUEVO CAMPO: Imagen de la moneda
-    coin_image = fields.Binary(
-        string="Coin Image", 
-        help="Optional image to display the coin"
+    player_balance = fields.Float(
+        string="Balance Actual",
+        compute='_compute_player_balance',
+        store=False
     )
+
+    @api.depends('player_id')
+    def _compute_player_balance(self):
+        for record in self:
+            if record.player_id:
+                record.player_balance = record.player_id.coin_balance
+            else:
+                record.player_balance = 0.0
