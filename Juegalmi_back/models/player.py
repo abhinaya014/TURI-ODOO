@@ -26,10 +26,7 @@ class GamePlayer(models.Model):
     coin_balance = fields.Float(string="Coin Balance", compute='_compute_coin_balance', store=True)
 
     owned_skins = fields.Many2many('game.skin', string="Owned Skins")
-
-
     match_stats_ids = fields.One2many('game.match.player.stats', 'player_id', string="Match Statistics")
-
     partner_id = fields.Many2one('res.partner', string="Contacto", required=True, readonly=True, ondelete='cascade')
 
     @api.depends('coin_transaction_ids.amount')
@@ -46,13 +43,13 @@ class GamePlayer(models.Model):
             player.total_wins = wins
 
     def action_view_stats(self):
-    return {
-        'name': 'Estadísticas del Jugador',
-        'type': 'ir.actions.act_window',
-        'res_model': 'game.match.player.stats',
-        'view_mode': 'tree,form',
-        'domain': [('player_id', '=', self.id)],
-    }
+        return {
+            'name': 'Estadísticas del Jugador',
+            'type': 'ir.actions.act_window',
+            'res_model': 'game.match.player.stats',
+            'view_mode': 'tree,form',
+            'domain': [('player_id', '=', self.id)],
+        }
 
     @api.model
     def create(self, vals):
@@ -71,21 +68,18 @@ class GamePlayer(models.Model):
                 partner_vals['image_1920'] = vals['photo']
             partner = self.env['res.partner'].sudo().create(partner_vals)
 
-        vals['partner_id'] = partner.id  # Asignamos el partner_id antes de crear el jugador
+        vals['partner_id'] = partner.id
         player = super(GamePlayer, self).create(vals)
 
         try:
-            # Obtener la compañía por defecto
             company = self.env['res.company'].sudo().search([], limit=1)
             if not company:
                 raise ValidationError("No se encontró una compañía en Odoo. Configura una antes de continuar.")
 
-            # Verificar si el grupo 'base.group_user' existe
             user_group = self.env.ref('base.group_user', raise_if_not_found=False)
             if not user_group:
                 raise ValidationError("El grupo 'base.group_user' no está disponible en Odoo.")
 
-            # Verificar si ya existe un usuario con el mismo email
             existing_user = self.env['res.users'].sudo().search([('login', '=', player.email)], limit=1)
             if not existing_user:
                 user_vals = {
@@ -93,9 +87,9 @@ class GamePlayer(models.Model):
                     'login': player.email,
                     'partner_id': partner.id,
                     'password': vals.get('password'),
-                    'groups_id': [(6, 0, [user_group.id])],  # Grupo de usuarios normales
-                    'company_id': company.id,  # Asignar compañía por defecto
-                    'company_ids': [(6, 0, [company.id])],  # Asegurar que tenga acceso a la compañía
+                    'groups_id': [(6, 0, [user_group.id])],
+                    'company_id': company.id,
+                    'company_ids': [(6, 0, [company.id])],
                 }
                 self.env['res.users'].sudo().create(user_vals)
 
@@ -105,7 +99,6 @@ class GamePlayer(models.Model):
         return player
 
     def write(self, vals):
-        """Sincroniza cambios en el jugador con res.partner"""
         res = super(GamePlayer, self).write(vals)
 
         for player in self:
