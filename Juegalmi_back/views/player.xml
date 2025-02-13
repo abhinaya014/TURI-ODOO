@@ -51,20 +51,21 @@
       </field>
     </record>
 
+        <record id="view_game_player_tree" model="ir.ui.view">
     <record id="view_game_player_tree" model="ir.ui.view">
-      <field name="name">game.player.tree</field>
-      <field name="model">game.player</field>
-      <field name="arch" type="xml">
-        <tree> 
-          <field name="name"/>
-          <field name="email"/>
-          <field name="level"/>
-          <field name="coin_balance"/>
-          <field name="total_matches"/>
-          <field name="total_wins"/>
-        </tree> 
-      </field>
-    </record>
+  <field name="name">game.player.tree</field>
+  <field name="model">game.player</field>
+  <field name="arch" type="xml">
+    <tree> <!-- ✅ CORREGIDO: Se abre correctamente el tag <tree> -->
+      <field name="name"/>
+      <field name="email"/>
+      <field name="level"/>
+      <field name="coin_balance"/>
+      <field name="total_matches"/>
+      <field name="total_wins"/>
+    </tree> <!-- ✅ Cierre correcto del tag <tree> -->
+  </field>
+</record>
 
 
     <!-- Vista Form Totalmente Mejorada -->
