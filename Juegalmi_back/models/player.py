@@ -46,12 +46,12 @@ class GamePlayer(models.Model):
             player.total_matches = len(matches)
             player.total_wins = wins
 
-    @api.model
+   @api.model
     def create(self, vals):
         if 'registration_date' not in vals:
             vals['registration_date'] = fields.Datetime.now()
 
-        # 🔹 Guardar la imagen también en res.partner
+        # 🔹 Crear el contacto en res.partner
         partner = self.env['res.partner'].sudo().search([('email', '=', vals.get('email'))], limit=1)
         if not partner:
             partner_vals = {
@@ -69,7 +69,15 @@ class GamePlayer(models.Model):
         if 'photo' in vals and vals['photo']:
             partner.sudo().write({'image_1920': vals['photo']})
 
+        # 🔹 Dar 400 monedas por defecto al nuevo jugador
+        self.env['game.coin.transaction'].sudo().create({
+            'player_id': player.id,
+            'amount': 400,
+            'reason': 'Monedas iniciales por registro'
+        })
+
         return player
+
 
     def write(self, vals):
         """Sincroniza cambios en el jugador con res.partner"""
