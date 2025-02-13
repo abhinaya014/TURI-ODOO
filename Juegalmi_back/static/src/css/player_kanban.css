@@ -12,8 +12,8 @@
 }
 
 .o_player_kanban .o_kanban_image_fill_left {
-    background-color: rgba(0,0,0,0.2);
-    border-right: 1px solid rgba(255, 249, 249, 0.1);
+    background-color: rgba(234, 234, 234, 0.625);
+    border-right: 1px solid rgba(160, 155, 155, 0.666);
 }
 
 .o_player_kanban .o_kanban_record_title {
