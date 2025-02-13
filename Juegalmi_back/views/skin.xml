@@ -12,16 +12,16 @@
   <field name="arch" type="xml">
     <kanban>
       <field name="name"/>
-      <field name="color"/>
+      <field name="image"/>
       <field name="owned_by_players"/>
       <templates>
         <t t-name="kanban-box">
           <div class="oe_kanban_global_click"
                style="padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:transform 0.2s;">
 
-            <!-- Mostrar imagen en vez de texto para el color -->
+            <!-- Mostrar imagen del skin -->
             <div style="margin-bottom:10px;">
-              <img t-att-src="'/your_module/static/img/color_' + (record.color.value or 'default') + '.png'"
+              <img t-att-src="record.image.value"
                    style="width:100px; height:100px; object-fit:cover; border-radius:10px;"/>
             </div>
 
