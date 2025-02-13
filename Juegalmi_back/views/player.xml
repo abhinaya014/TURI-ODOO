@@ -6,7 +6,7 @@
          VISTAS PARA GAME.PLAYER
          *********************** -->
 
-    <!-- Vista Kanban Mejorada de Jugadores -->
+    <!-- Vista Kanban Ultra Mejorada de Jugadores -->
     <record id="view_game_player_kanban_full" model="ir.ui.view">
       <field name="name">game.player.kanban.full</field>
       <field name="model">game.player</field>
@@ -20,31 +20,31 @@
           <field name="coin_balance"/>
           <field name="total_matches"/>
           <field name="total_wins"/>
+          <field name="win_rate"/>
           <templates>
             <t t-name="kanban-box">
-              <div class="oe_kanban_global_click kanban_player_card">
-                <div class="kanban_player_avatar">
-                  <t t-if="record.photo.value">
-                    <img t-att-src="'data:image/png;base64,' + record.photo.value" class="kanban_player_img"/>
-                  </t>
-                  <t t-else="">
-                    <img src="/web/static/img/user_menu_avatar.png" class="kanban_player_img_default"/>
-                  </t>
+              <div class="oe_kanban_global_click kanban_player_card" style="border-radius:10px; padding:15px; box-shadow:0px 4px 8px rgba(0,0,0,0.1); background:#f9f9f9;">
+                <div class="kanban_player_header" style="display:flex; align-items:center; gap:10px;">
+                  <div class="kanban_player_avatar" style="width:70px; height:70px; border-radius:50%; overflow:hidden;">
+                    <t t-if="record.photo.value">
+                      <img t-att-src="'data:image/png;base64,' + record.photo.value" style="width:100%; height:100%; object-fit:cover;"/>
+                    </t>
+                    <t t-else="">
+                      <img src="/web/static/img/user_menu_avatar.png" style="width:100%; height:100%; opacity:0.5;"/>
+                    </t>
+                  </div>
+                  <div>
+                    <div style="font-size:18px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
+                    <div style="font-size:14px; color:#777;">ID: <span t-esc="record.player_id.value"/></div>
+                  </div>
                 </div>
-                <div class="kanban_player_info">
-                  <div class="kanban_player_name" t-esc="record.name.value"/>
-                  <div class="kanban_player_email" t-esc="record.email.value"/>
-                  <div class="kanban_player_stats">
-                    <span>ID:</span> <span t-esc="record.player_id.value"/>
-                    <span>| Level:</span> <span t-esc="record.level.value"/>
-                  </div>
-                  <div class="kanban_player_coins">
-                    <span>Coins:</span> <span t-esc="record.coin_balance.value"/>
-                  </div>
-                  <div class="kanban_player_matches">
-                    <span>Matches:</span> <span t-esc="record.total_matches.value"/>
-                    <span>| Wins:</span> <span t-esc="record.total_wins.value"/>
-                  </div>
+                <div class="kanban_player_details" style="margin-top:10px; font-size:14px;">
+                  <div>Email: <strong t-esc="record.email.value"/></div>
+                  <div>Nivel: <strong t-esc="record.level.value"/></div>
+                  <div>Coins: <strong t-esc="record.coin_balance.value"/></div>
+                  <div>Matches: <strong t-esc="record.total_matches.value"/></div>
+                  <div>Wins: <strong t-esc="record.total_wins.value"/></div>
+                  <div>Win Rate: <strong t-esc="record.win_rate.value"/>%</div>
                 </div>
               </div>
             </t>
@@ -58,13 +58,14 @@
       <field name="name">game.player.tree</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
-        <tree decoration-info="level &gt; 10">
+        <tree decoration-success="win_rate &gt;= 50" decoration-danger="win_rate &lt; 20">
           <field name="name"/>
           <field name="email"/>
           <field name="level"/>
           <field name="coin_balance"/>
           <field name="total_matches"/>
           <field name="total_wins"/>
+          <field name="win_rate" string="Win Rate (%)"/>
         </tree>
       </field>
     </record>
@@ -88,6 +89,7 @@
               <field name="player_id" readonly="1"/>
               <field name="level"/>
               <field name="coin_balance" readonly="1"/>
+              <field name="win_rate" readonly="1" string="Win Rate (%)"/>
             </group>
             <group>
               <field name="total_matches" readonly="1"/>
