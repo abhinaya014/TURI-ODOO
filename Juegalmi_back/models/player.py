@@ -11,7 +11,7 @@ class GamePlayer(models.Model):
 
     name = fields.Char(required=True)
     email = fields.Char(required=True, unique=True)
-password = fields.Char(string="Password", required=True)
+    password_hash = fields.Char(string="Password Hash", readonly=True)  # Guardamos el hash, no la contraseña en texto plano
 
     # 🔹 Usamos Image para la foto
     photo = fields.Image(string="Photo", max_width=512, max_height=512, attachment=True, store=False)
@@ -110,6 +110,13 @@ password = fields.Char(string="Password", required=True)
 
         return res
 
-    def verify_password(self, password):
+    def check_password(self, password):
         """Verifica si la contraseña ingresada coincide con la almacenada"""
         return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
+
+    @api.constrains('email')
+    def _check_unique_email(self):
+        for record in self:
+            existing = self.env['game.player'].sudo().search([('email', '=', record.email), ('id', '!=', record.id)])
+            if existing:
+                raise ValidationError("Este correo ya está registrado. Usa otro.")
