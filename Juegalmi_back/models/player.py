@@ -45,6 +45,15 @@ class GamePlayer(models.Model):
             player.total_matches = len(matches)
             player.total_wins = wins
 
+    def action_view_stats(self):
+    return {
+        'name': 'Estadísticas del Jugador',
+        'type': 'ir.actions.act_window',
+        'res_model': 'game.match.player.stats',
+        'view_mode': 'tree,form',
+        'domain': [('player_id', '=', self.id)],
+    }
+
     @api.model
     def create(self, vals):
         if 'registration_date' not in vals:
