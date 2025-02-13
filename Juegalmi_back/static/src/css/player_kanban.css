@@ -8,7 +8,7 @@
 
 .o_player_kanban:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 20px rgba(255, 253, 253, 0.744);
 }
 
 .o_player_kanban .o_kanban_image_fill_left {
