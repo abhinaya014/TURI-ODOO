@@ -24,19 +24,14 @@
                        t-attf-src="#{record.photo.value ? 'data:image/png;base64,' + record.photo.value : '/web/static/img/user_menu_avatar.png'}"/>
                 </div>
                 <div class="oe_kanban_details d-flex flex-column p-3">
-                  <!-- Encabezado con Nombre y ID -->
                   <div class="d-flex justify-content-between align-items-center mb-2">
                     <strong class="o_kanban_record_title text-primary h5 mb-0" t-esc="record.name.value"/>
                     <span class="badge badge-pill badge-primary" t-esc="'ID: ' + record.player_id.value"/>
                   </div>
-                  
-                  <!-- Información del jugador -->
                   <div class="d-flex flex-column gap-2">
                     <div class="text-muted small">
                       <i class="fa fa-envelope me-2"/> <span t-esc="record.email.value"/>
                     </div>
-                    
-                    <!-- Stats con iconos -->
                     <div class="d-flex justify-content-between mt-2">
                       <div class="text-center px-2">
                         <div class="h6 mb-0 text-warning">
@@ -45,7 +40,6 @@
                         </div>
                         <small class="text-muted">Level</small>
                       </div>
-                      
                       <div class="text-center px-2">
                         <div class="h6 mb-0 text-success">
                           <i class="fa fa-coins me-1"/>
@@ -53,7 +47,6 @@
                         </div>
                         <small class="text-muted">Coins</small>
                       </div>
-                      
                       <div class="text-center px-2">
                         <div class="h6 mb-0 text-info">
                           <i class="fa fa-trophy me-1"/>
@@ -71,7 +64,7 @@
       </field>
     </record>
 
-    <!-- Vista Tree Mejorada -->
+    <!-- Vista Tree -->
     <record id="view_game_player_tree" model="ir.ui.view">
       <field name="name">game.player.tree</field>
       <field name="model">game.player</field>
@@ -83,8 +76,8 @@
           <field name="photo" widget="image" class="oe_avatar" options="{'size': [40, 40]}"/>
           <field name="name"/>
           <field name="email"/>
-          <field name="level" decoration-danger="level &gt;= 20"/>
-          <field name="coin_balance" widget="monetary" decoration-success="coin_balance &gt; 1000"/>
+          <field name="level"/>
+          <field name="coin_balance" widget="monetary"/>
           <field name="total_matches"/>
           <field name="total_wins"/>
           <field name="win_rate" optional="show" widget="percentage"/>
@@ -92,83 +85,66 @@
       </field>
     </record>
 
-    <!-- Vista Form Mejorada -->
+    <!-- Vista Form -->
     <record id="view_game_player_form" model="ir.ui.view">
       <field name="name">game.player.form</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
         <form>
           <header>
-            <button name="action_level_up" 
-                    string="Level Up" 
-                    type="object" 
-                    class="btn btn-primary"
+            <button name="action_level_up" string="Level Up" type="object" class="btn btn-primary"
                     attrs="{'invisible': [('can_level_up', '=', False)]}"/>
           </header>
           <sheet>
             <div class="oe_button_box" name="button_box">
-              <button name="action_view_matches" 
-                      type="object" 
-                      class="oe_stat_button" 
-                      icon="fa-gamepad">
+              <button name="action_view_matches" type="object" class="oe_stat_button" icon="fa-gamepad">
                 <field name="total_matches" widget="statinfo" string="Matches"/>
               </button>
-              <button name="action_view_achievements" 
-                      type="object" 
-                      class="oe_stat_button" 
-                      icon="fa-trophy">
+              <button name="action_view_achievements" type="object" class="oe_stat_button" icon="fa-trophy">
                 <field name="total_wins" widget="statinfo" string="Wins"/>
               </button>
             </div>
             
             <field name="photo" widget="image" class="oe_avatar" options="{'preview_image': 'photo', 'size': [180, 180]}"/>
             <div class="oe_title">
-              <label for="name" class="oe_edit_only"/>
               <h1><field name="name" placeholder="Player Name"/></h1>
-              <h2>
-                <field name="player_id" readonly="1" class="text-muted"/>
-              </h2>
+              <h2><field name="player_id" readonly="1" class="text-muted"/></h2>
             </div>
             
-            <div class="row mt-4">
-              <div class="col-lg-6">
-                <group>
-                  <field name="email" widget="email"/>
-                  <field name="password" password="True"/>
-                  <field name="can_level_up" invisible="1"/>
-                </group>
-              </div>
-              <div class="col-lg-6">
-                <group>
-                  <field name="level" widget="gauge" 
-                         options="{'max_value': 100, 'style': 'width:120px; height:120px;'}"/>
-                  <field name="coin_balance" widget="monetary"/>
-                  <field name="win_rate" widget="percentage"/>
-                </group>
-              </div>
-            </div>
-            
+            <group>
+              <field name="email" widget="email"/>
+              <field name="password" password="True"/>
+              <field name="can_level_up" invisible="1"/>
+              <field name="level"/>
+              <field name="coin_balance" widget="monetary"/>
+              <field name="win_rate" widget="percentage"/>
+            </group>
+
             <notebook>
-              <page string="Match History" name="match_history">
+              <page string="Match History">
                 <field name="match_stats_ids">
                   <tree>
                     <field name="match_id"/>
+                    <field name="match_date"/>
                     <field name="match_type"/>
                     <field name="kills"/>
                     <field name="deaths"/>
                     <field name="score" widget="progressbar"/>
-                    <field name="result" widget="badge" 
+                    <field name="result" widget="badge"
                            decoration-success="result == 'win'"
                            decoration-danger="result == 'loss'"
                            decoration-warning="result == 'draw'"/>
                   </tree>
                 </field>
               </page>
-              <page string="Achievements" name="achievements">
-                <!-- Contenido para achievements -->
-              </page>
-              <page string="Statistics" name="statistics">
-                <!-- Gráficos y estadísticas -->
+              <page string="Achievements">
+                <field name="achievement_ids">
+                  <tree>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="date_earned"/>
+                  </tree>
+                </field>
               </page>
             </notebook>
           </sheet>
