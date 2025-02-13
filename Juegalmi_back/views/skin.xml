@@ -1,55 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <data>
-
-   <!-- ***********************
+<!--  ***********************
          VISTA KANBAN PARA SKINS
-         *********************** -->
-    <record id="view_game_skin_kanban" model="ir.ui.view">
-      <field name="name">game.skin.kanban</field>
-      <field name="model">game.skin</field>
-      <field name="arch" type="xml">
-        <kanban default_groupby="color">
-          <field name="name"/>
-          <field name="color"/>
-          <field name="owned_by_players"/>
-          <templates>
-            <t t-name="kanban-box">
-              <div class="oe_kanban_global_click" 
-                   t-att-style="'background-color:' + record.color.raw_value + '; padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:transform 0.2s;'">
-                <div style="font-size:16px; font-weight:bold; color:#fff;" t-esc="record.name.value"/>
-                <div style="font-size:13px; color:#eee;" t-esc="record.color.value"/>
-                <div style="margin-top:10px; font-size:13px; color:#fff;">
-                  <strong>Jugadores:</strong>
-                  <ul>
-                    <li t-foreach="record.owned_by_players.value" t-as="player" t-esc="player"/>
-                  </ul>
-                </div>
-              </div>
-            </t>
-          </templates>
-        </kanban>
-      </field>
-    </record>
- <!-- ***********************
+         ***********************  -->
+<record id="view_game_skin_kanban" model="ir.ui.view">
+<field name="name">game.skin.kanban</field>
+<field name="model">game.skin</field>
+<field name="arch" type="xml">
+<kanban default_groupby="color">
+<field name="name"/>
+<field name="color"/>
+<field name="owned_by_players"/>
+<templates>
+<t t-name="kanban-box">
+<div class="oe_kanban_global_click" t-att-style="'background-color:' + record.color.raw_value + '; padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:transform 0.2s;'">
+<div style="font-size:16px; font-weight:bold; color:#fff;" t-esc="record.name.value"/>
+<div style="font-size:13px; color:#eee;" t-esc="record.color.value"/>
+<div style="margin-top:10px; font-size:13px; color:#fff;">
+<strong>Jugadores:</strong>
+<ul>
+<li t-foreach="record.owned_by_players.value" t-as="player" t-esc="player"/>
+</ul>
+</div>
+</div>
+</t>
+</templates>
+</kanban>
+</field>
+</record>
+<!--  ***********************
          VISTA FORM PARA SKINS
-         *********************** -->
-    <record id="view_game_skin_form" model="ir.ui.view">
-      <field name="name">game.skin.form</field>
-      <field name="model">game.skin</field>
-      <field name="arch" type="xml">
-        <form>
-          <sheet>
-            <group>
-              <field name="name"/>
-              <field name="color"/>
-            </group>
-            <group>
-              <field name="owned_by_players" widget="many2many_tags"/>
-            </group>
-          </sheet>
-        </form>
-      </field>
-    </record>
+         ***********************  -->
+<record id="view_game_skin_form" model="ir.ui.view">
+<field name="name">game.skin.form</field>
+<field name="model">game.skin</field>
+<field name="arch" type="xml">
+<form>
+<sheet>
+<group>
+<field name="name"/>
+<field name="color"/>
+</group>
+<group>
+<field name="owned_by_players" widget="many2many_tags"/>
+</group>
+</sheet>
+</form>
+</field>
+</record>
+
   </data>
 </odoo>
