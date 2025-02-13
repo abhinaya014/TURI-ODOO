@@ -48,7 +48,7 @@ class GameSkinAPI(http.Controller):
                 'id': skin.id,
                 'name': skin.name,
                 'type': skin.type
-            } for skin in player.owned_skins]
+            } for skin in player.owned_by_players]  # FIX: Cambié owned_skins por owned_by_players
 
             return self._json_response({'status': 'success', 'player_id': player.id, 'skins': skin_list})
 
@@ -67,7 +67,7 @@ class GameSkinAPI(http.Controller):
 
             player_id = data.get('player_id')
             skin_id = data.get('skin_id')
-            skin_price = data.get('price', 50)  # Precio por defecto de 50 monedas
+            skin_price = data.get('price', 50)  # Precio por defecto
 
             if not player_id or not skin_id:
                 _logger.error("Faltan parámetros en la compra de skin (player_id, skin_id)")
@@ -84,7 +84,7 @@ class GameSkinAPI(http.Controller):
                 _logger.error(f"Skin no encontrada con ID: {skin_id}")
                 return self._json_response({'status': 'error', 'message': 'Skin no encontrada'}, 404)
 
-            if skin in player.owned_skins:
+            if skin in player.owned_by_players:  # FIX: Cambié owned_skins por owned_by_players
                 _logger.error(f"El jugador {player_id} ya posee esta skin")
                 return self._json_response({'status': 'error', 'message': 'Ya posees esta skin'}, 400)
 
@@ -99,9 +99,17 @@ class GameSkinAPI(http.Controller):
                 'reason': f'Compra de skin {skin.name}'
             })
 
-            player.owned_skins = [(4, skin.id)]
+            player.sudo().write({
+                'coin_balance': player.coin_balance - skin_price  # FIX: Ahora sí se resta el saldo
+            })
 
-            return self._json_response({'status': 'success', 'message': f'Skin {skin.name} comprada', 'new_balance': player.coin_balance})
+            player.owned_by_players = [(4, skin.id)]  # FIX: owned_by_players en vez de owned_skins
+
+            return self._json_response({
+                'status': 'success',
+                'message': f'Skin {skin.name} comprada',
+                'new_balance': player.coin_balance
+            })
 
         except Exception as e:
             _logger.error(f"Error comprando skin: {e}")
