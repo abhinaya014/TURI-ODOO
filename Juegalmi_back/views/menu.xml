@@ -1,49 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <data>
+    <data>
+        <!-- Menú Raíz con Icono y Estilo -->
+        <menuitem 
+            id="menu_game_api_root" 
+            name="🐝 Juegalmi Mermeladas" 
+            sequence="10"
+            web_icon="Juegalmi_back,static/description/icon.png"/>
 
-    <!-- ***********************
-         MENÚs Y ACCIONES MEJORADOS
-         *********************** -->
+        <!-- Grupo de Jugadores -->
+        <menuitem 
+            id="menu_game_api_players" 
+            name="🎮 Gestión de Jugadores" 
+            parent="menu_game_api_root" 
+            sequence="1"/>
 
-    <!-- Menú Principal con Estilo Moderno -->
-    <menuitem id="menu_game_api_root" name="🐝 Juegalmi Mermeladas" sequence="10"/>
+        <record id="action_game_player" model="ir.actions.act_window">
+            <field name="name">🧑‍🚀 Jugadores</field>
+            <field name="res_model">game.player</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ¡Crea tu primer jugador! 🎮
+                </p>
+                <p>
+                    Gestiona los jugadores de Juegalmi, sus estadísticas y progreso.
+                </p>
+            </field>
+        </record>
 
-    <!-- Menú y Acción para Players -->
-    <menuitem id="menu_game_api_players" name="🎮 Players" parent="menu_game_api_root" sequence="1"/>
-    <record id="action_game_player" model="ir.actions.act_window">
-      <field name="name">🧑‍🚀 Jugadores</field>
-      <field name="res_model">game.player</field>
-      <field name="view_mode">kanban,tree,form</field>
-    </record>
-    <menuitem id="menu_game_api_players_list" name="📋 Players List" parent="menu_game_api_players" action="action_game_player" sequence="1"/>
+        <menuitem 
+            id="menu_game_api_players_list" 
+            name="📋 Lista de Jugadores" 
+            parent="menu_game_api_players" 
+            action="action_game_player" 
+            sequence="1"/>
 
-    <!-- Menú y Acción para Skins -->
-    <menuitem id="menu_game_api_skins" name="🎭 Skins" parent="menu_game_api_root" sequence="2"/>
-    <record id="action_game_skin" model="ir.actions.act_window">
-      <field name="name">🎨 Game Skins</field>
-      <field name="res_model">game.skin</field>
-      <field name="view_mode">kanban,tree,form</field>
-    </record>
-    <menuitem id="menu_game_api_skins_list" name="✨ Skins List" parent="menu_game_api_skins" action="action_game_skin" sequence="1"/>
+        <!-- Grupo de Contenido del Juego -->
+        <menuitem 
+            id="menu_game_content" 
+            name="🎭 Contenido del Juego" 
+            parent="menu_game_api_root" 
+            sequence="2"/>
 
-    <!-- Menú y Acción para Matches -->
-    <menuitem id="menu_game_api_matches" name="🏆 Matches" parent="menu_game_api_root" sequence="3"/>
-    <record id="action_game_match" model="ir.actions.act_window">
-      <field name="name">⚔️ Game Matches</field>
-      <field name="res_model">game.match</field>
-      <field name="view_mode">kanban,tree,form</field>
-    </record>
-    <menuitem id="menu_game_api_matches_list" name="🔥 Matches List" parent="menu_game_api_matches" action="action_game_match" sequence="1"/>
+        <record id="action_game_skin" model="ir.actions.act_window">
+            <field name="name">🎨 Skins del Juego</field>
+            <field name="res_model">game.skin</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ¡Añade nuevos skins al juego! 🎨
+                </p>
+                <p>
+                    Gestiona los skins disponibles para los jugadores.
+                </p>
+            </field>
+        </record>
 
-    <!-- Menú y Acción para Transacciones de Monedas -->
-    <menuitem id="menu_game_api_transactions" name="💰 Transactions" parent="menu_game_api_root" sequence="4"/>
-    <record id="action_game_transaction" model="ir.actions.act_window">
-      <field name="name">💵 Coin Transactions</field>
-      <field name="res_model">game.coin.transaction</field>
-      <field name="view_mode">kanban,tree,form</field>
-    </record>
-    <menuitem id="menu_game_api_transactions_list" name="📜 Transactions List" parent="menu_game_api_transactions" action="action_game_transaction" sequence="1"/>
+        <menuitem 
+            id="menu_game_api_skins_list" 
+            name="✨ Skins" 
+            parent="menu_game_content" 
+            action="action_game_skin" 
+            sequence="1"/>
 
-  </data>
+        <!-- Grupo de Partidas -->
+        <record id="action_game_match" model="ir.actions.act_window">
+            <field name="name">⚔️ Partidas</field>
+            <field name="res_model">game.match</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ¡No hay partidas registradas aún! 🎮
+                </p>
+                <p>
+                    Aquí podrás ver el historial de partidas jugadas.
+                </p>
+            </field>
+        </record>
+
+        <menuitem 
+            id="menu_game_api_matches" 
+            name="🏆 Partidas" 
+            parent="menu_game_api_root" 
+            sequence="3"/>
+
+        <menuitem 
+            id="menu_game_api_matches_list" 
+            name="🔥 Historial de Partidas" 
+            parent="menu_game_api_matches" 
+            action="action_game_match" 
+            sequence="1"/>
+
+        <!-- Grupo de Economía -->
+        <menuitem 
+            id="menu_game_economy" 
+            name="💰 Economía" 
+            parent="menu_game_api_root" 
+            sequence="4"/>
+
+        <record id="action_game_transaction" model="ir.actions.act_window">
+            <field name="name">💵 Transacciones</field>
+            <field name="res_model">game.coin.transaction</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ¡No hay transacciones registradas! 💸
+                </p>
+                <p>
+                    Aquí se registran todas las transacciones de monedas del juego.
+                </p>
+            </field>
+        </record>
+
+        <menuitem 
+            id="menu_game_api_transactions_list" 
+            name="📜 Registro de Transacciones" 
+            parent="menu_game_economy" 
+            action="action_game_transaction" 
+            sequence="1"/>
+
+    </data>
 </odoo>
