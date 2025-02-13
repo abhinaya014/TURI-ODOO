@@ -2,11 +2,7 @@
 <odoo>
   <data>
 
-    <!-- ***********************
-         VISTAS PARA GAME.PLAYER
-         *********************** -->
-
-    <!-- Vista Kanban Super Estilizada de Jugadores -->
+    <!-- Vista Kanban Mejorada -->
     <record id="view_game_player_kanban_full" model="ir.ui.view">
       <field name="name">game.player.kanban.full</field>
       <field name="model">game.player</field>
@@ -23,7 +19,7 @@
         <field name="total_wins"/>
         <templates>
           <t t-name="kanban-box">
-            <div t-att-data-id="record.id.value" class="oe_kanban_global_click kanban_player_card"
+            <div t-att-data-id="record.id and record.id.value" class="oe_kanban_global_click kanban_player_card"
                 style="border-radius:15px; padding:20px; box-shadow:0px 5px 15px rgba(0,0,0,0.15); background:#141e30; color:#ffffff;">
                 
               <div class="kanban_player_header" style="display:flex; align-items:center; gap:15px;">
@@ -53,10 +49,10 @@
           </t>
         </templates>
       </kanban>
-
       </field>
     </record>
 
+    <!-- Vista Tree -->
     <record id="view_game_player_tree" model="ir.ui.view">
       <field name="name">game.player.tree</field>
       <field name="model">game.player</field>
@@ -72,8 +68,7 @@
       </field>
     </record>
 
-
-    <!-- Vista Form Totalmente Mejorada -->
+    <!-- Vista Form Mejorada -->
     <record id="view_game_player_form" model="ir.ui.view">
       <field name="name">game.player.form</field>
       <field name="model">game.player</field>
@@ -81,14 +76,14 @@
         <form string="Game Player" class="oe_form_modern" style="background:#0f0c29; color:#ffffff; border-radius:15px; padding:20px;">
           <sheet>
             <div class="oe_title" style="text-align:center;">
-              <h2 style="color:#ffcc00;" t-esc="record.name.value"/>
-              <h4 style="color:#bbbbbb;" t-esc="record.email.value"/>
+              <h2 style="color:#ffcc00;" t-esc="name"/> <!-- Cambio aquí -->
+              <h4 style="color:#bbbbbb;" t-esc="email"/> <!-- Cambio aquí -->
             </div>
             <group>
               <div style="display:flex; gap:20px; align-items:center;">
                 <div style="width:140px; height:140px; overflow:hidden; border-radius:50%; background:#222; display:flex; align-items:center; justify-content:center;">
-                  <t t-if="record.photo.value">
-                    <img t-att-src="'data:image/png;base64,' + record.photo.value" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"/>
+                  <t t-if="photo">
+                    <img t-att-src="'data:image/png;base64,' + photo" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"/>
                   </t>
                   <t t-else="">
                     <img src="/web/static/img/user_menu_avatar.png" style="width:80px; height:80px; opacity:0.5;"/>
