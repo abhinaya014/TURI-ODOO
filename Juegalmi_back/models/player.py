@@ -69,13 +69,14 @@ class GamePlayer(models.Model):
         if 'photo' in vals and vals['photo']:
             partner.sudo().write({'image_1920': vals['photo']})
 
-    self.env['game.coin.transaction'].sudo().create({
-        'player_id': player.id,
-        'amount': 400,
-        'reason': 'Monedas iniciales por registro'
-    })
+        # 🔹 Dar 400 monedas por defecto al nuevo jugador
+        self.env['game.coin.transaction'].sudo().create({
+            'player_id': player.id,
+            'amount': 400,
+            'reason': 'Monedas iniciales por registro'
+        })
 
-        return player
+        return player  # ✅ Asegúrate de que el return esté correctamente indentado
 
     def write(self, vals):
         """Sincroniza cambios en el jugador con res.partner"""
