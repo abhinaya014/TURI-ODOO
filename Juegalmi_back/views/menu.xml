@@ -7,7 +7,7 @@
          *********************** -->
 
     <!-- Menú Principal con Estilo Moderno -->
-    <menuitem id="menu_game_api_root" name="🌌 Juegalmi Universe" sequence="10"/>
+    <menuitem id="menu_game_api_root" name="🐝 Juegalmi Mermeladas" sequence="10"/>
 
     <!-- Menú y Acción para Players -->
     <menuitem id="menu_game_api_players" name="🎮 Players" parent="menu_game_api_root" sequence="1"/>
