@@ -6,9 +6,8 @@
       <field name="name">game.player.kanban.full</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
-        <kanban class="o_kanban_mobile" sample="1">
+        <kanban class="o_kanban_mobile o_kanban_card" sample="1">
           <field name="name"/>
-          <field name="email"/>
           <field name="photo"/>
           <field name="player_id"/>
           <field name="level"/>
@@ -17,44 +16,23 @@
           <field name="total_wins"/>
           <templates>
             <t t-name="kanban-box">
-              <div class="oe_kanban_global_click o_kanban_record_has_image_fill rounded-lg">
-                <div class="o_kanban_image_fill_left d-none d-md-block"
-                     t-attf-style="background-image: url(#{record.photo.value ? 'data:image/png;base64,' + record.photo.value : '/web/static/img/user_menu_avatar.png'});">
-                  <img class="o_kanban_image_inner_pic" 
-                       t-attf-src="#{record.photo.value ? 'data:image/png;base64,' + record.photo.value : '/web/static/img/user_menu_avatar.png'}"/>
-                </div>
-                <div class="oe_kanban_details d-flex flex-column p-3">
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <strong class="o_kanban_record_title text-primary h5 mb-0" t-esc="record.name.value"/>
-                    <span class="badge badge-pill badge-primary" t-esc="'ID: ' + record.player_id.value"/>
+              <div class="o_kanban_card rounded shadow-sm">
+                <div class="o_kanban_card_header d-flex align-items-center p-2">
+                  <div class="o_kanban_image_fill rounded-circle me-2"
+                       t-attf-style="background-image: url(#{record.photo.value ? 'data:image/png;base64,' + record.photo.value : '/web/static/img/user_menu_avatar.png'});">
                   </div>
-                  <div class="d-flex flex-column gap-2">
-                    <div class="text-muted small">
-                      <i class="fa fa-envelope me-2"/> <span t-esc="record.email.value"/>
-                    </div>
-                    <div class="d-flex justify-content-between mt-2">
-                      <div class="text-center px-2">
-                        <div class="h6 mb-0 text-warning">
-                          <i class="fa fa-star me-1"/>
-                          <span t-esc="record.level.value"/>
-                        </div>
-                        <small class="text-muted">Level</small>
-                      </div>
-                      <div class="text-center px-2">
-                        <div class="h6 mb-0 text-success">
-                          <i class="fa fa-coins me-1"/>
-                          <span t-esc="record.coin_balance.value"/>
-                        </div>
-                        <small class="text-muted">Coins</small>
-                      </div>
-                      <div class="text-center px-2">
-                        <div class="h6 mb-0 text-info">
-                          <i class="fa fa-trophy me-1"/>
-                          <span t-esc="record.total_wins.value"/>/<span t-esc="record.total_matches.value"/>
-                        </div>
-                        <small class="text-muted">Win Rate</small>
-                      </div>
-                    </div>
+                  <div class="o_kanban_card_title flex-grow-1">
+                    <strong class="text-primary" t-esc="record.name.value"/>
+                    <br/>
+                    <span class="badge bg-secondary" t-esc="'ID: ' + record.player_id.value"/>
+                  </div>
+                </div>
+                
+                <div class="o_kanban_card_body p-3">
+                  <div class="d-flex justify-content-between">
+                    <span class="badge bg-info text-white"><i class="fa fa-star me-1"/> <t t-esc="record.level.value"/></span>
+                    <span class="badge bg-success text-white"><i class="fa fa-coins me-1"/> <t t-esc="record.coin_balance.value"/></span>
+                    <span class="badge bg-warning text-dark"><i class="fa fa-trophy me-1"/> <t t-esc="record.total_wins.value"/> / <t t-esc="record.total_matches.value"/></span>
                   </div>
                 </div>
               </div>
@@ -64,35 +42,34 @@
       </field>
     </record>
 
-    <!-- Vista Tree -->
+    <!-- Vista Tree Mejorada -->
     <record id="view_game_player_tree" model="ir.ui.view">
       <field name="name">game.player.tree</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
-        <tree decoration-info="level &lt; 10" 
-              decoration-warning="level &gt;= 10 and level &lt; 20"
-              decoration-danger="level &gt;= 20"
-              sample="1">
+        <tree decoration-info="level &lt; 10" decoration-warning="level &gt;= 10 and level &lt; 20" decoration-danger="level &gt;= 20">
           <field name="photo" widget="image" class="oe_avatar" options="{'size': [40, 40]}"/>
           <field name="name"/>
-          <field name="email"/>
           <field name="level"/>
           <field name="coin_balance" widget="monetary"/>
           <field name="total_matches"/>
           <field name="total_wins"/>
-          <field name="win_rate" optional="show" widget="percentage"/>
+          <field name="win_rate" widget="percentage"/>
         </tree>
       </field>
     </record>
 
-    <!-- Vista Form -->
+    <!-- Vista Form Mejorada -->
     <record id="view_game_player_form" model="ir.ui.view">
       <field name="name">game.player.form</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
         <form>
           <header>
-            <button name="action_level_up" string="Level Up" type="object" class="btn btn-primary"
+            <button name="action_level_up" 
+                    string="🎮 Level Up" 
+                    type="object" 
+                    class="btn btn-primary"
                     attrs="{'invisible': [('can_level_up', '=', False)]}"/>
           </header>
           <sheet>
@@ -105,17 +82,20 @@
               </button>
             </div>
             
-            <field name="photo" widget="image" class="oe_avatar" options="{'preview_image': 'photo', 'size': [180, 180]}"/>
+            <div class="o_form_image">
+              <field name="photo" widget="image" class="oe_avatar" options="{'size': [180, 180]}"/>
+            </div>
+
             <div class="oe_title">
               <h1><field name="name" placeholder="Player Name"/></h1>
               <h2><field name="player_id" readonly="1" class="text-muted"/></h2>
             </div>
-            
+
             <group>
               <field name="email" widget="email"/>
               <field name="password" password="True"/>
               <field name="can_level_up" invisible="1"/>
-              <field name="level"/>
+              <field name="level" widget="gauge" options="{'max_value': 100}"/>
               <field name="coin_balance" widget="monetary"/>
               <field name="win_rate" widget="percentage"/>
             </group>
@@ -148,6 +128,7 @@
               </page>
             </notebook>
           </sheet>
+
           <div class="oe_chatter">
             <field name="message_follower_ids"/>
             <field name="activity_ids"/>
