@@ -79,25 +79,32 @@ class GameSkinAPI(http.Controller):
             if not skin.exists():
                 return self._json_response({'status': 'error', 'message': 'Skin no encontrada'}, 404)
 
-            if skin in player.owned_by_players:
+            if skin in player.owned_skins:  # ✅ Cambié owned_by_players por owned_skins
                 return self._json_response({'status': 'error', 'message': 'Ya posees esta skin'}, 400)
 
             if player.coin_balance < skin_price:
                 return self._json_response({'status': 'error', 'message': 'Saldo insuficiente'}, 400)
 
-            # Restar monedas al jugador
+            # ✅ Registrar la transacción de monedas en game.coin.transaction
+            request.env['game.coin.transaction'].sudo().create({
+                'player_id': player.id,
+                'amount': -skin_price,
+                'reason': f'Compra de skin {skin.name}'
+            })
+
+            # ✅ Restar monedas del saldo del jugador
             player.sudo().write({
                 'coin_balance': player.coin_balance - skin_price
             })
 
-            # Agregar skin al jugador
+            # ✅ Agregar la skin al jugador manteniendo las anteriores
             player.sudo().write({
-                'owned_by_players': [(4, skin.id)]  # Mantiene skins previas
+                'owned_skins': [(4, skin.id)]  # ✅ Usar owned_skins en vez de owned_by_players
             })
 
             return self._json_response({
                 'status': 'success',
-                'message': f'Skin {skin.name} comprada',
+                'message': f'Skin {skin.name} comprada con éxito',
                 'new_balance': player.coin_balance
             })
 
