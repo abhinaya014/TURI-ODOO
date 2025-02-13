@@ -1,0 +1,36 @@
+<odoo>
+  <data noupdate="1">
+
+    <!-- 🔥 Skins con imágenes -->
+    <record id="skin_red" model="game.skin">
+      <field name="name">Red Skin</field>
+      <field name="image">juegalmi_back/static/img/skin_red.png</field>
+    </record>
+
+    <record id="skin_blue" model="game.skin">
+      <field name="name">Blue Skin</field>
+      <field name="image">Juegalmi_back\static\img\skin_blue.png</field>
+    </record>
+
+    <record id="skin_green" model="game.skin">
+      <field name="name">Green Skin</field>
+      <field name="image">/Juegalmi_back\static\img\skin_green.png</field>
+    </record>
+
+    <record id="skin_yellow" model="game.skin">
+      <field name="name">Yellow Skin</field>
+      <field name="image">/Juegalmi_back\static\img\skin_yellow.png</field>
+    </record>
+
+    <record id="skin_pink" model="game.skin">
+      <field name="name">Pink Skin</field>
+      <field name="image">/Juegalmi_back\static\img\skin_pink.png</field>
+    </record>
+
+    <record id="skin_orange" model="game.skin">
+      <field name="name">Orange Skin</field>
+      <field name="image">/Juegalmi_back\static\img\skin_orange.png</field>
+    </record>
+
+  </data>
+</odoo>
