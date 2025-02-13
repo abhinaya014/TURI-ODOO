@@ -53,6 +53,22 @@
       </field>
     </record>
 
+        <record id="view_game_player_tree" model="ir.ui.view">
+      <field name="name">game.player.tree</field>
+      <field name="model">game.player</field>
+      <field name="arch" type="xml">
+        <tree decoration-success="win_rate &gt;= 50" decoration-danger="win_rate &lt; 20">
+          <field name="name"/>
+          <field name="email"/>
+          <field name="level"/>
+          <field name="coin_balance"/>
+          <field name="total_matches"/>
+          <field name="total_wins"/>
+          <field name="win_rate" string="Win Rate (%)"/>
+        </tree>
+      </field>
+    </record>
+
     <!-- Vista Form Totalmente Mejorada -->
     <record id="view_game_player_form" model="ir.ui.view">
       <field name="name">game.player.form</field>
