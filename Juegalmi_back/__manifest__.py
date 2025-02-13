@@ -6,7 +6,11 @@
     'depends': ['base', 'contacts'],
     'data': [
         'security/ir.model.access.csv',
-        'views/game_api_views.xml',
+        'views/player.xml',
+        'views/skin.xml',
+        'views/match.xml',
+        'views/menu.xml',
+        'views/transic.xml',
     ],
     'installable': True,
     'application': True,
