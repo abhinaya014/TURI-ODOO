@@ -78,7 +78,7 @@
                             <group>
                                 <field name="achievement_type"/>
                                 <field name="threshold"/>
-                                <field name="rarity" widget="badge"/>
+                                <field name="rarity"/>
                             </group>
                             <group>
                                 <field name="points"/>
