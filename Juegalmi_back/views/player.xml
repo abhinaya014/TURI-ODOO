@@ -152,7 +152,6 @@
               <page string="Match History" name="match_history">
                 <field name="match_stats_ids">
                   <tree>
-                    <field name="match_date"/>
                     <field name="match_id"/>
                     <field name="match_type"/>
                     <field name="kills"/>
