@@ -1,126 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <data>
-
-    <!-- ***********************
-         VISTAS PARA GAME.PLAYER
-         *********************** -->
-
-    <!-- Vista Kanban Completa de Jugadores -->
-<record id="view_game_player_kanban_full" model="ir.ui.view">
-  <field name="name">game.player.kanban.full</field>
-  <field name="model">game.player</field>
-  <field name="arch" type="xml">
-    <kanban>
-      <field name="name"/>
-      <field name="email"/>
-      <field name="photo"/>
-      <field name="player_id"/>
-      <field name="level"/>
-      <field name="coin_balance"/>
-      <field name="total_matches"/>
-      <field name="total_wins"/>
-      <templates>
-        <t t-name="kanban-box">
-          <div class="oe_kanban_global_click"
-               style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-            <div style="display:flex; align-items:center; margin-bottom:8px;">
-              <div style="margin-right:10px; width:64px; height:64px; overflow:hidden; border-radius:50%; display:flex; align-items:center; justify-content:center; background-color:#f5f5f5;">
-                <t t-if="record.photo.value">
-                    <img t-att-src="'data:image/png;base64,' + record.photo.value"
-                         style="width:64px; height:64px; object-fit:cover;"/>
-                </t>
-                <t t-else="">
-                    <img src="/web/static/img/user_menu_avatar.png"
-                         style="width:40px; height:40px; opacity:0.5;"/>
-                </t>
-              </div>
-              <div>
-                <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
-                <div style="font-size:12px; color:#777;">
-                  ID: <span t-esc="record.player_id.value"/>
-                </div>
-              </div>
-            </div>
-            <div style="font-size:13px; color:#555; margin-bottom:4px;">
-              <span>Email: </span><span t-esc="record.email.value"/>
-            </div>
-            <div style="font-size:13px; color:#555; margin-bottom:4px;">
-              <span>Level: </span><span t-esc="record.level.value"/>
-            </div>
-            <div style="font-size:13px; color:#555; margin-bottom:4px;">
-              <span>Coins: </span><span t-esc="record.coin_balance.value"/>
-            </div>
-            <div style="font-size:12px; color:#999;">
-              <span>Matches: </span><span t-esc="record.total_matches.value"/>
-              <span> | Wins: </span><span t-esc="record.total_wins.value"/>
-            </div>
-          </div>
-        </t>
-      </templates>
-    </kanban>
-  </field>
-</record>
-    <!-- Vista Tree de Jugadores -->
-    <record id="view_game_player_tree" model="ir.ui.view">
-      <field name="name">game.player.tree</field>
+    <!-- Vista Kanban Mejorada -->
+    <record id="view_game_player_kanban_full" model="ir.ui.view">
+      <field name="name">game.player.kanban.full</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
-        <tree>
+        <kanban class="o_kanban_mobile" sample="1">
           <field name="name"/>
           <field name="email"/>
+          <field name="photo"/>
+          <field name="player_id"/>
           <field name="level"/>
           <field name="coin_balance"/>
           <field name="total_matches"/>
           <field name="total_wins"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click o_kanban_record_has_image_fill rounded-lg">
+                <div class="o_kanban_image_fill_left d-none d-md-block"
+                     t-attf-style="background-image: url(#{record.photo.value ? 'data:image/png;base64,' + record.photo.value : '/web/static/img/user_menu_avatar.png'});">
+                  <img class="o_kanban_image_inner_pic" 
+                       t-attf-src="#{record.photo.value ? 'data:image/png;base64,' + record.photo.value : '/web/static/img/user_menu_avatar.png'}"/>
+                </div>
+                <div class="oe_kanban_details d-flex flex-column p-3">
+                  <!-- Encabezado con Nombre y ID -->
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <strong class="o_kanban_record_title text-primary h5 mb-0" t-esc="record.name.value"/>
+                    <span class="badge badge-pill badge-primary" t-esc="'ID: ' + record.player_id.value"/>
+                  </div>
+                  
+                  <!-- Información del jugador -->
+                  <div class="d-flex flex-column gap-2">
+                    <div class="text-muted small">
+                      <i class="fa fa-envelope me-2"/> <span t-esc="record.email.value"/>
+                    </div>
+                    
+                    <!-- Stats con iconos -->
+                    <div class="d-flex justify-content-between mt-2">
+                      <div class="text-center px-2">
+                        <div class="h6 mb-0 text-warning">
+                          <i class="fa fa-star me-1"/>
+                          <span t-esc="record.level.value"/>
+                        </div>
+                        <small class="text-muted">Level</small>
+                      </div>
+                      
+                      <div class="text-center px-2">
+                        <div class="h6 mb-0 text-success">
+                          <i class="fa fa-coins me-1"/>
+                          <span t-esc="record.coin_balance.value"/>
+                        </div>
+                        <small class="text-muted">Coins</small>
+                      </div>
+                      
+                      <div class="text-center px-2">
+                        <div class="h6 mb-0 text-info">
+                          <i class="fa fa-trophy me-1"/>
+                          <span t-esc="record.total_wins.value"/>/<span t-esc="record.total_matches.value"/>
+                        </div>
+                        <small class="text-muted">Win Rate</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- Vista Tree Mejorada -->
+    <record id="view_game_player_tree" model="ir.ui.view">
+      <field name="name">game.player.tree</field>
+      <field name="model">game.player</field>
+      <field name="arch" type="xml">
+        <tree decoration-info="level &lt; 10" 
+              decoration-warning="level &gt;= 10 and level &lt; 20"
+              decoration-danger="level &gt;= 20"
+              sample="1">
+          <field name="photo" widget="image" class="oe_avatar" options="{'size': [40, 40]}"/>
+          <field name="name"/>
+          <field name="email"/>
+          <field name="level" decoration-danger="level &gt;= 20"/>
+          <field name="coin_balance" widget="monetary" decoration-success="coin_balance &gt; 1000"/>
+          <field name="total_matches"/>
+          <field name="total_wins"/>
+          <field name="win_rate" optional="show" widget="percentage"/>
         </tree>
       </field>
     </record>
 
-    <!-- Vista Form de Jugadores -->
+    <!-- Vista Form Mejorada -->
     <record id="view_game_player_form" model="ir.ui.view">
       <field name="name">game.player.form</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
         <form>
+          <header>
+            <button name="action_level_up" 
+                    string="Level Up" 
+                    type="object" 
+                    class="btn btn-primary"
+                    attrs="{'invisible': [('can_level_up', '=', False)]}"/>
+          </header>
           <sheet>
-            <group>
-              <field name="photo" widget="image" class="oe_avatar" options="{'preview_image': 'photo'}"/>
-            </group>
-            <group>
-              <field name="name"/>
-              <field name="email"/>
-              <field name="password"/>
-            </group>
-            <group>
-              <field name="player_id" readonly="1"/>
-              <field name="level"/>
-              <field name="coin_balance" readonly="1"/>
-            </group>
-            <group>
-              <field name="total_matches" readonly="1"/>
-              <field name="total_wins" readonly="1"/>
-            </group>
+            <div class="oe_button_box" name="button_box">
+              <button name="action_view_matches" 
+                      type="object" 
+                      class="oe_stat_button" 
+                      icon="fa-gamepad">
+                <field name="total_matches" widget="statinfo" string="Matches"/>
+              </button>
+              <button name="action_view_achievements" 
+                      type="object" 
+                      class="oe_stat_button" 
+                      icon="fa-trophy">
+                <field name="total_wins" widget="statinfo" string="Wins"/>
+              </button>
+            </div>
+            
+            <field name="photo" widget="image" class="oe_avatar" options="{'preview_image': 'photo', 'size': [180, 180]}"/>
+            <div class="oe_title">
+              <label for="name" class="oe_edit_only"/>
+              <h1><field name="name" placeholder="Player Name"/></h1>
+              <h2>
+                <field name="player_id" readonly="1" class="text-muted"/>
+              </h2>
+            </div>
+            
+            <div class="row mt-4">
+              <div class="col-lg-6">
+                <group>
+                  <field name="email" widget="email"/>
+                  <field name="password" password="True"/>
+                  <field name="can_level_up" invisible="1"/>
+                </group>
+              </div>
+              <div class="col-lg-6">
+                <group>
+                  <field name="level" widget="gauge" 
+                         options="{'max_value': 100, 'style': 'width:120px; height:120px;'}"/>
+                  <field name="coin_balance" widget="monetary"/>
+                  <field name="win_rate" widget="percentage"/>
+                </group>
+              </div>
+            </div>
+            
             <notebook>
-              <page string="Matches">
+              <page string="Match History" name="match_history">
                 <field name="match_stats_ids">
                   <tree>
+                    <field name="match_date"/>
                     <field name="match_id"/>
+                    <field name="match_type"/>
                     <field name="kills"/>
                     <field name="deaths"/>
-                    <field name="score"/>
+                    <field name="score" widget="progressbar"/>
+                    <field name="result" widget="badge" 
+                           decoration-success="result == 'win'"
+                           decoration-danger="result == 'loss'"
+                           decoration-warning="result == 'draw'"/>
                   </tree>
                 </field>
               </page>
+              <page string="Achievements" name="achievements">
+                <!-- Contenido para achievements -->
+              </page>
+              <page string="Statistics" name="statistics">
+                <!-- Gráficos y estadísticas -->
+              </page>
             </notebook>
           </sheet>
+          <div class="oe_chatter">
+            <field name="message_follower_ids"/>
+            <field name="activity_ids"/>
+            <field name="message_ids"/>
+          </div>
         </form>
       </field>
     </record>
-
-
-
-
-
   </data>
 </odoo>
