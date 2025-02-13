@@ -11,7 +11,7 @@ class GamePlayer(models.Model):
 
     name = fields.Char(required=True)
     email = fields.Char(required=True, unique=True)
-    password_hash = fields.Char(string="Password", required=True)  # 🔹 Guardamos solo el hash
+password = fields.Char(string="Password", required=True)
 
     # 🔹 Usamos Image para la foto
     photo = fields.Image(string="Photo", max_width=512, max_height=512, attachment=True, store=False)
