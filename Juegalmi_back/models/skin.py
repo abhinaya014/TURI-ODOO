@@ -1,4 +1,4 @@
-from odoo import models, fields, api  # Asegúrate de importar api
+from odoo import models, fields, api
 
 class GameSkin(models.Model):
     _name = 'game.skin'
@@ -9,7 +9,14 @@ class GameSkin(models.Model):
         ('character', 'Personaje'),
     ], string="Type", default='character', required=True)
     description = fields.Text()
-    image_url = fields.Char(string="Image URL")
+    image_url = fields.Selection([
+        ('/juegalmi_back/static/img/skin_red.png', 'Red Skin'),
+        ('/juegalmi_back/static/img/skin_blue.png', 'Blue Skin'),
+        ('/juegalmi_back/static/img/skin_green.png', 'Green Skin'),
+        ('/juegalmi_back/static/img/skin_yellow.png', 'Yellow Skin'),
+        ('/juegalmi_back/static/img/skin_pink.png', 'Pink Skin'),
+        ('/juegalmi_back/static/img/skin_orange.png', 'Orange Skin'),
+    ], string="Skin Image", required=True)
     owned_by_players = fields.Many2many(
         'game.player',
         string="Jugadores que tienen este skin"
@@ -22,13 +29,3 @@ class GameSkin(models.Model):
     def _compute_player_count(self):
         for skin in self:
             skin.player_count = len(skin.owned_by_players)
-
-    @api.model
-    def create(self, vals):
-        if vals.get('image_url'):
-            # Convertir la ruta relativa a una URL completa
-            image_url = vals['image_url']
-            if image_url.startswith('/'):
-                base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-                vals['image_url'] = f"{base_url}{image_url}"
-        return super(GameSkin, self).create(vals)
