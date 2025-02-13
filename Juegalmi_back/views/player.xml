@@ -90,7 +90,7 @@
             <group>
               <field name="name"/>
               <field name="email"/>
-              <field name="password"/>
+              <field name="password_hash" invisible="1"/>
             </group>
             <group>
               <field name="player_id" readonly="1"/>
