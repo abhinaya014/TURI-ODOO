@@ -11,8 +11,12 @@
         'views/match.xml',
         'views/menu.xml',
         'views/transic.xml',
-        'static\src\css\player_kanban.css',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'Juegalmi_back/static/src/css/player_kanban.css',
+        ],
+    },
     'installable': True,
     'application': True,
 }
