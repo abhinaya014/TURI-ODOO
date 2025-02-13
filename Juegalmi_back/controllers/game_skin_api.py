@@ -24,8 +24,7 @@ class GameSkinAPI(http.Controller):
             skin_list = [{
                 'id': skin.id,
                 'name': skin.name,
-                'type': skin.type,
-                'description': skin.description
+                'image': skin.image,  # Devuelve la imagen como una ruta en el módulo
             } for skin in skins]
 
             return self._json_response({'status': 'success', 'skins': skin_list})
