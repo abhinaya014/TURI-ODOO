@@ -5,7 +5,18 @@ class GameSkin(models.Model):
     _description = 'Game Skin'
 
     name = fields.Char(required=True)
-    image = fields.Char(string="Skin Image", required=True, help="Ruta de la imagen dentro del módulo, por ejemplo: /your_module_name/static/img/skin_red.png")
+    type = fields.Selection([
+        ('character', 'Personaje'),  # Solo permitiremos "Character"
+    ], string="Type", default='character', required=True)
+    description = fields.Text()
+    color = fields.Selection([
+        ('red', 'Rojo'),
+        ('blue', 'Azul'),
+        ('green', 'Verde'),
+        ('yellow', 'Amarillo'),
+        ('pink', 'Rosa'),
+        ('orange', 'Naranja')
+    ], string="Color", required=True)
 
     owned_by_players = fields.Many2many(
         'game.player',

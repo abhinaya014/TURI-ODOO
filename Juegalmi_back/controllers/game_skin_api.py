@@ -24,7 +24,8 @@ class GameSkinAPI(http.Controller):
             skin_list = [{
                 'id': skin.id,
                 'name': skin.name,
-                'image': skin.image,  # Devuelve la imagen como una ruta en el módulo
+                'type': skin.type,
+                'description': skin.description
             } for skin in skins]
 
             return self._json_response({'status': 'success', 'skins': skin_list})
@@ -46,71 +47,62 @@ class GameSkinAPI(http.Controller):
             skin_list = [{
                 'id': skin.id,
                 'name': skin.name,
-                'image': skin.image
-            } for skin in player.owned_by_players]
+                'type': skin.type
+            } for skin in player.owned_skins]
 
             return self._json_response({'status': 'success', 'player_id': player.id, 'skins': skin_list})
 
         except Exception as e:
             _logger.error(f"Error obteniendo skins del jugador: {e}")
             return self._json_response({'status': 'error', 'message': 'Error interno del servidor'}, 500)
+
     # ---------------------------
     # POST: Comprar una skin
     # ---------------------------
-@http.route('/game_api/skins/buy', type='http', auth='public', methods=['POST'], csrf=False)
-def buy_skin(self, **kwargs):
-    try:
-        data = json.loads(request.httprequest.data.decode('utf-8'))
-        _logger.info(f"Datos recibidos en compra de skin: {data}")
+    @http.route('/game_api/skins/buy', type='http', auth='public', methods=['POST'], csrf=False)
+    def buy_skin(self, **kwargs):
+        try:
+            data = json.loads(request.httprequest.data.decode('utf-8'))
+            _logger.info(f"Datos recibidos en compra de skin: {data}")
 
-        player_id = data.get('player_id')
-        skin_id = data.get('skin_id')
-        skin_price = data.get('price', 50)  # Precio por defecto
+            player_id = data.get('player_id')
+            skin_id = data.get('skin_id')
+            skin_price = data.get('price', 50)  # Precio por defecto de 50 monedas
 
-        if not player_id or not skin_id:
-            return self._json_response({'status': 'error', 'message': 'Faltan parámetros (player_id, skin_id)'}, 400)
+            if not player_id or not skin_id:
+                _logger.error("Faltan parámetros en la compra de skin (player_id, skin_id)")
+                return self._json_response({'status': 'error', 'message': 'Faltan parámetros (player_id, skin_id)'}, 400)
 
-        player = request.env['game.player'].sudo().browse(player_id)
-        skin = request.env['game.skin'].sudo().browse(skin_id)
+            player = request.env['game.player'].sudo().browse(player_id)
+            skin = request.env['game.skin'].sudo().browse(skin_id)
 
-        if not player.exists():
-            return self._json_response({'status': 'error', 'message': 'Jugador no encontrado'}, 404)
+            if not player.exists():
+                _logger.error(f"Jugador no encontrado con ID: {player_id}")
+                return self._json_response({'status': 'error', 'message': 'Jugador no encontrado'}, 404)
 
-        if not skin.exists():
-            return self._json_response({'status': 'error', 'message': 'Skin no encontrada'}, 404)
+            if not skin.exists():
+                _logger.error(f"Skin no encontrada con ID: {skin_id}")
+                return self._json_response({'status': 'error', 'message': 'Skin no encontrada'}, 404)
 
-        if skin in player.owned_skins:
-            return self._json_response({'status': 'error', 'message': 'Ya posees esta skin'}, 400)
+            if skin in player.owned_skins:
+                _logger.error(f"El jugador {player_id} ya posee esta skin")
+                return self._json_response({'status': 'error', 'message': 'Ya posees esta skin'}, 400)
 
-        # ✅ Asegurar que el saldo está actualizado antes de hacer la resta
-        player.sudo().flush()  # 🛠️ Forzar actualización de datos antes de leer `coin_balance`
-        current_balance = player.coin_balance
+            if player.coin_balance < skin_price:
+                _logger.error(f"Saldo insuficiente: {player.coin_balance} < {skin_price}")
+                return self._json_response({'status': 'error', 'message': 'Saldo insuficiente'}, 400)
 
-        if current_balance < skin_price:
-            return self._json_response({'status': 'error', 'message': 'Saldo insuficiente'}, 400)
+            # Restar monedas y asignar la skin
+            request.env['game.coin.transaction'].sudo().create({
+                'player_id': player.id,
+                'amount': -skin_price,
+                'reason': f'Compra de skin {skin.name}'
+            })
 
-        # ✅ Registrar la transacción de monedas en game.coin.transaction
-        request.env['game.coin.transaction'].sudo().create({
-            'player_id': player.id,
-            'amount': -skin_price,
-            'reason': f'Compra de skin {skin.name}'
-        })
+            player.owned_skins = [(4, skin.id)]
 
-        # ✅ Restar monedas del saldo del jugador usando el saldo actualizado
-        new_balance = current_balance - skin_price  # 🛠️ Asegurar que siempre usa el valor correcto
-        player.sudo().write({'coin_balance': new_balance})
+            return self._json_response({'status': 'success', 'message': f'Skin {skin.name} comprada', 'new_balance': player.coin_balance})
 
-        # ✅ Agregar la skin al jugador manteniendo las anteriores
-        player.sudo().write({
-            'owned_skins': [(4, skin.id)]
-        })
-
-        return self._json_response({
-            'status': 'success',
-            'message': f'Skin {skin.name} comprada con éxito',
-            'new_balance': new_balance
-        })
-
-    except Exception as e:
-        _logger.error(f"Error comprando skin: {e}")
-        return self._json_response({'status': 'error', 'message': 'Error interno del servidor'}, 500)
+        except Exception as e:
+            _logger.error(f"Error comprando skin: {e}")
+            return self._json_response({'status': 'error', 'message': 'Error interno del servidor'}, 500)

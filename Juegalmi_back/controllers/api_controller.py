@@ -59,7 +59,7 @@ class GameAPIController(http.Controller):
             skins = [{
                 'id': skin.id,
                 'name': skin.name,
-                'color': skin.image,
+                'color': skin.color,
             } for skin in player.owned_skins]
 
             # Respuesta exitosa con skins incluidas
