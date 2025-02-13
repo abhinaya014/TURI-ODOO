@@ -10,7 +10,7 @@ class GameSkin(models.Model):
     ], string="Type", default='character', required=True)
     description = fields.Text()
     image_url = fields.Selection([
-        ('/juegalmi_back/static/img/skin_red.png', 'Red Skin'),
+        ('Juegalmi_back\static\img\skin_red.png', 'Red Skin'),
         ('/juegalmi_back/static/img/skin_blue.png', 'Blue Skin'),
         ('/juegalmi_back/static/img/skin_green.png', 'Green Skin'),
         ('/juegalmi_back/static/img/skin_yellow.png', 'Yellow Skin'),
