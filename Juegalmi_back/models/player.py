@@ -47,36 +47,36 @@ class GamePlayer(models.Model):
             player.total_wins = wins
 
    @api.model
-    def create(self, vals):
-        if 'registration_date' not in vals:
-            vals['registration_date'] = fields.Datetime.now()
+def create(self, vals):
+    if 'registration_date' not in vals:
+        vals['registration_date'] = fields.Datetime.now()
 
-        # 🔹 Crear el contacto en res.partner
-        partner = self.env['res.partner'].sudo().search([('email', '=', vals.get('email'))], limit=1)
-        if not partner:
-            partner_vals = {
-                'name': vals.get('name'),
-                'email': vals.get('email'),
-            }
-            if vals.get('photo'):
-                partner_vals['image_1920'] = vals['photo']
-            partner = self.env['res.partner'].sudo().create(partner_vals)
+    # 🔹 Crear el contacto en res.partner
+    partner = self.env['res.partner'].sudo().search([('email', '=', vals.get('email'))], limit=1)
+    if not partner:
+        partner_vals = {
+            'name': vals.get('name'),
+            'email': vals.get('email'),
+        }
+        if vals.get('photo'):
+            partner_vals['image_1920'] = vals['photo']
+        partner = self.env['res.partner'].sudo().create(partner_vals)
 
-        vals['partner_id'] = partner.id
-        player = super(GamePlayer, self).create(vals)
+    vals['partner_id'] = partner.id
+    player = super(GamePlayer, self).create(vals)
 
-        # 🔹 Asegurar que la imagen se guarda en res.partner
-        if 'photo' in vals and vals['photo']:
-            partner.sudo().write({'image_1920': vals['photo']})
+    # 🔹 Asegurar que la imagen se guarda en res.partner
+    if 'photo' in vals and vals['photo']:
+        partner.sudo().write({'image_1920': vals['photo']})
 
-        # 🔹 Dar 400 monedas por defecto al nuevo jugador
-        self.env['game.coin.transaction'].sudo().create({
-            'player_id': player.id,
-            'amount': 400,
-            'reason': 'Monedas iniciales por registro'
-        })
+    # 🔹 Dar 400 monedas por defecto al nuevo jugador
+    self.env['game.coin.transaction'].sudo().create({
+        'player_id': player.id,
+        'amount': 400,
+        'reason': 'Monedas iniciales por registro'
+    })
 
-        return player
+    return player
 
 
     def write(self, vals):
