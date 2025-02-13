@@ -46,15 +46,14 @@ class GameSkinAPI(http.Controller):
             skin_list = [{
                 'id': skin.id,
                 'name': skin.name,
-                'type': skin.type
-            } for skin in player.owned_by_players]  # FIX: Cambié owned_skins por owned_by_players
+                'image': skin.image
+            } for skin in player.owned_by_players]
 
             return self._json_response({'status': 'success', 'player_id': player.id, 'skins': skin_list})
 
         except Exception as e:
             _logger.error(f"Error obteniendo skins del jugador: {e}")
             return self._json_response({'status': 'error', 'message': 'Error interno del servidor'}, 500)
-
     # ---------------------------
     # POST: Comprar una skin
     # ---------------------------
@@ -69,40 +68,32 @@ class GameSkinAPI(http.Controller):
             skin_price = data.get('price', 50)  # Precio por defecto
 
             if not player_id or not skin_id:
-                _logger.error("Faltan parámetros en la compra de skin (player_id, skin_id)")
                 return self._json_response({'status': 'error', 'message': 'Faltan parámetros (player_id, skin_id)'}, 400)
 
             player = request.env['game.player'].sudo().browse(player_id)
             skin = request.env['game.skin'].sudo().browse(skin_id)
 
             if not player.exists():
-                _logger.error(f"Jugador no encontrado con ID: {player_id}")
                 return self._json_response({'status': 'error', 'message': 'Jugador no encontrado'}, 404)
 
             if not skin.exists():
-                _logger.error(f"Skin no encontrada con ID: {skin_id}")
                 return self._json_response({'status': 'error', 'message': 'Skin no encontrada'}, 404)
 
-            if skin in player.owned_by_players:  # FIX: Cambié owned_skins por owned_by_players
-                _logger.error(f"El jugador {player_id} ya posee esta skin")
+            if skin in player.owned_by_players:
                 return self._json_response({'status': 'error', 'message': 'Ya posees esta skin'}, 400)
 
             if player.coin_balance < skin_price:
-                _logger.error(f"Saldo insuficiente: {player.coin_balance} < {skin_price}")
                 return self._json_response({'status': 'error', 'message': 'Saldo insuficiente'}, 400)
 
-            # Restar monedas y asignar la skin
-            request.env['game.coin.transaction'].sudo().create({
-                'player_id': player.id,
-                'amount': -skin_price,
-                'reason': f'Compra de skin {skin.name}'
-            })
-
+            # Restar monedas al jugador
             player.sudo().write({
-                'coin_balance': player.coin_balance - skin_price  # FIX: Ahora sí se resta el saldo
+                'coin_balance': player.coin_balance - skin_price
             })
 
-            player.owned_by_players = [(4, skin.id)]  # FIX: owned_by_players en vez de owned_skins
+            # Agregar skin al jugador
+            player.sudo().write({
+                'owned_by_players': [(4, skin.id)]  # Mantiene skins previas
+            })
 
             return self._json_response({
                 'status': 'success',
