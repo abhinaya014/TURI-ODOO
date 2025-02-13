@@ -13,7 +13,7 @@ class GamePlayer(models.Model):
     password = fields.Char(required=True)
 
     # ✅ Cambiamos Binary a Image para que funcione en todas las vistas
-    photo = fields.Image(string="Photo", max_width=512, max_height=512, store=True, attachment=True)
+    photo = fields.Image(string="Photo", max_width=512, max_height=512, attachment=True, store=False)
 
     level = fields.Integer(string="Level", default=1)
     experience = fields.Float(string="Experience", default=0)
