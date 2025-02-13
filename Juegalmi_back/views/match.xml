@@ -1,172 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <!-- Vista Tree de Partidos -->
-        <record id="view_game_match_tree" model="ir.ui.view">
-            <field name="name">game.match.tree</field>
-            <field name="model">game.match</field>
-            <field name="arch" type="xml">
-                <tree decoration-info="state=='draft'" 
-                      decoration-success="state=='finished'" 
-                      decoration-warning="state=='in_progress'"
-                      default_order="start_time desc">
-                    <field name="name"/>
-                    <field name="start_time"/>
-                    <field name="end_time"/>
-                    <field name="winner_id"/>
-                    <field name="state" widget="badge" 
-                           decoration-info="state == 'draft'"
-                           decoration-warning="state == 'in_progress'"
-                           decoration-success="state == 'finished'"/>
-                    <field name="duration" widget="float_time"/>
-                </tree>
-            </field>
-        </record>
+   <data>
+       <!-- Vista Tree de Partidos -->
+       <record id="view_game_match_tree" model="ir.ui.view">
+           <field name="name">game.match.tree</field>
+           <field name="model">game.match</field>
+           <field name="arch" type="xml">
+               <tree decoration-info="state=='draft'" 
+                     decoration-success="state=='finished'" 
+                     decoration-warning="state=='in_progress'"
+                     default_order="start_time desc">
+                   <field name="name"/>
+                   <field name="start_time"/>
+                   <field name="end_time"/>
+                   <field name="winner_id"/>
+                   <field name="state" widget="badge"/>
+               </tree>
+           </field>
+       </record>
 
-        <!-- Vista Form de Partidos -->
-        <record id="view_game_match_form" model="ir.ui.view">
-            <field name="name">game.match.form</field>
-            <field name="model">game.match</field>
-            <field name="arch" type="xml">
-                <form>
-                    <header>
-                        <button name="action_start_match" 
-                                type="object" 
-                                string="▶️ Iniciar Partida" 
-                                class="oe_highlight btn-primary" 
-                                states="draft"/>
-                        <button name="action_end_match" 
-                                type="object" 
-                                string="🏁 Finalizar Partida" 
-                                class="oe_highlight btn-success" 
-                                states="in_progress"/>
-                        <field name="state" widget="statusbar" 
-                               statusbar_visible="draft,in_progress,finished"/>
-                    </header>
-                    <sheet>
-                        <div class="oe_button_box" name="button_box">
-                            <button name="action_view_stats" 
-                                    type="object" 
-                                    class="oe_stat_button" 
-                                    icon="fa-trophy">
-                                <field name="total_kills" widget="statinfo" string="Kills"/>
-                            </button>
-                            <button class="oe_stat_button" icon="fa-clock-o">
-                                <field name="duration" widget="statinfo" string="Duración"/>
-                            </button>
-                        </div>
-                        <div class="oe_title">
-                            <h1>
-                                <field name="name" placeholder="Nombre de la Partida"
-                                       class="text-center" style="width: 100%;"/>
-                            </h1>
-                        </div>
-                        <group>
-                            <group>
-                                <field name="start_time"/>
-                                <field name="end_time"/>
-                                <field name="map_name" placeholder="Nombre del Mapa"/>
-                            </group>
-                            <group>
-                                <field name="winner_id" 
-                                       options="{'no_create': True}"
-                                       domain="[('id', 'in', player_stats_ids.mapped('player_id').ids)]"/>
-                                <field name="score" widget="integer"/>
-                                <field name="game_mode" placeholder="Modo de Juego"/>
-                            </group>
-                        </group>
+       <!-- Vista Form de Partidos -->
+       <record id="view_game_match_form" model="ir.ui.view">
+           <field name="name">game.match.form</field>
+           <field name="model">game.match</field>
+           <field name="arch" type="xml">
+               <form>
+                   <header>
+                       <button name="action_start_match" 
+                               type="object" 
+                               string="▶️ Iniciar Partida" 
+                               class="oe_highlight btn-primary" 
+                               attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                       <button name="action_end_match" 
+                               type="object" 
+                               string="🏁 Finalizar Partida" 
+                               class="oe_highlight btn-success" 
+                               attrs="{'invisible': [('state', '!=', 'in_progress')]}"/>
+                       <field name="state" widget="statusbar" 
+                              statusbar_visible="draft,in_progress,finished"/>
+                   </header>
+                   <sheet>
+                       <div class="oe_title">
+                           <h1>
+                               <field name="name" placeholder="Nombre de la Partida"
+                                      class="text-center" style="width: 100%;"/>
+                           </h1>
+                       </div>
+                       <group>
+                           <group>
+                               <field name="start_time"/>
+                               <field name="end_time"/>
+                           </group>
+                           <group>
+                               <field name="winner_id" 
+                                      options="{'no_create': True}"
+                                      domain="[('id', 'in', player_stats_ids.mapped('player_id').ids)]"/>
+                               <field name="score" widget="integer"/>
+                           </group>
+                       </group>
 
-                        <notebook>
-                            <page string="🎮 Estadísticas de Jugadores" name="player_stats">
-                                <field name="player_stats_ids" 
-                                       widget="one2many">
-                                    <tree editable="bottom" decoration-success="score > 100">
-                                        <field name="player_id" options="{'no_create': True}"/>
-                                        <field name="kills"/>
-                                        <field name="deaths"/>
-                                        <field name="score" sum="Total Score"/>
-                                        <field name="kd_ratio" widget="percentage"/>
-                                        <field name="team" widget="badge"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="📝 Notas y Comentarios" name="notes">
-                                <field name="notes" placeholder="Añade notas sobre la partida..."/>
-                            </page>
-                            <page string="🏆 Recompensas" name="rewards">
-                                <group>
-                                    <field name="reward_coins"/>
-                                    <field name="reward_experience"/>
-                                </group>
-                            </page>
-                        </notebook>
-                    </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids"/>
-                        <field name="message_ids"/>
-                    </div>
-                </form>
-            </field>
-        </record>
+                       <notebook>
+                           <page string="🎮 Estadísticas de Jugadores" name="player_stats">
+                               <field name="player_stats_ids">
+                                   <tree editable="bottom">
+                                       <field name="player_id" options="{'no_create': True}"/>
+                                       <field name="kills"/>
+                                       <field name="deaths"/>
+                                       <field name="score" sum="Total Score"/>
+                                   </tree>
+                               </field>
+                           </page>
+                           <page string="📝 Notas" name="notes">
+                               <field name="notes" placeholder="Añade notas sobre la partida..."/>
+                           </page>
+                       </notebook>
+                   </sheet>
+               </form>
+           </field>
+       </record>
 
-        <!-- Vista Kanban de Partidos -->
-        <record id="view_game_match_kanban" model="ir.ui.view">
-            <field name="name">game.match.kanban</field>
-            <field name="model">game.match</field>
-            <field name="arch" type="xml">
-                <kanban class="o_game_match_kanban" default_order="start_time desc">
-                    <field name="name"/>
-                    <field name="start_time"/>
-                    <field name="state"/>
-                    <field name="winner_id"/>
-                    <field name="score"/>
-                    <templates>
-                        <t t-name="kanban-box">
-                            <div class="oe_kanban_global_click">
-                                <div class="oe_kanban_content">
-                                    <div class="o_kanban_record_top">
-                                        <div class="o_kanban_record_headings">
-                                            <strong class="o_kanban_record_title">
-                                                <field name="name"/>
-                                            </strong>
-                                        </div>
-                                        <div class="o_kanban_record_state">
-                                            <field name="state" widget="label_selection" 
-                                                   options="{'classes': {'draft': 'info', 'in_progress': 'warning', 'finished': 'success'}}"/>
-                                        </div>
-                                    </div>
-                                    <div class="o_kanban_record_body">
-                                        <div><strong>Ganador:</strong> <field name="winner_id"/></div>
-                                        <div><strong>Puntuación:</strong> <field name="score"/></div>
-                                        <div><strong>Inicio:</strong> <field name="start_time"/></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </t>
-                    </templates>
-                </kanban>
-            </field>
-        </record>
+       <!-- Vista Kanban de Partidos -->
+       <record id="view_game_match_kanban" model="ir.ui.view">
+           <field name="name">game.match.kanban</field>
+           <field name="model">game.match</field>
+           <field name="arch" type="xml">
+               <kanban default_order="start_time desc" class="o_kanban_small_column">
+                   <field name="name"/>
+                   <field name="start_time"/>
+                   <field name="end_time"/>
+                   <field name="state"/>
+                   <field name="winner_id"/>
+                   <field name="score"/>
+                   <templates>
+                       <t t-name="kanban-box">
+                           <div class="oe_kanban_global_click" t-attf-class="oe_kanban_card 
+                               #{record.state.raw_value == 'draft' ? 'bg-info' : ''} 
+                               #{record.state.raw_value == 'in_progress' ? 'bg-warning' : ''} 
+                               #{record.state.raw_value == 'finished' ? 'bg-success' : ''}">
+                               <div class="o_kanban_record_top">
+                                   <div class="o_kanban_record_headings">
+                                       <h3 class="o_kanban_record_title" style="color: white;">
+                                           <field name="name"/>
+                                       </h3>
+                                   </div>
+                                   <div class="o_kanban_record_bottom">
+                                       <div class="oe_kanban_bottom_left" style="color: white;">
+                                           <field name="state" widget="label_selection" 
+                                                  options="{'classes': {'draft': 'default', 'in_progress': 'warning', 'finished': 'success'}}"/>
+                                       </div>
+                                   </div>
+                               </div>
+                               <div class="o_kanban_record_body" style="color: white;">
+                                   <div><strong>Inicio:</strong> <field name="start_time"/></div>
+                                   <div t-if="record.end_time.raw_value">
+                                       <strong>Fin:</strong> <field name="end_time"/>
+                                   </div>
+                                   <div t-if="record.winner_id.raw_value">
+                                       <strong>Ganador:</strong> <field name="winner_id"/>
+                                   </div>
+                                   <div t-if="record.score.raw_value">
+                                       <strong>Puntuación:</strong> <field name="score"/>
+                                   </div>
+                               </div>
+                           </div>
+                       </t>
+                   </templates>
+               </kanban>
+           </field>
+       </record>
 
-        <!-- Vista Search -->
-        <record id="view_game_match_search" model="ir.ui.view">
-            <field name="name">game.match.search</field>
-            <field name="model">game.match</field>
-            <field name="arch" type="xml">
-                <search>
-                    <field name="name"/>
-                    <field name="winner_id"/>
-                    <filter string="Borradores" name="draft" domain="[('state','=','draft')]"/>
-                    <filter string="En Progreso" name="in_progress" domain="[('state','=','in_progress')]"/>
-                    <filter string="Finalizados" name="finished" domain="[('state','=','finished')]"/>
-                    <group expand="0" string="Agrupar Por">
-                        <filter string="Estado" name="state" context="{'group_by':'state'}"/>
-                        <filter string="Ganador" name="winner" context="{'group_by':'winner_id'}"/>
-                        <filter string="Fecha" name="date" context="{'group_by':'start_time:day'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
-
-    </data>
+       <!-- Vista Search -->
+       <record id="view_game_match_search" model="ir.ui.view">
+           <field name="name">game.match.search</field>
+           <field name="model">game.match</field>
+           <field name="arch" type="xml">
+               <search>
+                   <field name="name"/>
+                   <field name="winner_id"/>
+                   <filter string="Borradores" name="draft" domain="[('state','=','draft')]"/>
+                   <filter string="En Progreso" name="in_progress" domain="[('state','=','in_progress')]"/>
+                   <filter string="Finalizados" name="finished" domain="[('state','=','finished')]"/>
+                   <group expand="0" string="Agrupar Por">
+                       <filter string="Estado" name="state" context="{'group_by':'state'}"/>
+                       <filter string="Ganador" name="winner" context="{'group_by':'winner_id'}"/>
+                       <filter string="Fecha" name="date" context="{'group_by':'start_time:day'}"/>
+                   </group>
+               </search>
+           </field>
+       </record>
+   </data>
 </odoo>
