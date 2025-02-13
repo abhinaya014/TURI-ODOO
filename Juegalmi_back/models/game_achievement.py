@@ -43,16 +43,18 @@ class GameAchievement(models.Model):
                     'reason': f'Logro desbloqueado: {self.name}',
                     'date': fields.Datetime.now()
                 })
+                _logger.info(f"Transacción creada: {transaction}")
+
             # Añadir el jugador a la lista
-            if player.id not in self.player_ids.ids:
-                self.write({
-                    'player_ids': [(4, player.id, 0)]
-                })
-            return True
-        except Exception as e:
-            _logger.error(f"Error al otorgar logro: {str(e)}")
-            return False
-    return False
+                if player.id not in self.player_ids.ids:
+                    self.write({
+                            'player_ids': [(4, player.id, 0)]
+                        })
+                return True
+            except Exception as e:
+                _logger.error(f"Error al otorgar logro: {str(e)}")
+                return False
+        return False
 
     def check_achievement_for_player(self, player_id):
         player = self.env['game.player'].browse(player_id)
