@@ -13,7 +13,7 @@
 
 .o_player_kanban .o_kanban_image_fill_left {
     background-color: rgba(0,0,0,0.2);
-    border-right: 1px solid rgb(255, 249, 249);
+    border-right: 1px solid rgba(255, 249, 249, 0.1);
 }
 
 .o_player_kanban .o_kanban_record_title {
@@ -32,7 +32,7 @@
 
 .player_progress .progress {
     height: 8px;
-    background: rgba(255,255,255,0.1);
+    background: rgb(218, 217, 217);
     border-radius: 4px;
     overflow: hidden;
 }
