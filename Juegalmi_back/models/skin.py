@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 class GameSkin(models.Model):
     _name = 'game.skin'
@@ -11,10 +11,10 @@ class GameSkin(models.Model):
     
     description = fields.Text()
 
-    # Nuevo: Imagen del skin en lugar de solo color
+    # Nuevo: Imagen del skin
     image = fields.Image(string="Skin Image", help="Imagen del skin en el juego")
 
-    # Si quieres seguir usando la lógica de colores con imágenes predefinidas en /static/img/
+    # Si quieres usar imágenes predefinidas en /static/img/
     color_image = fields.Char(
         string="Color Image Path",
         help="Ruta de la imagen de color en /static/img/"
@@ -25,14 +25,14 @@ class GameSkin(models.Model):
         string="Jugadores que poseen este skin"
     )
 
-    # Nuevo: Contador automático de jugadores que tienen este skin
+    # Campo computado para contar jugadores que tienen el skin
     owned_by_players_count = fields.Integer(
         string="Número de jugadores",
         compute="_compute_owned_by_players_count",
         store=True
     )
 
-    @property
+    @api.depends('owned_by_players')
     def _compute_owned_by_players_count(self):
         """ Calcula el número de jugadores que poseen este skin """
         for skin in self:
