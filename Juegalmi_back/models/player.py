@@ -69,6 +69,12 @@ class GamePlayer(models.Model):
         if 'photo' in vals and vals['photo']:
             partner.sudo().write({'image_1920': vals['photo']})
 
+    self.env['game.coin.transaction'].sudo().create({
+        'player_id': player.id,
+        'amount': 400,
+        'reason': 'Monedas iniciales por registro'
+    })
+
         return player
 
     def write(self, vals):
