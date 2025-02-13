@@ -7,42 +7,73 @@
          *********************** -->
 
     <!-- Vista Kanban Completa de Jugadores -->
-    <record id="view_game_player_kanban_full" model="ir.ui.view">
-      <field name="name">game.player.kanban.full</field>
+<record id="view_game_player_kanban_full" model="ir.ui.view">
+  <field name="name">game.player.kanban.full</field>
+  <field name="model">game.player</field>
+  <field name="arch" type="xml">
+    <kanban>
+      <field name="name"/>
+      <field name="email"/>
+      <field name="photo"/>
+      <field name="player_id"/>
+      <field name="level"/>
+      <field name="coin_balance"/>
+      <field name="total_matches"/>
+      <field name="total_wins"/>
+      <templates>
+        <t t-name="kanban-box">
+          <div class="oe_kanban_global_click"
+               style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+            <div style="display:flex; align-items:center; margin-bottom:8px;">
+              <div style="margin-right:10px; width:64px; height:64px; overflow:hidden; border-radius:50%; display:flex; align-items:center; justify-content:center; background-color:#f5f5f5;">
+                <t t-if="record.photo.value">
+                    <img t-att-src="'data:image/png;base64,' + record.photo.value"
+                         style="width:64px; height:64px; object-fit:cover;"/>
+                </t>
+                <t t-else="">
+                    <img src="/web/static/img/user_menu_avatar.png"
+                         style="width:40px; height:40px; opacity:0.5;"/>
+                </t>
+              </div>
+              <div>
+                <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
+                <div style="font-size:12px; color:#777;">
+                  ID: <span t-esc="record.player_id.value"/>
+                </div>
+              </div>
+            </div>
+            <div style="font-size:13px; color:#555; margin-bottom:4px;">
+              <span>Email: </span><span t-esc="record.email.value"/>
+            </div>
+            <div style="font-size:13px; color:#555; margin-bottom:4px;">
+              <span>Level: </span><span t-esc="record.level.value"/>
+            </div>
+            <div style="font-size:13px; color:#555; margin-bottom:4px;">
+              <span>Coins: </span><span t-esc="record.coin_balance.value"/>
+            </div>
+            <div style="font-size:12px; color:#999;">
+              <span>Matches: </span><span t-esc="record.total_matches.value"/>
+              <span> | Wins: </span><span t-esc="record.total_wins.value"/>
+            </div>
+          </div>
+        </t>
+      </templates>
+    </kanban>
+  </field>
+</record>
+    <!-- Vista Tree de Jugadores -->
+    <record id="view_game_player_tree" model="ir.ui.view">
+      <field name="name">game.player.tree</field>
       <field name="model">game.player</field>
       <field name="arch" type="xml">
-        <kanban>
+        <tree>
           <field name="name"/>
           <field name="email"/>
-          <field name="photo"/>
-          <field name="player_id"/>
           <field name="level"/>
           <field name="coin_balance"/>
           <field name="total_matches"/>
           <field name="total_wins"/>
-          <templates>
-            <t t-name="kanban-box">
-              <div class="oe_kanban_global_click"
-                   style="padding:10px; border:1px solid #eee; border-radius:8px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-                <div style="display:flex; align-items:center; margin-bottom:8px;">
-                  <div style="margin-right:10px;">
-                    <!-- 🔹 Corrección: Usamos `photo` en lugar de `partner_id.image_128` -->
-                    <img t-if="record.photo.raw_value"
-                         t-att-src="'data:image/png;base64,' + record.photo.raw_value"
-                         style="width:80px; height:80px; border-radius:50%; object-fit: cover;"/>
-                    <img t-else="" src="/web/static/src/img/smile.svg" style="width:80px; height:80px; border-radius:50%;"/>
-                  </div>
-                  <div>
-                    <div style="font-size:16px; font-weight:bold; color:#333;" t-esc="record.name.value"/>
-                    <div style="font-size:12px; color:#777;">
-                      ID: <span t-esc="record.player_id.value"/>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </t>
-          </templates>
-        </kanban>
+        </tree>
       </field>
     </record>
 
@@ -86,6 +117,10 @@
         </form>
       </field>
     </record>
+
+
+
+
 
   </data>
 </odoo>
