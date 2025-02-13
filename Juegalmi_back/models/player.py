@@ -12,7 +12,7 @@ class GamePlayer(models.Model):
     email = fields.Char(required=True)
     password = fields.Char(required=True)
 
-    # 🔹 Usamos Image y nos aseguramos de que se almacena correctamente
+    # 📌 Foto del jugador
     photo = fields.Image(string="Photo", max_width=512, max_height=512, attachment=True, store=False)
 
     level = fields.Integer(string="Level", default=1)
@@ -28,6 +28,7 @@ class GamePlayer(models.Model):
 
     total_matches = fields.Integer(string="Total Matches", compute="_compute_totals", store=True)
     total_wins = fields.Integer(string="Total Wins", compute="_compute_totals", store=True)
+    win_rate = fields.Float(string="Win Rate", compute="_compute_win_rate", store=True)
 
     coin_transaction_ids = fields.One2many(
         'game.coin.transaction', 'player_id', string="Coin Transactions", ondelete='cascade'
@@ -39,8 +40,6 @@ class GamePlayer(models.Model):
 
     partner_id = fields.Many2one('res.partner', string="Contacto", required=True, readonly=True, ondelete='cascade')
 
-    win_rate = fields.Float(string="Win Rate", compute="_compute_win_rate", store=True)
-
     can_level_up = fields.Boolean(
         string="Can Level Up",
         compute="_compute_can_level_up",
@@ -51,11 +50,13 @@ class GamePlayer(models.Model):
     
     @api.depends('coin_transaction_ids.amount')
     def _compute_coin_balance(self):
+        """Calcula el saldo de monedas del jugador"""
         for player in self:
             player.coin_balance = sum(player.coin_transaction_ids.mapped('amount'))
 
     @api.depends('match_stats_ids')
     def _compute_totals(self):
+        """Calcula el total de partidas jugadas y ganadas"""
         for player in self:
             matches = self.env['game.match'].search([('player_stats_ids.player_id', '=', player.id)])
             wins = len(matches.filtered(lambda m: m.winner_id == player))
@@ -64,6 +65,7 @@ class GamePlayer(models.Model):
 
     @api.depends('total_matches', 'total_wins')
     def _compute_win_rate(self):
+        """Calcula el porcentaje de victorias"""
         for player in self:
             if player.total_matches:
                 player.win_rate = (player.total_wins / player.total_matches) * 100
@@ -72,21 +74,45 @@ class GamePlayer(models.Model):
 
     @api.depends('experience', 'level')
     def _compute_can_level_up(self):
-        """Comprueba si el jugador tiene suficiente experiencia para subir de nivel"""
+        """Determina si el jugador puede subir de nivel"""
         for player in self:
             player.can_level_up = player.experience >= (player.level * 100)
 
     ### 📌 ACCIONES ###
-    
+
     def action_level_up(self):
-        """Sube de nivel al jugador si tiene suficiente experiencia"""
+        """Permite subir de nivel si se cumple con la experiencia necesaria"""
         for player in self:
             if player.experience < (player.level * 100):
-                raise ValidationError(f"Necesitas más experiencia para subir de nivel.")
+                raise ValidationError("Necesitas más experiencia para subir de nivel.")
             
             player.level += 1
             player.experience -= (player.level * 100)
             _logger.info(f"Jugador {player.name} ha subido al nivel {player.level}")
+
+    def action_view_matches(self):
+        """Redirige a la vista de partidas jugadas por el jugador"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Matches',
+            'res_model': 'game.match',
+            'view_mode': 'tree,form',
+            'domain': [('player_stats_ids.player_id', '=', self.id)],
+            'context': {'default_player_id': self.id},
+        }
+
+    def action_view_achievements(self):
+        """Redirige a la vista de logros del jugador"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Achievements',
+            'res_model': 'game.achievement',
+            'view_mode': 'tree,form',
+            'domain': [('player_id', '=', self.id)],
+            'context': {'default_player_id': self.id},
+        }
 
     ### 📌 CREATE Y WRITE ###
 
@@ -138,16 +164,3 @@ class GamePlayer(models.Model):
                 player.partner_id.sudo().write(partner_vals)
 
         return res
-
-        def action_view_matches(self):
-    """ Redirige a la vista de partidas jugadas por el jugador """
-    self.ensure_one()
-    return {
-        'type': 'ir.actions.act_window',
-        'name': 'Matches',
-        'res_model': 'game.match',
-        'view_mode': 'tree,form',
-        'domain': [('player_stats_ids.player_id', '=', self.id)],
-        'context': {'default_player_id': self.id},
-    }
-
