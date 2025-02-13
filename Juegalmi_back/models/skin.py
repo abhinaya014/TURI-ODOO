@@ -9,14 +9,12 @@ class GameSkin(models.Model):
         ('character', 'Personaje'),  # Solo permitiremos "Character"
     ], string="Type", default='character', required=True)
     description = fields.Text()
-    color = fields.Selection([
-        ('red', 'Rojo'),
-        ('blue', 'Azul'),
-        ('green', 'Verde'),
-        ('yellow', 'Amarillo'),
-        ('pink', 'Rosa'),
-        ('orange', 'Naranja')
-    ], string="Color", required=True)
+
+    # Nuevo: Imagen del skin en lugar de solo color
+    image = fields.Image(string="Skin Image")  # Campo imagen
+
+    # Si quieres seguir usando la lógica de colores, podrías almacenar la ruta en lugar de un campo Selection
+    color_image = fields.Char(string="Color Image Path", help="Ruta de la imagen de color")  
 
     owned_by_players = fields.Many2many(
         'game.player',
