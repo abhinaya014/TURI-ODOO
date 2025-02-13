@@ -1,5 +1,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+import bcrypt
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -9,10 +10,10 @@ class GamePlayer(models.Model):
     _description = 'Game Player'
 
     name = fields.Char(required=True)
-    email = fields.Char(required=True)
-    password = fields.Char(required=True)
+    email = fields.Char(required=True, unique=True)
+    password_hash = fields.Char(string="Password", required=True)  # 🔹 Guardamos solo el hash
 
-    # 🔹 Usamos Image y nos aseguramos de que se almacena correctamente
+    # 🔹 Usamos Image para la foto
     photo = fields.Image(string="Photo", max_width=512, max_height=512, attachment=True, store=False)
 
     level = fields.Integer(string="Level", default=1)
@@ -51,7 +52,17 @@ class GamePlayer(models.Model):
         if 'registration_date' not in vals:
             vals['registration_date'] = fields.Datetime.now()
 
-        # 🔹 Guardar la imagen también en res.partner
+        # 🔹 Verificar si el email ya existe
+        existing_player = self.env['game.player'].sudo().search([('email', '=', vals.get('email'))])
+        if existing_player:
+            raise ValidationError("Este email ya está registrado. Usa otro.")
+
+        # 🔹 Hashear la contraseña antes de guardar
+        if 'password' in vals:
+            vals['password_hash'] = bcrypt.hashpw(vals['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            del vals['password']  # Eliminamos la contraseña en texto plano
+
+        # 🔹 Guardar la imagen en res.partner
         partner = self.env['res.partner'].sudo().search([('email', '=', vals.get('email'))], limit=1)
         if not partner:
             partner_vals = {
@@ -65,7 +76,7 @@ class GamePlayer(models.Model):
         vals['partner_id'] = partner.id
         player = super(GamePlayer, self).create(vals)
 
-        # 🔹 Asegurar que la imagen se guarda en res.partner
+        # 🔹 Guardar imagen en res.partner
         if 'photo' in vals and vals['photo']:
             partner.sudo().write({'image_1920': vals['photo']})
 
@@ -76,10 +87,14 @@ class GamePlayer(models.Model):
             'reason': 'Monedas iniciales por registro'
         })
 
-        return player  # ✅ Asegúrate de que el return esté correctamente indentado
+        return player
 
     def write(self, vals):
         """Sincroniza cambios en el jugador con res.partner"""
+        if 'password' in vals:
+            vals['password_hash'] = bcrypt.hashpw(vals['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            del vals['password']
+
         res = super(GamePlayer, self).write(vals)
 
         for player in self:
@@ -94,3 +109,7 @@ class GamePlayer(models.Model):
                 player.partner_id.sudo().write(partner_vals)
 
         return res
+
+    def verify_password(self, password):
+        """Verifica si la contraseña ingresada coincide con la almacenada"""
+        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
