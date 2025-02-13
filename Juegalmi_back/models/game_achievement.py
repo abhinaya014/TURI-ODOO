@@ -1,6 +1,5 @@
 from odoo import models, fields, api
 import logging
-import json
 
 _logger = logging.getLogger(__name__)
 
@@ -35,21 +34,20 @@ class GameAchievement(models.Model):
     def award_achievement(self, player_id):
         player = self.env['game.player'].browse(player_id)
         if player.exists() and player.id not in self.player_ids.ids:
-            # Crear la transacción de monedas
-            if self.reward_coins > 0:
-                transaction = self.env['game.coin.transaction'].sudo().create({
-                    'player_id': player.id,
-                    'amount': self.reward_coins,
-                    'reason': f'Logro desbloqueado: {self.name}',
-                    'date': fields.Datetime.now()
-                })
-                _logger.info(f"Transacción creada: {transaction}")
+            try:
+                # Crear la transacción de monedas si hay recompensa
+                if self.reward_coins > 0:
+                    transaction = self.env['game.coin.transaction'].sudo().create({
+                        'player_id': player.id,
+                        'amount': self.reward_coins,
+                        'reason': f'Logro desbloqueado: {self.name}',
+                        'date': fields.Datetime.now()
+                    })
+                    _logger.info(f"Transacción creada: {transaction.id}")
 
-            # Añadir el jugador a la lista
-                if player.id not in self.player_ids.ids:
-                    self.write({
-                            'player_ids': [(4, player.id, 0)]
-                        })
+                # Añadir el jugador a la lista de logradores
+                self.write({'player_ids': [(4, player.id)]})
+
                 return True
             except Exception as e:
                 _logger.error(f"Error al otorgar logro: {str(e)}")
@@ -62,17 +60,23 @@ class GameAchievement(models.Model):
             return False
 
         achieved = False
+
         if self.achievement_type == 'kills':
-            total_kills = sum(player.match_stats_ids.mapped('kills'))
+            total_kills = player.match_stats_ids.read_group(
+                [('player_id', '=', player.id)], ['kills'], ['player_id'])[0].get('kills', 0)
             achieved = total_kills >= self.threshold
+
         elif self.achievement_type == 'matches':
             achieved = player.total_matches >= self.threshold
+
         elif self.achievement_type == 'wins':
             achieved = player.total_wins >= self.threshold
+
         elif self.achievement_type == 'coins':
             achieved = player.coin_balance >= self.threshold
+
         elif self.achievement_type == 'skins':
-            achieved = len(player.owned_skins) >= self.threshold
+            achieved = len(player.owned_skins) >= self.threshold if player.owned_skins else False
 
         if achieved:
             return self.award_achievement(player_id)
