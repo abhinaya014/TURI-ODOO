@@ -35,18 +35,11 @@ class GamePlayer(models.Model):
     match_stats_ids = fields.One2many('game.match.player.stats', 'player_id', string="Match Statistics")
 
     partner_id = fields.Many2one('res.partner', string="Contact", required=True, readonly=True, ondelete='cascade')
-    win_rate = fields.Float(string="Win Rate", compute="_compute_win_rate", store=True)
 
     def _generate_player_id(self):
         """Genera un Player ID usando ir.sequence"""
         sequence = self.env['ir.sequence'].sudo().search([('code', '=', 'game.player')], limit=1)
         return sequence.next_by_id() if sequence else False
-
-    @api.depends('total_matches', 'total_wins')
-    def _compute_win_rate(self):
-        """Evita división por 0 y calcula el porcentaje de victorias"""
-        for player in self:
-            player.win_rate = (player.total_wins * 100 / player.total_matches) if player.total_matches > 0 else 0
 
     @api.depends('coin_transaction_ids.amount')
     def _compute_coin_balance(self):
