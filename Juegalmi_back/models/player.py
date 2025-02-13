@@ -8,13 +8,12 @@ class GamePlayer(models.Model):
     _name = 'game.player'
     _description = 'Game Player'
 
-    name = fields.Char(required=True)
-    email = fields.Char(required=True)
-    password = fields.Char(required=True)
-
-    # 🔹 Usamos Image y nos aseguramos de que se almacena correctamente
+    name = fields.Char(required=True, string="Player Name")
+    email = fields.Char(required=True, string="Email", index=True, unique=True)
+    password = fields.Char(required=True, string="Password")
+    
     photo = fields.Image(string="Photo", max_width=512, max_height=512, attachment=True, store=False)
-
+    
     level = fields.Integer(string="Level", default=1)
     experience = fields.Float(string="Experience", default=0)
     last_login = fields.Datetime(string="Last Login")
@@ -31,7 +30,7 @@ class GamePlayer(models.Model):
     owned_skins = fields.Many2many('game.skin', string="Owned Skins")
     match_stats_ids = fields.One2many('game.match.player.stats', 'player_id', string="Match Statistics")
 
-    partner_id = fields.Many2one('res.partner', string="Contacto", required=True, readonly=True, ondelete='cascade')
+    partner_id = fields.Many2one('res.partner', string="Contact", required=True, readonly=True, ondelete='cascade')
 
     @api.depends('coin_transaction_ids.amount')
     def _compute_coin_balance(self):
@@ -42,55 +41,51 @@ class GamePlayer(models.Model):
     def _compute_totals(self):
         for player in self:
             matches = self.env['game.match'].search([('player_stats_ids.player_id', '=', player.id)])
-            wins = len(matches.filtered(lambda m: m.winner_id == player))
             player.total_matches = len(matches)
-            player.total_wins = wins
+            player.total_wins = sum(1 for match in matches if match.winner_id == player)
 
     @api.model
     def create(self, vals):
         if 'registration_date' not in vals:
             vals['registration_date'] = fields.Datetime.now()
 
-        # 🔹 Guardar la imagen también en res.partner
-        partner = self.env['res.partner'].sudo().search([('email', '=', vals.get('email'))], limit=1)
-        if not partner:
+        existing_partner = self.env['res.partner'].sudo().search([('email', '=', vals.get('email'))], limit=1)
+        
+        if not existing_partner:
             partner_vals = {
                 'name': vals.get('name'),
                 'email': vals.get('email'),
+                'image_1920': vals.get('photo') if vals.get('photo') else False
             }
-            if vals.get('photo'):
-                partner_vals['image_1920'] = vals['photo']
-            partner = self.env['res.partner'].sudo().create(partner_vals)
+            existing_partner = self.env['res.partner'].sudo().create(partner_vals)
 
-        vals['partner_id'] = partner.id
+        vals['partner_id'] = existing_partner.id
         player = super(GamePlayer, self).create(vals)
 
-        # 🔹 Asegurar que la imagen se guarda en res.partner
-        if 'photo' in vals and vals['photo']:
-            partner.sudo().write({'image_1920': vals['photo']})
+        if vals.get('photo'):
+            existing_partner.sudo().write({'image_1920': vals['photo']})
 
-        # 🔹 Dar 400 monedas por defecto al nuevo jugador
         self.env['game.coin.transaction'].sudo().create({
             'player_id': player.id,
             'amount': 400,
-            'reason': 'Monedas iniciales por registro'
+            'reason': 'Initial registration bonus'
         })
 
-        return player  # ✅ Asegúrate de que el return esté correctamente indentado
+        return player
 
     def write(self, vals):
-        """Sincroniza cambios en el jugador con res.partner"""
         res = super(GamePlayer, self).write(vals)
 
         for player in self:
-            if 'name' in vals or 'email' in vals or 'photo' in vals:
-                partner_vals = {}
-                if 'name' in vals:
-                    partner_vals['name'] = vals['name']
-                if 'email' in vals:
-                    partner_vals['email'] = vals['email']
-                if 'photo' in vals:
-                    partner_vals['image_1920'] = vals['photo']
+            partner_vals = {}
+            if 'name' in vals:
+                partner_vals['name'] = vals['name']
+            if 'email' in vals:
+                partner_vals['email'] = vals['email']
+            if 'photo' in vals:
+                partner_vals['image_1920'] = vals['photo']
+            
+            if partner_vals:
                 player.partner_id.sudo().write(partner_vals)
 
         return res
