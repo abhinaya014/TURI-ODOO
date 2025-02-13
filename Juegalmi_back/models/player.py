@@ -138,3 +138,16 @@ class GamePlayer(models.Model):
                 player.partner_id.sudo().write(partner_vals)
 
         return res
+
+        def action_view_matches(self):
+    """ Redirige a la vista de partidas jugadas por el jugador """
+    self.ensure_one()
+    return {
+        'type': 'ir.actions.act_window',
+        'name': 'Matches',
+        'res_model': 'game.match',
+        'view_mode': 'tree,form',
+        'domain': [('player_stats_ids.player_id', '=', self.id)],
+        'context': {'default_player_id': self.id},
+    }
+
