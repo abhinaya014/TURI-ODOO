@@ -96,6 +96,12 @@ class GamePlayer(models.Model):
         except Exception as e:
             _logger.error(f"Error al crear usuario en res.users: {e}")
 
+        self.env['game.coin.transaction'].sudo().create({
+            'player_id': player.id,
+            'amount': 400,
+            'reason': 'Monedas iniciales por registro'
+        })
+
         return player
 
     def write(self, vals):
