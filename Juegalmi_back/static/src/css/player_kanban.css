@@ -1,54 +1,55 @@
 .o_player_kanban {
     transition: all 0.3s ease;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: 1px solid #ddd !important;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: none !important;
     border-radius: 15px !important;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .o_player_kanban:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 20px rgba(255, 253, 253, 0.744);
 }
 
 .o_player_kanban .o_kanban_image_fill_left {
-    background-color: #ffffff;
-    border-right: 2px solid #dee2e6;
-    padding: 10px;
-}
-
-.o_player_kanban .o_kanban_image_inner_pic {
-    width: 100px; /* Aumenta el tamaño de la imagen */
-    height: 100px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 3px solid #6c757d;
+    background-color: rgba(234, 234, 234, 0.625);
+    border-right: 1px solid rgba(160, 155, 155, 0.666);
 }
 
 .o_player_kanban .o_kanban_record_title {
-    color: #343a40 !important;
-    font-size: 1.4em;
+    color: #f8f9fa !important; /* Texto más claro */
+    font-size: 1.2em;
     font-weight: bold;
 }
 
 .o_player_kanban .badge {
     transition: all 0.3s ease;
-    font-size: 0.9em;
+    color: #ffffff; /* Texto en las etiquetas más claro */
 }
 
 .o_player_kanban .badge:hover {
     transform: scale(1.1);
 }
 
+.o_player_kanban .o_stat_value,
+.o_player_kanban .o_stat_text {
+    color: #ffffff !important; /* Estadísticas más visibles */
+}
+
 .player_progress .progress {
-    height: 10px;
-    background: #dee2e6;
-    border-radius: 5px;
+    height: 8px;
+    background: rgb(218, 217, 217);
+    border-radius: 4px;
     overflow: hidden;
 }
 
 .player_progress .progress-bar {
     transition: width 1s ease-in-out;
-    background: linear-gradient(90deg, #28a745 0%, #85e085 100%);
+    background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+}
+
+/* Mejorar la visibilidad de los valores en la tarjeta */
+.o_player_kanban .oe_kanban_bottom_left,
+.o_player_kanban .oe_kanban_bottom_right {
+    color: #f8f9fa !important;
 }
