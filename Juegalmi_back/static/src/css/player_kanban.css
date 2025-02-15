@@ -7,6 +7,7 @@
     padding: 15px;
     display: flex;
     align-items: center;
+    color: #ffffff !important;
 }
 
 .o_player_kanban:hover {
@@ -15,41 +16,48 @@
 }
 
 .o_player_kanban .o_kanban_image_fill_left {
-    background-color: rgba(234, 234, 234, 0.625);
-    border-right: 2px solid rgba(160, 155, 155, 0.666);
+    background-color: transparent;
+    flex: 0 0 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 10px;
-    flex-shrink: 0;
 }
 
 .o_player_kanban .o_kanban_image_inner_pic {
-    width: 120px !important;
-    height: 120px !important;
-    border-radius: 50% !important;
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 15px !important;
     object-fit: cover;
     border: 3px solid white;
 }
 
 .o_player_kanban .o_kanban_record_title {
     color: #ffffff !important;
-    font-size: 1.4em;
+    font-size: 1.6em;
     font-weight: bold;
     text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .o_player_kanban .badge {
     transition: all 0.3s ease;
-    font-size: 1em;
-    padding: 5px 10px;
+    font-size: 1.2em;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .o_player_kanban .badge:hover {
     transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.4);
 }
 
 .player_progress .progress {
-    height: 10px;
+    height: 12px;
     background: rgb(218, 217, 217);
-    border-radius: 4px;
+    border-radius: 6px;
     overflow: hidden;
     margin-top: 5px;
 }
