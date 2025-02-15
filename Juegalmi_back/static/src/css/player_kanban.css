@@ -1,6 +1,6 @@
 .o_player_kanban {
     transition: all 0.3s ease;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: linear-gradient(135deg, #2a2a4e 0%, #1f2d5c 100%);
     border: none !important;
     border-radius: 15px !important;
     overflow: hidden;
@@ -12,29 +12,27 @@
 
 .o_player_kanban:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(255, 253, 253, 0.744);
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.8);
 }
 
 .o_player_kanban .o_kanban_image_fill_left {
-    background-color: transparent;
-    flex: 0 0 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-right: 2px solid rgba(200, 200, 200, 0.6);
     padding: 10px;
+    flex-shrink: 0;
 }
 
 .o_player_kanban .o_kanban_image_inner_pic {
-    width: 100% !important;
-    height: auto !important;
+    width: 110px !important;
+    height: 110px !important;
     border-radius: 15px !important;
     object-fit: cover;
-    border: 3px solid white;
+    border: 2px solid white;
 }
 
 .o_player_kanban .o_kanban_record_title {
     color: #ffffff !important;
-    font-size: 1.6em;
+    font-size: 1.4em;
     font-weight: bold;
     text-transform: uppercase;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
@@ -42,11 +40,12 @@
 
 .o_player_kanban .badge {
     transition: all 0.3s ease;
-    font-size: 1.2em;
-    padding: 6px 12px;
+    font-size: 1em;
+    padding: 5px 12px;
     background: rgba(255, 255, 255, 0.2);
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.5);
+    font-weight: bold;
 }
 
 .o_player_kanban .badge:hover {
@@ -55,14 +54,15 @@
 }
 
 .player_progress .progress {
-    height: 12px;
-    background: rgb(218, 217, 217);
-    border-radius: 6px;
+    height: 10px;
+    background: rgb(220, 220, 220);
+    border-radius: 5px;
     overflow: hidden;
     margin-top: 5px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .player_progress .progress-bar {
     transition: width 1s ease-in-out;
-    background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+    background: linear-gradient(90deg, #50d890 0%, #4caf50 100%);
 }
