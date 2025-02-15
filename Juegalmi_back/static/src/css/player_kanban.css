@@ -7,6 +7,8 @@
     border-radius: 15px !important;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+    min-height: 180px; /* Aumenta la altura de las tarjetas */
+    padding: 10px;
 }
 
 .o_player_kanban:hover {
@@ -20,6 +22,8 @@
     justify-content: center;
     align-items: center;
     background-color: rgba(234, 234, 234, 0.8);
+    min-width: 120px; /* Define un tamaño mínimo para evitar que sea demasiado pequeña */
+    height: 100%;
 }
 
 .o_kanban_image_fill_left img.o_kanban_image_full {
@@ -47,24 +51,24 @@
 .o_kanban_record_bottom {
     display: flex;
     justify-content: space-between;
-    padding-top: 10px;
+    padding-top: 15px;
 }
 
 .badge {
-    font-size: 1em;
-    padding: 8px 12px;
+    font-size: 1.2em;
+    padding: 10px 15px;
 }
 
 .o_stat_info {
-    font-size: 1.2em;
+    font-size: 1.3em;
     font-weight: bold;
     color: #ffffff;
 }
 
 .player_progress .progress {
-    height: 10px;
+    height: 12px;
     background: rgb(218, 217, 217);
-    border-radius: 4px;
+    border-radius: 6px;
     overflow: hidden;
 }
 
