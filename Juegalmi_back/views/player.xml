@@ -3,7 +3,7 @@
   <data>
 
     <!-- Vista Kanban Mejorada -->
-   <record id="view_game_player_kanban_full" model="ir.ui.view">
+    <record id="view_game_player_kanban_full" model="ir.ui.view">
         <field name="name">game.player.kanban.full</field>
         <field name="model">game.player</field>
         <field name="arch" type="xml">

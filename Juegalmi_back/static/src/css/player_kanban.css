@@ -7,8 +7,6 @@
     border-radius: 15px !important;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
-    min-height: 180px; /* Aumenta la altura de las tarjetas */
-    padding: 10px;
 }
 
 .o_player_kanban:hover {
@@ -16,14 +14,13 @@
     box-shadow: 0 10px 20px rgba(255, 253, 253, 0.9);
 }
 
+/* La imagen ahora ocupa el 40% del card */
 .o_kanban_image_fill_left {
-    flex: 1;
+    flex: 0.4;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: rgba(234, 234, 234, 0.8);
-    min-width: 120px; /* Define un tamaño mínimo para evitar que sea demasiado pequeña */
-    height: 100%;
 }
 
 .o_kanban_image_fill_left img.o_kanban_image_full {
@@ -33,8 +30,9 @@
     border-radius: 15px 0 0 15px;
 }
 
+/* Ajuste de tamaño del área de texto */
 .oe_kanban_details {
-    flex: 2;
+    flex: 0.6;
     padding: 15px;
     color: #ffffff;
     display: flex;
@@ -42,8 +40,9 @@
     justify-content: space-between;
 }
 
+/* Texto más claro y grande */
 .o_kanban_record_title {
-    font-size: 1.5em;
+    font-size: 1.6em;
     font-weight: bold;
     color: #ffffff !important;
 }
@@ -51,24 +50,32 @@
 .o_kanban_record_bottom {
     display: flex;
     justify-content: space-between;
-    padding-top: 15px;
+    padding-top: 10px;
 }
 
+/* Ajuste de tamaño de los badges */
 .badge {
     font-size: 1.2em;
-    padding: 10px 15px;
+    padding: 8px 12px;
+    font-weight: bold;
 }
 
+/* Mayor contraste para los textos de estadísticas */
 .o_stat_info {
-    font-size: 1.3em;
+    font-size: 1.4em;
     font-weight: bold;
     color: #ffffff;
 }
 
+.o_stat_text {
+    font-size: 1.1em;
+    color: #ddd;
+}
+
 .player_progress .progress {
-    height: 12px;
+    height: 10px;
     background: rgb(218, 217, 217);
-    border-radius: 6px;
+    border-radius: 4px;
     overflow: hidden;
 }
 
