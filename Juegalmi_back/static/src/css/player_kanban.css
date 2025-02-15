@@ -1,37 +1,79 @@
 .o_player_kanban {
+    display: flex;
+    align-items: stretch;
     transition: all 0.3s ease;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     border: none !important;
     border-radius: 15px !important;
     overflow: hidden;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
 }
 
 .o_player_kanban:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(255, 253, 253, 0.744);
+    box-shadow: 0 10px 20px rgba(255, 253, 253, 0.9);
 }
 
-.o_player_kanban .o_kanban_image_fill_left {
-    background-color: rgba(234, 234, 234, 0.625);
-    border-right: 1px solid rgba(160, 155, 155, 0.666);
+/* La imagen ahora ocupa el 40% del card */
+.o_kanban_image_fill_left {
+    flex: 0.4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(234, 234, 234, 0.8);
 }
 
-.o_player_kanban .o_kanban_record_title {
+.o_kanban_image_fill_left img.o_kanban_image_full {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px 0 0 15px;
+}
+
+/* Ajuste de tamaño del área de texto */
+.oe_kanban_details {
+    flex: 0.6;
+    padding: 15px;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Texto más claro y grande */
+.o_kanban_record_title {
+    font-size: 1.6em;
+    font-weight: bold;
     color: #ffffff !important;
+}
+
+.o_kanban_record_bottom {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+}
+
+/* Ajuste de tamaño de los badges */
+.badge {
     font-size: 1.2em;
+    padding: 8px 12px;
     font-weight: bold;
 }
 
-.o_player_kanban .badge {
-    transition: all 0.3s ease;
+/* Mayor contraste para los textos de estadísticas */
+.o_stat_info {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #ffffff;
 }
 
-.o_player_kanban .badge:hover {
-    transform: scale(1.1);
+.o_stat_text {
+    font-size: 1.1em;
+    color: #ddd;
 }
 
 .player_progress .progress {
-    height: 8px;
+    height: 10px;
     background: rgb(218, 217, 217);
     border-radius: 4px;
     overflow: hidden;
