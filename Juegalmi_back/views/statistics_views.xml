@@ -1,47 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Vista Graph Principal -->
+        <!-- Vista Gráfica Principal -->
         <record id="view_game_statistics_graph" model="ir.ui.view">
             <field name="name">game.statistics.graph</field>
-            <field name="model">game.statistics</field>
+            <field name="model">game.player</field>
             <field name="arch" type="xml">
-                <graph string="🎮 Estadísticas del Juego" type="bar" stacked="True">
+                <graph string="🎮 Estadísticas del Juego" type="bar" stacked="True" sample="1">
                     <field name="name"/>
-                    <field name="victories" type="measure"/>
+                    <field name="total_wins" type="measure"/>
                     <field name="total_matches" type="measure"/>
-                    <field name="total_coins" type="measure"/>
-                    <field name="skins_owned" type="measure"/>
+                    <field name="coin_balance" type="measure"/>
                 </graph>
             </field>
         </record>
 
-        <!-- Vista Dashboard -->
-        <record id="game_statistics_dashboard" model="ir.ui.view">
-            <field name="name">game.statistics.dashboard</field>
-            <field name="model">game.statistics</field>
+        <!-- Vista Pivot para análisis -->
+        <record id="view_game_statistics_pivot" model="ir.ui.view">
+            <field name="name">game.statistics.pivot</field>
+            <field name="model">game.player</field>
             <field name="arch" type="xml">
-                <dashboard>
-                    <view type="graph" ref="view_game_statistics_graph"/>
-                    <group>
-                        <aggregate name="total_player_aggregate" field="total_players" string="👥 Total Jugadores"/>
-                        <aggregate name="total_matches_aggregate" field="total_matches" string="🎮 Partidas Jugadas"/>
-                        <aggregate name="total_victories_aggregate" field="victories" string="🏆 Victorias"/>
-                        <aggregate name="total_coins_aggregate" field="total_coins" string="💰 Monedas"/>
-                        <aggregate name="total_skins_aggregate" field="skins_owned" string="🎨 Skins"/>
-                    </group>
-                    <view type="pivot"/>
-                </dashboard>
+                <pivot string="📊 Análisis Detallado" sample="1">
+                    <field name="name" type="row"/>
+                    <field name="level" type="measure"/>
+                    <field name="total_wins" type="measure"/>
+                    <field name="total_matches" type="measure"/>
+                    <field name="coin_balance" type="measure"/>
+                </pivot>
             </field>
         </record>
 
-        <!-- Acción para el Dashboard -->
-        <record id="action_game_statistics_dashboard" model="ir.actions.act_window">
+        <!-- Acción para las Estadísticas -->
+        <record id="action_game_statistics" model="ir.actions.act_window">
             <field name="name">📊 Estadísticas del Juego</field>
-            <field name="res_model">game.statistics</field>
-            <field name="view_mode">dashboard,graph</field>
-            <field name="view_id" ref="game_statistics_dashboard"/>
-            <field name="target">main</field>
+            <field name="res_model">game.player</field>
+            <field name="view_mode">graph,pivot</field>
+            <field name="view_id" ref="view_game_statistics_graph"/>
         </record>
 
         <!-- Menú para Estadísticas -->
@@ -49,7 +43,7 @@
             id="menu_game_statistics"
             name="📊 Estadísticas"
             parent="menu_game_api_root"
-            action="action_game_statistics_dashboard"
+            action="action_game_statistics"
             sequence="2"/>
     </data>
 </odoo>
