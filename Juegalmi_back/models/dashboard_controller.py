@@ -1,67 +1,32 @@
-from odoo import http
-from odoo.http import request
-import json
-from datetime import datetime, timedelta
+from odoo import models, fields, api
 
-class GameDashboardController(http.Controller):
+class GameStatistics(models.Model):
+    _name = 'game.statistics'
+    _description = 'Game Statistics Dashboard'
+    _auto = False
 
-    @http.route('/game/dashboard/data', type='json', auth='user')
-    def get_dashboard_data(self):
-        # Obtener datos para KPIs
-        total_players = request.env['game.player'].search_count([])
-        total_matches = request.env['game.match'].search_count([])
-        total_skins = request.env['game.skin'].search_count([])
-        total_coins = sum(request.env['game.player'].search([]).mapped('coin_balance'))
+    name = fields.Char(string='Nombre')
+    total_players = fields.Integer(string='Total Jugadores')
+    total_matches = fields.Integer(string='Total Partidas')
+    victories = fields.Integer(string='Victorias')
+    total_coins = fields.Float(string='Total Monedas')
+    skins_owned = fields.Integer(string='Skins Comprados')
 
-        # Datos para el gráfico de distribución de skins
-        skins = request.env['game.skin'].search([])
-        skin_data = {
-            'labels': skins.mapped('name'),
-            'data': [len(skin.owned_by_players) for skin in skins]
-        }
-
-        # Datos para el top de jugadores
-        players = request.env['game.player'].search([], limit=10, order='total_wins desc')
-        player_data = {
-            'labels': players.mapped('name'),
-            'data': players.mapped('total_wins')
-        }
-
-        # Datos para la actividad de partidas
-        end_date = datetime.now()
-        start_date = end_date - timedelta(days=30)
-        matches = request.env['game.match'].search([
-            ('start_time', '>=', start_date),
-            ('start_time', '<=', end_date)
-        ])
-
-        # Agrupar partidas por día
-        match_data = {}
-        for match in matches:
-            date_str = match.start_time.strftime('%Y-%m-%d')
-            match_data[date_str] = match_data.get(date_str, 0) + 1
-
-        # Crear arrays para el gráfico
-        dates = []
-        match_counts = []
-        current_date = start_date
-        while current_date <= end_date:
-            date_str = current_date.strftime('%Y-%m-%d')
-            dates.append(date_str)
-            match_counts.append(match_data.get(date_str, 0))
-            current_date += timedelta(days=1)
-
-        return {
-            'kpis': {
-                'total_players': total_players,
-                'total_matches': total_matches,
-                'total_skins': total_skins,
-                'total_coins': total_coins,
-            },
-            'skin_distribution': skin_data,
-            'top_players': player_data,
-            'match_activity': {
-                'labels': dates,
-                'data': match_counts
-            }
-        }
+    def init(self):
+        tools.drop_view_if_exists(self.env.cr, self._table)
+        self.env.cr.execute("""
+            CREATE or REPLACE VIEW game_statistics AS
+            SELECT 
+                p.id as id,
+                p.name as name,
+                COUNT(DISTINCT p.id) as total_players,
+                COUNT(DISTINCT m.id) as total_matches,
+                p.total_wins as victories,
+                p.coin_balance as total_coins,
+                COUNT(DISTINCT s.id) as skins_owned
+            FROM game_player p
+            LEFT JOIN game_match m ON m.winner_id = p.id
+            LEFT JOIN game_player_game_skin_rel ps ON ps.game_player_id = p.id
+            LEFT JOIN game_skin s ON s.id = ps.game_skin_id
+            GROUP BY p.id, p.name, p.total_wins, p.coin_balance
+        """)
