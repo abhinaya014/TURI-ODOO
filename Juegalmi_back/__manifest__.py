@@ -3,7 +3,7 @@
     'version': '1.0',
     'summary': 'Modulo JuegAlmi creado por el grupo ADI (Abhinaya Dios, Diego Mermelada E Ibai Fiesta Churro)',
     'category': 'Custom',
-    'depends': ['base', 'contacts'],
+    'depends': ['base', 'contacts','web_dashboard'],
     'data': [
         'security/ir.model.access.csv',
         'views/player.xml',
@@ -12,7 +12,7 @@
         'views/menu.xml',
         'views/transic.xml',
         'views/achievement_views.xml',
-        'views/dashboard_views.xml',
+        'views/statistics_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
