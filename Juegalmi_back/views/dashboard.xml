@@ -5,32 +5,69 @@
             <field name="name">game.dashboard</field>
             <field name="model">game.player</field>
             <field name="arch" type="xml">
-                <kanban class="o_kanban_dashboard" create="false">
+                <kanban class="o_game_dashboard" create="false">
                     <field name="id"/>
+                    <field name="name"/>
+                    <field name="total_matches"/>
+                    <field name="total_wins"/>
+                    <field name="coin_balance"/>
                     <templates>
                         <t t-name="kanban-box">
-                            <div class="container-fluid">
+                            <div class="container-fluid o_game_dashboard">
+                                <!-- Header Stats -->
                                 <div class="row">
-                                    <!-- Gráfica Principal -->
-                                    <div class="col-12 mb-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div t-att-id="'player-stats-chart-' + record.id.raw_value" style="height: 300px;"/>
+                                    <div class="col-md-3">
+                                        <div class="stat-card">
+                                            <h3><field name="total_matches"/></h3>
+                                            <p>Total Matches</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-card">
+                                            <h3><field name="total_wins"/></h3>
+                                            <p>Total Wins</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-card">
+                                            <h3><field name="coin_balance"/></h3>
+                                            <p>Coin Balance</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Charts -->
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="dashboard-card">
+                                            <div class="dashboard-card-header">
+                                                <h3>Performance Statistics</h3>
+                                            </div>
+                                            <div class="dashboard-card-body">
+                                                <div t-att-id="'main-stats-' + record.id.raw_value" class="chart-container"/>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Gráficas Secundarias -->
-                                    <div class="col-md-6">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div t-att-id="'coins-chart-' + record.id.raw_value" style="height: 200px;"/>
+                                    <div class="col-md-4">
+                                        <div class="dashboard-card">
+                                            <div class="dashboard-card-header">
+                                                <h3>Coin History</h3>
+                                            </div>
+                                            <div class="dashboard-card-body">
+                                                <div t-att-id="'coin-history-' + record.id.raw_value" class="chart-container"/>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                
+                                <div class="row">
                                     <div class="col-md-6">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div t-att-id="'skins-chart-' + record.id.raw_value" style="height: 200px;"/>
+                                        <div class="dashboard-card">
+                                            <div class="dashboard-card-header">
+                                                <h3>Owned Skins</h3>
+                                            </div>
+                                            <div class="dashboard-card-body">
+                                                <div t-att-id="'skins-chart-' + record.id.raw_value" class="chart-container"/>
                                             </div>
                                         </div>
                                     </div>
@@ -42,15 +79,15 @@
             </field>
         </record>
 
-        <!-- Acción para el Dashboard -->
+        <!-- Acción del Dashboard -->
         <record id="action_game_dashboard" model="ir.actions.act_window">
-            <field name="name">📊 Game Dashboard</field>
+            <field name="name">Game Dashboard</field>
             <field name="res_model">game.player</field>
             <field name="view_mode">kanban</field>
             <field name="view_id" ref="view_game_dashboard"/>
         </record>
 
-        <!-- Menú para el Dashboard -->
+        <!-- Menú del Dashboard -->
         <menuitem id="menu_game_dashboard"
                   name="📊 Dashboard"
                   parent="menu_game_api_root"

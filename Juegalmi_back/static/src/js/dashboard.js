@@ -1,50 +1,46 @@
 odoo.define('juegalmi_back.dashboard', function (require) {
     "use strict";
 
-    var KanbanController = require('web.KanbanController');
-    var KanbanView = require('web.KanbanView');
-    var KanbanRecord = require('web.KanbanRecord');
-    var view_registry = require('web.view_registry');
+    var AbstractAction = require('web.AbstractAction');
     var core = require('web.core');
+    var QWeb = core.qweb;
+    var rpc = require('web.rpc');
 
-    var GameDashboardRecord = KanbanRecord.extend({
-        events: _.extend({}, KanbanRecord.prototype.events, {
+    var GameDashboard = AbstractAction.extend({
+        template: 'GameDashboard',
+        events: {
             'click .refresh-stats': '_onRefreshStats',
-        }),
-
-        start: async function () {
-            await this._super.apply(this, arguments);
-            this._renderCharts();
         },
 
-        _renderCharts: async function () {
-            const playerId = this.recordData.id;
-            
-            // Obtener datos del jugador
-            const playerData = await this._rpc({
-                model: 'game.player',
-                method: 'get_player_statistics',
-                args: [playerId]
-            });
+        init: function(parent, action) {
+            this._super.apply(this, arguments);
+        },
 
-            // Gráfica de Estadísticas
-            new Chart(document.getElementById(`player-stats-chart-${playerId}`), {
+        start: async function() {
+            await this._super(...arguments);
+            this.renderCharts();
+        },
+
+        async renderCharts() {
+            const stats = await this._loadStatistics();
+            
+            // Performance Chart
+            new Chart(document.getElementById('main-stats-' + this.id), {
                 type: 'bar',
                 data: {
                     labels: ['Kills', 'Deaths', 'Wins', 'Matches'],
                     datasets: [{
-                        label: 'Player Statistics',
                         data: [
-                            playerData.total_kills,
-                            playerData.total_deaths,
-                            playerData.total_wins,
-                            playerData.total_matches
+                            stats.total_kills,
+                            stats.total_deaths,
+                            stats.total_wins,
+                            stats.total_matches
                         ],
                         backgroundColor: [
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(54, 162, 235, 0.8)'
+                            '#4CAF50',
+                            '#f44336',
+                            '#2196F3',
+                            '#FFC107'
                         ]
                     }]
                 },
@@ -54,25 +50,21 @@ odoo.define('juegalmi_back.dashboard', function (require) {
                     plugins: {
                         legend: {
                             display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Player Performance'
                         }
                     }
                 }
             });
 
-            // Gráfica de Monedas
-            new Chart(document.getElementById(`coins-chart-${playerId}`), {
+            // Coin History Chart
+            new Chart(document.getElementById('coin-history-' + this.id), {
                 type: 'line',
                 data: {
-                    labels: playerData.coin_history.dates,
+                    labels: stats.coin_history.dates,
                     datasets: [{
-                        label: 'Coin Balance',
-                        data: playerData.coin_history.balances,
-                        borderColor: 'rgb(255, 206, 86)',
-                        tension: 0.1
+                        label: 'Balance',
+                        data: stats.coin_history.balances,
+                        borderColor: '#FFC107',
+                        tension: 0.4
                     }]
                 },
                 options: {
@@ -81,18 +73,18 @@ odoo.define('juegalmi_back.dashboard', function (require) {
                 }
             });
 
-            // Gráfica de Skins
-            new Chart(document.getElementById(`skins-chart-${playerId}`), {
+            // Skins Chart
+            new Chart(document.getElementById('skins-chart-' + this.id), {
                 type: 'doughnut',
                 data: {
-                    labels: playerData.skins_data.names,
+                    labels: stats.skins_data.names,
                     datasets: [{
-                        data: playerData.skins_data.counts,
+                        data: stats.skins_data.counts,
                         backgroundColor: [
-                            'rgb(255, 99, 132)',
-                            'rgb(54, 162, 235)',
-                            'rgb(255, 206, 86)',
-                            'rgb(75, 192, 192)'
+                            '#4CAF50',
+                            '#2196F3',
+                            '#FFC107',
+                            '#f44336'
                         ]
                     }]
                 },
@@ -102,16 +94,22 @@ odoo.define('juegalmi_back.dashboard', function (require) {
                 }
             });
         },
+
+        async _loadStatistics() {
+            return await this._rpc({
+                model: 'game.player',
+                method: 'get_player_statistics',
+                args: [this.id]
+            });
+        },
+
+        _onRefreshStats: function(ev) {
+            ev.preventDefault();
+            this.renderCharts();
+        },
     });
 
-    var GameDashboardView = KanbanView.extend({
-        config: _.extend({}, KanbanView.prototype.config, {
-            Controller: KanbanController,
-            Record: GameDashboardRecord,
-        }),
-    });
+    core.action_registry.add('game_dashboard', GameDashboard);
 
-    view_registry.add('game_dashboard', GameDashboardView);
-
-    return GameDashboardView;
+    return GameDashboard;
 });

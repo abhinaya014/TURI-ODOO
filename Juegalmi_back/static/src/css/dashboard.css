@@ -1,0 +1,36 @@
+.o_game_dashboard {
+    padding: 20px;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.dashboard-card-header {
+    padding: 15px;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+}
+
+.dashboard-card-body {
+    padding: 20px;
+}
+
+.stat-card {
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #1e88e5 0%, #1976d2 100%);
+    color: white;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin: 20px 0;
+}
