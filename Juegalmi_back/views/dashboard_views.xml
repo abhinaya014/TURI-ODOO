@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="game_dashboard_view" model="ir.ui.view">
+            <field name="name">game.dashboard</field>
+            <field name="model">game.player</field>
+            <field name="arch" type="xml">
+                <kanban create="false" class="o_dashboard_kanban">
+                    <field name="name"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="container-fluid">
+                                <!-- Primera fila con KPIs -->
+                                <div class="row mt-3">
+                                    <div class="col-md-3">
+                                        <div class="card bg-primary text-white">
+                                            <div class="card-body text-center">
+                                                <h3>Total Jugadores</h3>
+                                                <h2 class="display-4" t-esc="total_players"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card bg-success text-white">
+                                            <div class="card-body text-center">
+                                                <h3>Total Partidas</h3>
+                                                <h2 class="display-4" t-esc="total_matches"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card bg-warning text-white">
+                                            <div class="card-body text-center">
+                                                <h3>Total Skins</h3>
+                                                <h2 class="display-4" t-esc="total_skins"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card bg-info text-white">
+                                            <div class="card-body text-center">
+                                                <h3>Monedas en Circulación</h3>
+                                                <h2 class="display-4" t-esc="total_coins"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Segunda fila con gráficos -->
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3>Distribución de Skins</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <canvas id="skinDistributionChart"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3>Top Jugadores por Victorias</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <canvas id="topPlayersChart"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tercera fila con más gráficos -->
+                                <div class="row mt-4">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3>Actividad de Partidas (Últimos 30 días)</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <canvas id="matchActivityChart"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Acción para el Dashboard -->
+        <record id="action_game_dashboard" model="ir.actions.act_window">
+            <field name="name">Game Dashboard</field>
+            <field name="res_model">game.player</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="game_dashboard_view"/>
+        </record>
+
+        <!-- Menú para el Dashboard -->
+        <menuitem id="menu_game_dashboard"
+                  name="📊 Dashboard"
+                  parent="menu_game_api_root"
+                  action="action_game_dashboard"
+                  sequence="1"/>
+    </data>
+</odoo>
