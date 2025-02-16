@@ -117,3 +117,43 @@ class GamePlayer(models.Model):
                 player.partner_id.sudo().write(partner_vals)
 
         return res
+
+
+        @api.model
+def get_player_statistics(self, player_id):
+    player = self.browse(player_id)
+    
+    # Obtener historial de monedas
+    coin_transactions = self.env['game.coin.transaction'].search([
+        ('player_id', '=', player_id)
+    ], order='date asc')
+    
+    coin_history = {
+        'dates': coin_transactions.mapped('date'),
+        'balances': []
+    }
+    
+    balance = 0
+    for transaction in coin_transactions:
+        balance += transaction.amount
+        coin_history['balances'].append(balance)
+
+    # Obtener datos de skins
+    skins_data = {
+        'names': player.owned_skins.mapped('name'),
+        'counts': [1] * len(player.owned_skins)  # 1 por cada skin
+    }
+
+    # Estadísticas generales
+    match_stats = self.env['game.match.player.stats'].search([
+        ('player_id', '=', player_id)
+    ])
+    
+    return {
+        'total_kills': sum(match_stats.mapped('kills')),
+        'total_deaths': sum(match_stats.mapped('deaths')),
+        'total_wins': player.total_wins,
+        'total_matches': player.total_matches,
+        'coin_history': coin_history,
+        'skins_data': skins_data
+    }

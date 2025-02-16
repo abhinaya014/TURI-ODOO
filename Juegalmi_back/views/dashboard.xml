@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_game_dashboard" model="ir.ui.view">
+            <field name="name">game.dashboard</field>
+            <field name="model">game.player</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_dashboard" create="false">
+                    <field name="id"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <!-- Gráfica Principal -->
+                                    <div class="col-12 mb-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div t-att-id="'player-stats-chart-' + record.id.raw_value" style="height: 300px;"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Gráficas Secundarias -->
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div t-att-id="'coins-chart-' + record.id.raw_value" style="height: 200px;"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div t-att-id="'skins-chart-' + record.id.raw_value" style="height: 200px;"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Acción para el Dashboard -->
+        <record id="action_game_dashboard" model="ir.actions.act_window">
+            <field name="name">📊 Game Dashboard</field>
+            <field name="res_model">game.player</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="view_game_dashboard"/>
+        </record>
+
+        <!-- Menú para el Dashboard -->
+        <menuitem id="menu_game_dashboard"
+                  name="📊 Dashboard"
+                  parent="menu_game_api_root"
+                  action="action_game_dashboard"
+                  sequence="1"/>
+    </data>
+</odoo>

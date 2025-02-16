@@ -12,10 +12,16 @@
         'views/menu.xml',
         'views/transic.xml',
         'views/achievement_views.xml',
+        'views/dashboard.xml',
+
     ],
     'assets': {
         'web.assets_backend': [
             'Juegalmi_back/static/src/css/player_kanban.css',
+            'juegalmi_back/static/src/js/dashboard.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js',
+
+
         ],
     },
     'installable': True,
