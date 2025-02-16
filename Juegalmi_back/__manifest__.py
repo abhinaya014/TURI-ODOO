@@ -18,8 +18,8 @@
     'assets': {
         'web.assets_backend': [
             'Juegalmi_back/static/src/css/player_kanban.css',
-            'juegalmi_back/static/src/js/dashboard.js',
-            'juegalmi_back/static/src/css/dashboard.css',
+            'Juegalmi_back/static/src/js/dashboard.js',
+            'Juegalmi_back/static/src/css/dashboard.css',
             'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js',
 
 
