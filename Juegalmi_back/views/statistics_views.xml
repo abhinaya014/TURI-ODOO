@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Vista Gráfica Principal -->
-        <record id="view_game_statistics_graph" model="ir.ui.view">
-            <field name="name">game.statistics.graph</field>
+        <!-- Vista Gráfica de Jugadores - Barras -->
+        <record id="view_game_player_statistics_bar" model="ir.ui.view">
+            <field name="name">game.player.statistics.bar</field>
             <field name="model">game.player</field>
             <field name="arch" type="xml">
-                <graph string="🎮 Estadísticas del Juego" type="bar" stacked="True" sample="1">
+                <graph string="🏆 Rendimiento de Jugadores" type="bar" stacked="True" sample="1">
                     <field name="name"/>
+                    <field name="level" type="measure"/>
                     <field name="total_wins" type="measure"/>
                     <field name="total_matches" type="measure"/>
                     <field name="coin_balance" type="measure"/>
@@ -15,7 +16,32 @@
             </field>
         </record>
 
-        <!-- Vista Pivot para análisis -->
+        <!-- Vista Gráfica de Jugadores - Línea -->
+        <record id="view_game_player_statistics_line" model="ir.ui.view">
+            <field name="name">game.player.statistics.line</field>
+            <field name="model">game.player</field>
+            <field name="arch" type="xml">
+                <graph string="📈 Progresión de Jugadores" type="line" sample="1">
+                    <field name="level"/>
+                    <field name="total_wins" type="measure"/>
+                    <field name="experience" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Vista Gráfica de Jugadores - Pie -->
+        <record id="view_game_player_statistics_pie" model="ir.ui.view">
+            <field name="name">game.player.statistics.pie</field>
+            <field name="model">game.player</field>
+            <field name="arch" type="xml">
+                <graph string="💰 Distribución de Monedas" type="pie" sample="1">
+                    <field name="name"/>
+                    <field name="coin_balance" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Vista Pivot Detallada -->
         <record id="view_game_statistics_pivot" model="ir.ui.view">
             <field name="name">game.statistics.pivot</field>
             <field name="model">game.player</field>
@@ -26,24 +52,74 @@
                     <field name="total_wins" type="measure"/>
                     <field name="total_matches" type="measure"/>
                     <field name="coin_balance" type="measure"/>
+                    <field name="experience" type="measure"/>
                 </pivot>
             </field>
         </record>
 
-        <!-- Acción para las Estadísticas -->
-        <record id="action_game_statistics" model="ir.actions.act_window">
-            <field name="name">📊 Estadísticas del Juego</field>
+        <!-- Acciones para cada vista -->
+        <record id="action_game_statistics_performance" model="ir.actions.act_window">
+            <field name="name">🏆 Rendimiento</field>
             <field name="res_model">game.player</field>
-            <field name="view_mode">graph,pivot</field>
-            <field name="view_id" ref="view_game_statistics_graph"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="view_game_player_statistics_bar"/>
         </record>
 
-        <!-- Menú para Estadísticas -->
+        <record id="action_game_statistics_progression" model="ir.actions.act_window">
+            <field name="name">📈 Progresión</field>
+            <field name="res_model">game.player</field>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="view_game_player_statistics_line"/>
+        </record>
+
+        <record id="action_game_statistics_coins" model="ir.actions.act_window">
+            <field name="name">💰 Monedas</field>
+            <field name="res_model">game.player</field>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="view_game_player_statistics_pie"/>
+        </record>
+
+        <record id="action_game_statistics_analysis" model="ir.actions.act_window">
+            <field name="name">📊 Análisis</field>
+            <field name="res_model">game.player</field>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="view_game_statistics_pivot"/>
+        </record>
+
+        <!-- Menú Principal de Estadísticas -->
         <menuitem 
-            id="menu_game_statistics"
+            id="menu_game_statistics_root"
             name="📊 Estadísticas"
             parent="menu_game_api_root"
-            action="action_game_statistics"
             sequence="2"/>
+
+        <!-- Submenús para cada tipo de gráfico -->
+        <menuitem 
+            id="menu_game_statistics_performance"
+            name="🏆 Rendimiento"
+            parent="menu_game_statistics_root"
+            action="action_game_statistics_performance"
+            sequence="1"/>
+
+        <menuitem 
+            id="menu_game_statistics_progression"
+            name="📈 Progresión"
+            parent="menu_game_statistics_root"
+            action="action_game_statistics_progression"
+            sequence="2"/>
+
+        <menuitem 
+            id="menu_game_statistics_coins"
+            name="💰 Monedas"
+            parent="menu_game_statistics_root"
+            action="action_game_statistics_coins"
+            sequence="3"/>
+
+        <menuitem 
+            id="menu_game_statistics_analysis"
+            name="📊 Análisis"
+            parent="menu_game_statistics_root"
+            action="action_game_statistics_analysis"
+            sequence="4"/>
     </data>
 </odoo>
